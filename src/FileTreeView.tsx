@@ -1,4 +1,4 @@
-import { ItemView, TFile, WorkspaceLeaf } from 'obsidian';
+import { ItemView, TFile, WorkspaceLeaf, App } from 'obsidian';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FileTreeAlternativePlugin from './main';
@@ -10,6 +10,7 @@ export const VIEW_DISPLAY_TEXT = 'File Tree View'
 export class FileTreeView extends ItemView {
 
     plugin: FileTreeAlternativePlugin;
+    currentFolderPath: string;
 
     constructor(leaf: WorkspaceLeaf, plugin: FileTreeAlternativePlugin) {
         super(leaf);
@@ -34,17 +35,29 @@ export class FileTreeView extends ItemView {
 
     async onOpen(): Promise<void> {
         ReactDOM.unmountComponentAtNode(this.contentEl);
-        var mdFiles = this.plugin.app.vault.getFiles()
-        this.constructFileTree(mdFiles, this.app.vault.getName());
+        this.constructFileTree(this.app.vault.getRoot().path);
     }
 
-    constructFileTree(files: TFile[], folderPath: string) {
+    getFilesUnderPath = (path: string, app: App): TFile[] => {
+        var allFiles = app.vault.getFiles();
+        var folderRegex = new RegExp(path + '.*');
+        return allFiles.filter(file => file.path.match(folderRegex));
+    }
+
+    constructFileTree(folderPath: string, vaultChange?: boolean) {
+        var files: TFile[] = [];
+        if (vaultChange) {
+            files = this.getFilesUnderPath(this.currentFolderPath, this.app);
+        } else {
+            files = this.getFilesUnderPath(folderPath, this.app);
+            this.currentFolderPath = folderPath;
+        }
         ReactDOM.unmountComponentAtNode(this.contentEl);
         ReactDOM.render(
             <FileTreeComponent
                 files={files}
                 app={this.app}
-                folderPath={folderPath}
+                folderPath={this.currentFolderPath}
             />,
             this.contentEl
         );

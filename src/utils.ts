@@ -31,16 +31,12 @@ export class FileTreeUtils {
             }, true)
     };
 
-    static setFileTreeFiles = (folderPath: string, app: App) => {
-        // Get All Files Under Folder
-        var allFiles = app.vault.getFiles();
-        var folderRegex = new RegExp(folderPath + '.*')
-        var filteredFiles: TFile[] = allFiles.filter(file => file.path.match(folderRegex))
+    static setFileTreeFiles = (folderPath: string, app: App, vaultChange?: boolean) => {
         // Set File List Under View
         var filetreeViews = app.workspace.getLeavesOfType(VIEW_TYPE);
         filetreeViews.forEach(leaf => {
             const view = leaf.view as FileTreeView;
-            view.constructFileTree(filteredFiles, folderPath);
+            view.constructFileTree(folderPath, vaultChange);
         })
     }
 
