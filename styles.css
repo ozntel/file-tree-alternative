@@ -1,6 +1,6 @@
-/* .nav-file { 
+.nav-file { 
     display: none !important;
-} */
+}
 
 .oz-file-tree-header{
     height: 22px;
@@ -10,4 +10,8 @@
     margin-top: 0px;
     font-size: 15px;
     text-align: center;
+}
+
+.nav-folder-title:not([has-child-folder='true']) > div.nav-folder-collapse-indicator{
+    display: none;
 }

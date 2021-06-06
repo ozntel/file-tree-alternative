@@ -4,8 +4,10 @@ import { FileTreeUtils } from './utils';
 
 export default class FileTreeAlternativePlugin extends Plugin {
 
+	addEventListener = () => FileTreeUtils.addEventListenerForFolders(this.app);
+
 	async onload() {
-		console.log('loading plugin');
+		console.log('Loading Alternative File Tree Plugin');
 
 		// Register View
 		this.registerView(VIEW_TYPE, (leaf) => {
@@ -18,7 +20,6 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		} else {
 			this.registerEvent(this.app.workspace.on('layout-ready', this.registerVaultEvent));
 		}
-
 
 		// Command to Open Tree Leaf
 		this.addCommand({
@@ -34,11 +35,14 @@ export default class FileTreeAlternativePlugin extends Plugin {
 	}
 
 	onunload() {
-		console.log('unloading plugin');
+		console.log('Unloading Alternative File Tree Plugin');
 	}
 
 	registerVaultEvent = () => {
 		FileTreeUtils.addEventListenerForFolders(this.app);
+		this.registerEvent(this.app.vault.on('create', () => this.addEventListener()));
+		this.registerEvent(this.app.vault.on('delete', () => this.addEventListener()));
+		this.registerEvent(this.app.vault.on('rename', () => this.addEventListener()));
 	}
 
 }
