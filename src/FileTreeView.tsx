@@ -39,6 +39,9 @@ export class FileTreeView extends ItemView {
     }
 
     getFilesUnderPath = (path: string, app: App): TFile[] => {
+        // @todo - recursively get files from children
+        // var folderObj = app.vault.getAbstractFileByPath(path);
+        // if(folderObj instanceof TFolder) { ... }
         var allFiles = app.vault.getFiles();
         var folderRegex = new RegExp(path + '.*');
         return allFiles.filter(file => file.path.match(folderRegex));

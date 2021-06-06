@@ -5,13 +5,19 @@
 .oz-file-tree-header{
     height: 22px;
     width: 100%;
-    background-color: black;
-    color: white;
+    color: black;
     margin-top: 0px;
     font-size: 15px;
     text-align: center;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .nav-folder-title:not([has-child-folder='true']) > div.nav-folder-collapse-indicator{
     display: none;
+}
+
+.oz-nav-file-title{
+    padding-left: 2px !important;
+    padding-right: 2px !important;
 }
