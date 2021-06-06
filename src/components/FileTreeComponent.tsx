@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { TFile, App, WorkspaceLeaf } from 'obsidian';
+// @ts-ignore
+import { TFile, App, WorkspaceLeaf, Keymap } from 'obsidian';
 
 interface FileTreeProps {
     files: TFile[],
@@ -11,10 +12,8 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
 
     const [activeFile, setActiveFile] = useState(null);
 
-    const openFile = (file: TFile) => {
-        let leaf: WorkspaceLeaf = app.workspace.getUnpinnedLeaf();
-        leaf.openFile(file);
-        setActiveFile(file);
+    const openFile = (file: TFile, e: React.MouseEvent) => {
+        app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
     }
 
     const getFileNameAndExtension = (fullName: string) => {
@@ -36,7 +35,7 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
             </div>
             {files.map(file => {
                 return (
-                    <div className="oz-nav-file" key={file.path} onClick={() => openFile(file)}>
+                    <div className="oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)}>
                         <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
                             {
                                 getFileNameAndExtension(file.name).extension !== 'md' &&
