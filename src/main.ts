@@ -14,20 +14,20 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			return new FileTreeView(leaf, this);
 		});
 
-		// Event Listener for "nav-folder-title"
+		// Event Listener for Folder Names in File Explorer
 		if (this.app.workspace.layoutReady) {
 			this.registerVaultEvent();
 		} else {
 			this.registerEvent(this.app.workspace.on('layout-ready', this.registerVaultEvent));
 		}
 
-		// Command to Open Tree Leaf
+		// Command to Open File Tree Leaf
 		this.addCommand({
 			id: 'open-file-tree-leaf',
 			name: 'Open File Tree Leaf',
 			callback: async () => {
 				if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
-					await this.app.workspace.getRightLeaf(false).setViewState({ type: VIEW_TYPE });
+					await this.app.workspace.getLeftLeaf(true).setViewState({ type: VIEW_TYPE });
 				}
 				this.app.workspace.revealLeaf(this.app.workspace.getLeavesOfType(VIEW_TYPE).first());
 			},
