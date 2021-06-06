@@ -3,29 +3,35 @@ import { VIEW_TYPE, FileTreeView } from './FileTreeView';
 
 export class FileTreeUtils {
 
-    static addEventListenerForFolders = (app: App) => {
-        var fileExplorers = app.workspace.getLeavesOfType('file-explorer');
-        for (let fileExplorer of fileExplorers) {
-            // @ts-ignore
-            for (const [path, item] of Object.entries(fileExplorer.view.fileItems)) {
-                if (item.titleEl.className === 'nav-folder-title') {
+    static folderSelector = ".workspace-leaf-content[data-type='file-explorer'] .nav-folder-title[data-path]"
 
-                    // Add Click Event for Folder Titles
-                    item.titleEl.onClickEvent(() => {
-                        FileTreeUtils.setFileTreeFiles(item.titleEl.getAttr('data-path'), app);
-                    })
-
-                    // Check if Folder has subfolder
-                    if (FileTreeUtils.hasChildFolder(item.titleEl.getAttr('data-path'), app)) {
-                        item.titleEl.setAttribute('has-child-folder', 'true');
-                    }
-                }
+    static checkFoldersForSubFolders = (app: App) => {
+        var folderNodes = document.querySelectorAll(FileTreeUtils.folderSelector);
+        folderNodes.forEach(node => {
+            var dataPath = node.getAttr('data-path');
+            if (dataPath && FileTreeUtils.hasChildFolder(dataPath, app)) {
+                node.setAttribute('has-child-folder', 'true');
             }
-        }
+        })
     }
 
-    static setFileTreeFiles = (folderPath: string, app: App) => {
+    static addEventListenerForFolders = (app: App) => {
+        document.body.on("click", FileTreeUtils.folderSelector,
+            (event, navFolderTitleEl) => {
+                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app);
+                FileTreeUtils.checkFoldersForSubFolders(app);
+            }, true)
+    };
 
+    static removeEventListenerForFolders = (app: App) => {
+        document.body.off("click",
+            FileTreeUtils.folderSelector, (event, navFolderTitleEl) => {
+                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app);
+                FileTreeUtils.checkFoldersForSubFolders(app);
+            }, true)
+    };
+
+    static setFileTreeFiles = (folderPath: string, app: App) => {
         // Get All Files Under Folder
         var allFiles = app.vault.getFiles();
         var folderRegex = new RegExp(folderPath + '.*')
@@ -36,7 +42,6 @@ export class FileTreeUtils {
             const view = leaf.view as FileTreeView;
             view.constructFileTree(filteredFiles, folderPath);
         })
-
     }
 
     static hasChildFolder = (path: string, app: App) => {

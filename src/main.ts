@@ -4,24 +4,24 @@ import { FileTreeUtils } from './utils';
 
 export default class FileTreeAlternativePlugin extends Plugin {
 
-	addEventListener = () => FileTreeUtils.addEventListenerForFolders(this.app);
-
 	async onload() {
 		console.log('Loading Alternative File Tree Plugin');
 
-		// Register View
+		// Register File Tree View
 		this.registerView(VIEW_TYPE, (leaf) => {
 			return new FileTreeView(leaf, this);
 		});
 
-		// Event Listener for Folder Names in File Explorer
+		// Event Listeners 
 		if (this.app.workspace.layoutReady) {
 			this.registerVaultEvent();
 		} else {
-			this.registerEvent(this.app.workspace.on('layout-ready', this.registerVaultEvent));
+			this.registerEvent(this.app.workspace.on('layout-ready', () => {
+				this.registerVaultEvent()
+			}));
 		}
 
-		// Command to Open File Tree Leaf
+		// Add Command to Open File Tree Leaf
 		this.addCommand({
 			id: 'open-file-tree-leaf',
 			name: 'Open File Tree Leaf',
@@ -36,13 +36,15 @@ export default class FileTreeAlternativePlugin extends Plugin {
 
 	onunload() {
 		console.log('Unloading Alternative File Tree Plugin');
+		FileTreeUtils.removeEventListenerForFolders(this.app);
 	}
 
 	registerVaultEvent = () => {
+		FileTreeUtils.checkFoldersForSubFolders(this.app); // @todo - doesn't work
 		FileTreeUtils.addEventListenerForFolders(this.app);
-		this.registerEvent(this.app.vault.on('create', () => this.addEventListener()));
-		this.registerEvent(this.app.vault.on('delete', () => this.addEventListener()));
-		this.registerEvent(this.app.vault.on('rename', () => this.addEventListener()));
+		this.registerEvent(this.app.vault.on('create', () => { }));
+		this.registerEvent(this.app.vault.on('delete', () => { }));
+		this.registerEvent(this.app.vault.on('rename', () => { }));
 	}
 
 }
