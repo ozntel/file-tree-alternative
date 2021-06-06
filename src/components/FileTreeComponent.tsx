@@ -14,6 +14,7 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
 
     const openFile = (file: TFile, e: React.MouseEvent) => {
         app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
+        setActiveFile(file);
     }
 
     const getFileNameAndExtension = (fullName: string) => {
