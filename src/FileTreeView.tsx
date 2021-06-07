@@ -26,7 +26,7 @@ export class FileTreeView extends ItemView {
     }
 
     getIcon(): string {
-        return 'go-to-file';
+        return 'documents';
     }
 
     async onClose() {
