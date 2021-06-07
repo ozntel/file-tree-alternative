@@ -14,7 +14,7 @@
 }
 
 .nav-folder-title:not([has-child-folder='true']) > div.nav-folder-collapse-indicator{
-    display: none;
+    visibility: hidden;
 }
 
 .oz-nav-file-title{
