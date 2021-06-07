@@ -37,7 +37,13 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
             <div className="oz-file-tree-header">
                 {getFolderName(folderPath)}
             </div>
-            {files.map(file => {
+            {files.sort((a, b) => {
+                var nameA = a.name.toUpperCase();
+                var nameB = b.name.toUpperCase();
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+                return 0;
+            }).map(file => {
                 return (
                     <div className="oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)}>
                         <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>

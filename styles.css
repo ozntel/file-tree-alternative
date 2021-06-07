@@ -5,7 +5,7 @@
 .oz-file-tree-header{
     height: 22px;
     width: 100%;
-    color: black;
+    color: var(--text-on-accent);
     margin-top: 0px;
     font-size: 15px;
     text-align: center;
