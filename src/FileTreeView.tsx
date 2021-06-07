@@ -5,7 +5,8 @@ import FileTreeAlternativePlugin from './main';
 import { FileTreeComponent } from './components/FileTreeComponent';
 
 export const VIEW_TYPE = 'file-tree-view';
-export const VIEW_DISPLAY_TEXT = 'File Tree View'
+export const VIEW_DISPLAY_TEXT = 'File Tree View';
+export const ICON = 'sheets-in-box';
 
 export class FileTreeView extends ItemView {
 
@@ -26,7 +27,7 @@ export class FileTreeView extends ItemView {
     }
 
     getIcon(): string {
-        return 'documents';
+        return ICON;
     }
 
     async onClose() {

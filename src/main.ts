@@ -1,5 +1,5 @@
 import { Plugin } from 'obsidian';
-import { VIEW_TYPE, FileTreeView } from './FileTreeView';
+import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
 import { FileTreeUtils } from './utils';
 
 export default class FileTreeAlternativePlugin extends Plugin {
@@ -26,6 +26,11 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			id: 'open-file-tree-leaf',
 			name: 'Open File Tree Leaf',
 			callback: async () => await this.openFileTreeLeaf(),
+		});
+
+		// Ribbon Icon For Opening 
+		this.addRibbonIcon(ICON, 'Alternative File Tree Plugin', async () => {
+			await this.openFileTreeLeaf()
 		});
 	}
 
