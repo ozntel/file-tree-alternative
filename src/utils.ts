@@ -33,6 +33,7 @@ export class FileTreeUtils {
         })
     }
 
+    // Add Click Event Listener
     static addEventListenerForFolders = (app: App) => {
         document.body.on("click", FileTreeUtils.folderSelector,
             (event, navFolderTitleEl) => {
@@ -40,6 +41,7 @@ export class FileTreeUtils {
             }, true)
     };
 
+    // Remove Click Event Listener
     static removeEventListenerForFolders = (app: App) => {
         document.body.off("click",
             FileTreeUtils.folderSelector, (event, navFolderTitleEl) => {
@@ -47,6 +49,7 @@ export class FileTreeUtils {
             }, true)
     };
 
+    // Funciton used for creating & changing the list of files in view
     static setFileTreeFiles = (folderPath: string, app: App, vaultChange?: boolean) => {
         // Set File List Under View
         var filetreeViews = app.workspace.getLeavesOfType(VIEW_TYPE);
@@ -57,6 +60,7 @@ export class FileTreeUtils {
         if (vaultChange) FileTreeUtils.checkFoldersForSubFolders(app);
     }
 
+    // Function to check if there is any child folder under provided path
     static hasChildFolder = (path: string, app: App) => {
         let folder = app.vault.getAbstractFileByPath(path);
         if (folder instanceof TFolder) {

@@ -37,6 +37,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		FileTreeUtils.removeEventListenerForFolders(this.app);
 	}
 
+	// Create Splitted Leaf on the Left Side
 	openFileTreeLeaf = async () => {
 		if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
 			await this.app.workspace.getLeftLeaf(true).setViewState({ type: VIEW_TYPE });
@@ -44,6 +45,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		this.app.workspace.revealLeaf(this.app.workspace.getLeavesOfType(VIEW_TYPE).first());
 	}
 
+	// Load Functions and Event Listeners
 	registerVaultEvent = () => {
 		FileTreeUtils.initialCheckForSubFolders(this.app);
 		FileTreeUtils.addEventListenerForFolders(this.app);
