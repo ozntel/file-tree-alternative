@@ -1,4 +1,4 @@
-import { ItemView, TFile, WorkspaceLeaf, App } from 'obsidian';
+import { ItemView, TFile, WorkspaceLeaf, App, Menu } from 'obsidian';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FileTreeAlternativePlugin from './main';
@@ -46,6 +46,30 @@ export class FileTreeView extends ItemView {
         var folderRegex = new RegExp(path + '.*');
         return allFiles.filter(file => file.path.match(folderRegex));
     }
+
+    // addContextMenu = () => {
+    //     var nodes = document.querySelectorAll('.oz-nav-file');
+    //     if (nodes) {
+    //         nodes.forEach(node => {
+    //             node.addEventListener("contextmenu", (event: MouseEvent) => {
+    //                 event.preventDefault();
+    //                 const fileMenu = new Menu(this.app);
+    //                 const file = this.app.vault.getAbstractFileByPath(node.getAttr('data-path'));
+    //                 this.app.workspace.trigger(
+    //                     "file-menu",
+    //                     fileMenu,
+    //                     file,
+    //                     "my-context-menu",
+    //                     null
+    //                 );
+    //                 fileMenu.showAtPosition({ x: event.pageX, y: event.pageY });
+    //                 return false;
+    //             },
+    //                 false
+    //             );
+    //         })
+    //     }
+    // }
 
     constructFileTree(folderPath: string, vaultChange?: boolean) {
         var files: TFile[] = [];

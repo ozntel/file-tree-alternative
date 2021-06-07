@@ -40,7 +40,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 	}
 
 	registerVaultEvent = () => {
-		FileTreeUtils.checkFoldersForSubFolders(this.app); // @todo - doesn't work
+		FileTreeUtils.initialCheckForSubFolders(this.app);
 		FileTreeUtils.addEventListenerForFolders(this.app);
 		this.registerEvent(this.app.vault.on('create', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));
 		this.registerEvent(this.app.vault.on('delete', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));

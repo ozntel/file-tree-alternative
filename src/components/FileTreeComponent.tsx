@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // @ts-ignore
-import { TFile, App, WorkspaceLeaf, Keymap } from 'obsidian';
+import { TFile, App, Keymap } from 'obsidian';
 
 interface FileTreeProps {
     files: TFile[],
@@ -25,14 +25,17 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
         }
     }
 
+    const getFolderName = (folderPath: string) => {
+        if (folderPath === '/') return app.vault.getName();
+        let index = folderPath.lastIndexOf('/');
+        if (index !== -1) return folderPath.substring(index + 1);
+        return folderPath;
+    }
+
     return (
         <React.Fragment>
             <div className="oz-file-tree-header">
-                {
-                    folderPath === '/' ?
-                        app.vault.getName() :
-                        folderPath
-                }
+                {getFolderName(folderPath)}
             </div>
             {files.map(file => {
                 return (

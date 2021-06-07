@@ -5,6 +5,7 @@ export class FileTreeUtils {
 
     static folderSelector = ".workspace-leaf-content[data-type='file-explorer'] .nav-folder-title[data-path]"
 
+    // This will be run only after vault changes
     static checkFoldersForSubFolders = (app: App) => {
         var folderNodes = document.querySelectorAll(FileTreeUtils.folderSelector);
         folderNodes.forEach(node => {
@@ -15,11 +16,27 @@ export class FileTreeUtils {
         })
     }
 
+    // This check will be run only when the plugin is loaded
+    static initialCheckForSubFolders = (app: App) => {
+        var fileExplorers = app.workspace.getLeavesOfType('file-explorer');
+        fileExplorers.forEach(fileExplorer => {
+            // @ts-ignore
+            for (const [path, fileItem] of Object.entries(fileExplorer.view.fileItems)) {
+                let fileExplorerNode: HTMLElement = fileItem.titleEl;
+                if (fileExplorerNode.className = 'nav-folder-title') {
+                    var dataPath = fileExplorerNode.getAttr('data-path');
+                    if (dataPath && FileTreeUtils.hasChildFolder(dataPath, app)) {
+                        fileExplorerNode.setAttribute('has-child-folder', 'true');
+                    }
+                }
+            }
+        })
+    }
+
     static addEventListenerForFolders = (app: App) => {
         document.body.on("click", FileTreeUtils.folderSelector,
             (event, navFolderTitleEl) => {
                 FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app);
-                FileTreeUtils.checkFoldersForSubFolders(app);
             }, true)
     };
 
@@ -27,7 +44,6 @@ export class FileTreeUtils {
         document.body.off("click",
             FileTreeUtils.folderSelector, (event, navFolderTitleEl) => {
                 FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app);
-                FileTreeUtils.checkFoldersForSubFolders(app);
             }, true)
     };
 
@@ -38,6 +54,7 @@ export class FileTreeUtils {
             const view = leaf.view as FileTreeView;
             view.constructFileTree(folderPath, vaultChange);
         })
+        if (vaultChange) FileTreeUtils.checkFoldersForSubFolders(app);
     }
 
     static hasChildFolder = (path: string, app: App) => {
