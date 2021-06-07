@@ -12,6 +12,9 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			return new FileTreeView(leaf, this);
 		});
 
+		// Add Leaf for File Tree
+		await this.openFileTreeLeaf();
+
 		// Event Listeners 
 		if (this.app.workspace.layoutReady) {
 			this.registerVaultEvent();
@@ -25,18 +28,20 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		this.addCommand({
 			id: 'open-file-tree-leaf',
 			name: 'Open File Tree Leaf',
-			callback: async () => {
-				if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
-					await this.app.workspace.getLeftLeaf(true).setViewState({ type: VIEW_TYPE });
-				}
-				this.app.workspace.revealLeaf(this.app.workspace.getLeavesOfType(VIEW_TYPE).first());
-			},
+			callback: async () => await this.openFileTreeLeaf(),
 		});
 	}
 
 	onunload() {
 		console.log('Unloading Alternative File Tree Plugin');
 		FileTreeUtils.removeEventListenerForFolders(this.app);
+	}
+
+	openFileTreeLeaf = async () => {
+		if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
+			await this.app.workspace.getLeftLeaf(true).setViewState({ type: VIEW_TYPE });
+		}
+		this.app.workspace.revealLeaf(this.app.workspace.getLeavesOfType(VIEW_TYPE).first());
 	}
 
 	registerVaultEvent = () => {
