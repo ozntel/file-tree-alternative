@@ -12,9 +12,6 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			return new FileTreeView(leaf, this);
 		});
 
-		// Add Leaf for File Tree
-		await this.openFileTreeLeaf();
-
 		// Event Listeners 
 		if (this.app.workspace.layoutReady) {
 			this.registerVaultEvent();
@@ -46,12 +43,17 @@ export default class FileTreeAlternativePlugin extends Plugin {
 	}
 
 	// Load Functions and Event Listeners
-	registerVaultEvent = () => {
+	registerVaultEvent = async () => {
+		// Initial Check for Sub-Folders
 		FileTreeUtils.initialCheckForSubFolders(this.app);
+		// Click Event
 		FileTreeUtils.addEventListenerForFolders(this.app);
+		// Vault Events
 		this.registerEvent(this.app.vault.on('create', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));
 		this.registerEvent(this.app.vault.on('delete', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));
 		this.registerEvent(this.app.vault.on('rename', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));
+		// Add Leaf for File Tree
+		await this.openFileTreeLeaf();
 	}
 
 }

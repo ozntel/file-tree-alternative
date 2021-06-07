@@ -45,7 +45,7 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
                 return 0;
             }).map(file => {
                 return (
-                    <div className="oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)}>
+                    <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)}>
                         <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
                             {
                                 getFileNameAndExtension(file.name).extension !== 'md' &&

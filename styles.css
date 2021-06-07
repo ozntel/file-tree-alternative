@@ -1,4 +1,4 @@
-.nav-file { 
+.nav-file:not(.oz-nav-file) { 
     display: none !important;
 }
 
