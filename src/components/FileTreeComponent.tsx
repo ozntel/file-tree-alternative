@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 // @ts-ignore
 import { TFile, App, Keymap } from 'obsidian';
 import { FileTreeView } from 'src/FileTreeView';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 
 interface FileTreeProps {
     files: TFile[],
@@ -47,10 +49,22 @@ export function FileTreeComponent({ files, app, folderPath, fileTreeView }: File
         return 0;
     })
 
+    const createNewFile = (e: React.MouseEvent, folderPath: string) => {
+        let targetFolder = app.vault.getAbstractFileByPath(folderPath);
+        if (!targetFolder) return;
+        // @ts-ignore
+        app.fileManager.createNewMarkdownFile(targetFolder, 'Untitled')
+    }
+
     return (
         <React.Fragment>
-            <div className="oz-file-tree-header">
-                {getFolderName(folderPath)} ({files.length})
+            <div className="oz-flex-container">
+                <div className="oz-file-tree-header">
+                    {getFolderName(folderPath)}
+                </div>
+                <div className="nav-action-button">
+                    <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, folderPath)} />
+                </div>
             </div>
             {sortedFiles.map(file => {
                 return (
