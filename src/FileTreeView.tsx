@@ -1,4 +1,4 @@
-import { ItemView, TFile, WorkspaceLeaf, App, Menu } from 'obsidian';
+import { ItemView, TFile, WorkspaceLeaf, App, Menu, TFolder } from 'obsidian';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FileTreeAlternativePlugin from './main';
@@ -40,12 +40,18 @@ export class FileTreeView extends ItemView {
     }
 
     getFilesUnderPath = (path: string, app: App): TFile[] => {
-        // @todo - recursively get files from children
-        // var folderObj = app.vault.getAbstractFileByPath(path);
-        // if(folderObj instanceof TFolder) { ... }
-        var allFiles = app.vault.getFiles();
-        var folderRegex = new RegExp(path + '.*');
-        return allFiles.filter(file => file.path.match(folderRegex));
+        var filesUnderPath: TFile[] = [];
+        recursiveFx(path, app);
+        function recursiveFx(path: string, app: App) {
+            var folderObj = app.vault.getAbstractFileByPath(path);
+            if (folderObj instanceof TFolder && folderObj.children) {
+                for (let child of folderObj.children) {
+                    if (child instanceof TFile) filesUnderPath.push(child);
+                    if (child instanceof TFolder) recursiveFx(child.path, app);
+                }
+            }
+        }
+        return filesUnderPath;
     }
 
     // addContextMenu = () => {
