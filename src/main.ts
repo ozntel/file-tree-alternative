@@ -4,6 +4,8 @@ import { FileTreeUtils } from './utils';
 
 export default class FileTreeAlternativePlugin extends Plugin {
 
+	FolderClickEventHolder: Function;
+
 	async onload() {
 		console.log('Loading Alternative File Tree Plugin');
 
@@ -30,7 +32,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 
 	onunload() {
 		console.log('Unloading Alternative File Tree Plugin');
-		FileTreeUtils.removeEventListenerForFolders(this.app);
+		this.removeEventListenerForFolders();
 		FileTreeUtils.detachFileTreeLeafs(this.app);
 	}
 
@@ -39,7 +41,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		// Initial Check for Sub-Folders
 		FileTreeUtils.initialCheckForSubFolders(this.app);
 		// Click Event
-		FileTreeUtils.addEventListenerForFolders(this.app);
+		this.addEventListenerForFolders();
 		// Vault Events
 		this.registerEvent(this.app.vault.on('create', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, 'create')));
 		this.registerEvent(this.app.vault.on('delete', (file) => FileTreeUtils.setFileTreeFiles('', this.app, 'delete')));
@@ -50,5 +52,22 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		// Add Leaf for File Tree
 		await FileTreeUtils.openFileTreeLeaf(this.app);
 	}
+
+	// Click Event Function
+	folderClickEvent = (event: MouseEvent, navFolderTitleEl: HTMLElement) => {
+		FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), this.app, '');
+	}
+
+	// Add Click Event Listener
+	addEventListenerForFolders = () => {
+		document.body.on("click", FileTreeUtils.folderSelector, this.folderClickEvent);
+		this.FolderClickEventHolder = this.folderClickEvent;
+	};
+
+	// Remove Click Event Listener
+	removeEventListenerForFolders = () => {
+		// @ts-ignore
+		document.body.off("click", FileTreeUtils.folderSelector, this.FolderClickEventHolder)
+	};
 
 }

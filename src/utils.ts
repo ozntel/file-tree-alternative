@@ -33,22 +33,6 @@ export class FileTreeUtils {
         })
     }
 
-    // Add Click Event Listener
-    static addEventListenerForFolders = (app: App) => {
-        document.body.on("click", FileTreeUtils.folderSelector,
-            (event, navFolderTitleEl) => {
-                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app, '');
-            }, true)
-    };
-
-    // Remove Click Event Listener
-    static removeEventListenerForFolders = (app: App) => {
-        document.body.off("click", FileTreeUtils.folderSelector,
-            (event, navFolderTitleEl) => {
-                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app, '');
-            }, true)
-    };
-
     // Funciton used for creating & changing the list of files in view
     static setFileTreeFiles = (folderPath: string, app: App, vaultChange: string) => {
         // Open File Tree Leaf If Closed
