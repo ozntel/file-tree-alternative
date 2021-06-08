@@ -5,6 +5,7 @@
     "baseUrl": ".",
     "inlineSourceMap": true,
     "inlineSources": true,
+    "isolatedModules": true,
     "module": "ESNext",
     "target": "es6",
     "allowJs": true,
