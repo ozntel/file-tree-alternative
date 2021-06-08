@@ -13,7 +13,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		});
 
 		// Event Listeners 
-		this.registerEvent(this.app.workspace.on('layout-ready', () => this.registerVaultEvent() ));
+		this.app.workspace.onLayoutReady(() => this.registerVaultEvent())
 
 		// Add Command to Open File Tree Leaf
 		this.addCommand({

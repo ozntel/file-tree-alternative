@@ -43,8 +43,8 @@ export class FileTreeUtils {
 
     // Remove Click Event Listener
     static removeEventListenerForFolders = (app: App) => {
-        document.body.off("click",
-            FileTreeUtils.folderSelector, (event, navFolderTitleEl) => {
+        document.body.off("click", FileTreeUtils.folderSelector,
+            (event, navFolderTitleEl) => {
                 FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app, '');
             }, true)
     };
@@ -80,8 +80,9 @@ export class FileTreeUtils {
     // Create Splitted Leaf on the Left Side
     static openFileTreeLeaf = async (app: App) => {
         if (app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
-            await app.workspace.getLeftLeaf(true).setViewState({ type: VIEW_TYPE });
-            app.workspace.revealLeaf(app.workspace.getLeavesOfType(VIEW_TYPE).first());
+            let leaf = app.workspace.getLeftLeaf(true);
+            await leaf.setViewState({ type: VIEW_TYPE });
+            app.workspace.revealLeaf(leaf);
         }
     }
 
