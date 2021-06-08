@@ -51,6 +51,8 @@ export class FileTreeUtils {
 
     // Funciton used for creating & changing the list of files in view
     static setFileTreeFiles = (folderPath: string, app: App, vaultChange?: boolean) => {
+        // Open File Tree Leaf If Closed
+        FileTreeUtils.openFileTreeLeaf(app);
         // Get File Tree Leaf To Update
         var filetreeViews = app.workspace.getLeavesOfType(VIEW_TYPE);
         // Add List of Files under Clicked Folder to the Leaf 
@@ -73,6 +75,14 @@ export class FileTreeUtils {
             }
         }
         return false;
+    }
+
+    // Create Splitted Leaf on the Left Side
+    static openFileTreeLeaf = async (app: App) => {
+        if (app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
+            await app.workspace.getLeftLeaf(true).setViewState({ type: VIEW_TYPE });
+            app.workspace.revealLeaf(app.workspace.getLeavesOfType(VIEW_TYPE).first());
+        }
     }
 
 }
