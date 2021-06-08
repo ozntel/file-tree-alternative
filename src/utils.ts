@@ -1,4 +1,4 @@
-import { App, TFile, TFolder } from "obsidian";
+import { App, TFolder } from "obsidian";
 import { VIEW_TYPE, FileTreeView } from './FileTreeView';
 
 export class FileTreeUtils {
@@ -51,12 +51,14 @@ export class FileTreeUtils {
 
     // Funciton used for creating & changing the list of files in view
     static setFileTreeFiles = (folderPath: string, app: App, vaultChange?: boolean) => {
-        // Set File List Under View
+        // Get File Tree Leaf To Update
         var filetreeViews = app.workspace.getLeavesOfType(VIEW_TYPE);
+        // Add List of Files under Clicked Folder to the Leaf 
         filetreeViews.forEach(leaf => {
             const view = leaf.view as FileTreeView;
             view.constructFileTree(folderPath, vaultChange);
         })
+        // If there is a file change in vault, sub-folder status might change, update the statuses
         if (vaultChange) FileTreeUtils.checkFoldersForSubFolders(app);
     }
 
