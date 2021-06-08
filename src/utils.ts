@@ -1,4 +1,4 @@
-import { App, TFolder } from "obsidian";
+import { App, TAbstractFile, TFolder } from "obsidian";
 import { VIEW_TYPE, FileTreeView } from './FileTreeView';
 
 export class FileTreeUtils {
@@ -82,6 +82,14 @@ export class FileTreeUtils {
         if (app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
             await app.workspace.getLeftLeaf(true).setViewState({ type: VIEW_TYPE });
             app.workspace.revealLeaf(app.workspace.getLeavesOfType(VIEW_TYPE).first());
+        }
+    }
+
+    // Obsidian doesn't change folder 'data-path' for Rename Folder - Needs to be handled manually
+    static handleRenameFolder = (file: TAbstractFile, oldPath: string) => {
+        if (file instanceof TFolder) {
+            var folderEl = document.querySelector(`.nav-folder-title[data-path="${oldPath}"]`);
+            if (folderEl) folderEl.setAttr('data-path', file.path);
         }
     }
 

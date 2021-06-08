@@ -48,7 +48,10 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		// Vault Events
 		this.registerEvent(this.app.vault.on('create', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));
 		this.registerEvent(this.app.vault.on('delete', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));
-		this.registerEvent(this.app.vault.on('rename', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true)));
+		this.registerEvent(this.app.vault.on('rename', (file, oldPath) => {
+			FileTreeUtils.handleRenameFolder(file, oldPath);
+			FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, true);
+		}));
 		// Add Leaf for File Tree
 		await FileTreeUtils.openFileTreeLeaf(this.app);
 	}
