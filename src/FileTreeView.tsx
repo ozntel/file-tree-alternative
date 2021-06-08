@@ -36,7 +36,7 @@ export class FileTreeView extends ItemView {
 
     async onOpen(): Promise<void> {
         ReactDOM.unmountComponentAtNode(this.contentEl);
-        this.constructFileTree(this.app.vault.getRoot().path);
+        this.constructFileTree(this.app.vault.getRoot().path, '');
     }
 
     getFilesUnderPath = (path: string, app: App): TFile[] => {
@@ -54,9 +54,9 @@ export class FileTreeView extends ItemView {
         return filesUnderPath;
     }
 
-    constructFileTree(folderPath: string, vaultChange?: boolean) {
+    constructFileTree(folderPath: string, vaultChange: string) {
         var files: TFile[] = [];
-        if (vaultChange) {
+        if (vaultChange !== '') {
             files = this.getFilesUnderPath(this.currentFolderPath, this.app);
         } else {
             files = this.getFilesUnderPath(folderPath, this.app);

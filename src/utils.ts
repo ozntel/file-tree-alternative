@@ -37,7 +37,7 @@ export class FileTreeUtils {
     static addEventListenerForFolders = (app: App) => {
         document.body.on("click", FileTreeUtils.folderSelector,
             (event, navFolderTitleEl) => {
-                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app);
+                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app, '');
             }, true)
     };
 
@@ -45,12 +45,12 @@ export class FileTreeUtils {
     static removeEventListenerForFolders = (app: App) => {
         document.body.off("click",
             FileTreeUtils.folderSelector, (event, navFolderTitleEl) => {
-                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app);
+                FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), app, '');
             }, true)
     };
 
     // Funciton used for creating & changing the list of files in view
-    static setFileTreeFiles = (folderPath: string, app: App, vaultChange?: boolean) => {
+    static setFileTreeFiles = (folderPath: string, app: App, vaultChange: string) => {
         // Open File Tree Leaf If Closed
         FileTreeUtils.openFileTreeLeaf(app);
         // Get File Tree Leaf To Update
@@ -61,7 +61,7 @@ export class FileTreeUtils {
             view.constructFileTree(folderPath, vaultChange);
         })
         // If there is a file change in vault, sub-folder status might change, update the statuses
-        if (vaultChange) FileTreeUtils.checkFoldersForSubFolders(app);
+        if (vaultChange !== '') FileTreeUtils.checkFoldersForSubFolders(app);
     }
 
     // Function to check if there is any child folder under provided path
