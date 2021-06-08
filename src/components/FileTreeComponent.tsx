@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 // @ts-ignore
-import { TFile, App, Keymap, Menu } from 'obsidian';
+import { TFile, App, Keymap } from 'obsidian';
+import { FileTreeView } from 'src/FileTreeView';
 
 interface FileTreeProps {
     files: TFile[],
     app: App,
-    folderPath: string
+    folderPath: string,
+    fileTreeView?: FileTreeView
 }
 
-export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
+export function FileTreeComponent({ files, app, folderPath, fileTreeView }: FileTreeProps) {
 
     const [activeFile, setActiveFile] = useState(null);
 
@@ -18,10 +20,8 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
     }
 
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
-        const fileMenu = new Menu(app);
-        app.workspace.trigger('file-menu', fileMenu, file, 'link-context-menu');
-        fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
-        return false;
+        // @ts-ignore
+        fileTreeView.app.workspace.onLinkContextMenu(e, file.path, file.path);
     }
 
     const getFileNameAndExtension = (fullName: string) => {

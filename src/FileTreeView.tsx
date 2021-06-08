@@ -68,6 +68,7 @@ export class FileTreeView extends ItemView {
                 files={files}
                 app={this.app}
                 folderPath={this.currentFolderPath}
+                fileTreeView={this}
             />,
             this.contentEl
         );
