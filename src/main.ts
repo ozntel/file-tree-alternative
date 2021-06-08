@@ -37,6 +37,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 	onunload() {
 		console.log('Unloading Alternative File Tree Plugin');
 		FileTreeUtils.removeEventListenerForFolders(this.app);
+		FileTreeUtils.detachFileTreeLeafs(this.app);
 	}
 
 	// Load Functions and Event Listeners

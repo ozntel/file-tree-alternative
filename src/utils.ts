@@ -85,6 +85,13 @@ export class FileTreeUtils {
         }
     }
 
+    static detachFileTreeLeafs = (app: App) => {
+        let leafs = app.workspace.getLeavesOfType(VIEW_TYPE);
+        for (let leaf of leafs) {
+            leaf.detach()
+        }
+    }
+
     // Obsidian doesn't change folder 'data-path' for Rename Folder - Needs to be handled manually
     static handleRenameFolder = (file: TAbstractFile, oldPath: string) => {
         if (file instanceof TFolder) {
