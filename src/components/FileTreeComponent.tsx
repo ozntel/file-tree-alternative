@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // @ts-ignore
-import { TFile, App, Keymap } from 'obsidian';
+import { TFile, App, Keymap, Menu } from 'obsidian';
 
 interface FileTreeProps {
     files: TFile[],
@@ -15,6 +15,13 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
     const openFile = (file: TFile, e: React.MouseEvent) => {
         app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
         setActiveFile(file);
+    }
+
+    const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
+        const fileMenu = new Menu(app);
+        app.workspace.trigger('file-menu', fileMenu, file, 'link-context-menu');
+        fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        return false;
     }
 
     const getFileNameAndExtension = (fullName: string) => {
@@ -45,7 +52,7 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
                 return 0;
             }).map(file => {
                 return (
-                    <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)}>
+                    <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
                         <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
                             {
                                 getFileNameAndExtension(file.name).extension !== 'md' &&
