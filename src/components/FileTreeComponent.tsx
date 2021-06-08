@@ -50,7 +50,7 @@ export function FileTreeComponent({ files, app, folderPath, fileTreeView }: File
     return (
         <React.Fragment>
             <div className="oz-file-tree-header">
-                {getFolderName(folderPath)}
+                {getFolderName(folderPath)} ({files.length})
             </div>
             {sortedFiles.map(file => {
                 return (
