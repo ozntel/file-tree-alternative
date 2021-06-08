@@ -4,8 +4,6 @@ import { FileTreeUtils } from './utils';
 
 export default class FileTreeAlternativePlugin extends Plugin {
 
-	FolderClickEventHolder: Function;
-
 	async onload() {
 		console.log('Loading Alternative File Tree Plugin');
 
@@ -61,13 +59,12 @@ export default class FileTreeAlternativePlugin extends Plugin {
 	// Add Click Event Listener
 	addEventListenerForFolders = () => {
 		document.body.on("click", FileTreeUtils.folderSelector, this.folderClickEvent);
-		this.FolderClickEventHolder = this.folderClickEvent;
 	};
 
 	// Remove Click Event Listener
 	removeEventListenerForFolders = () => {
 		// @ts-ignore
-		document.body.off("click", FileTreeUtils.folderSelector, this.FolderClickEventHolder)
+		document.body.off("click", FileTreeUtils.folderSelector, this.folderClickEvent)
 	};
 
 }

@@ -29,3 +29,7 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     flex-direction: row;
     justify-content: space-between;
 }
+
+.nav-folder-children:first-child{
+    margin-bottom: 0px !important;
+}
