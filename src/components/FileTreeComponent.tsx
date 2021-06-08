@@ -39,18 +39,20 @@ export function FileTreeComponent({ files, app, folderPath }: FileTreeProps) {
         return folderPath;
     }
 
+    const sortedFiles = files.sort((a, b) => {
+        var nameA = a.name.toUpperCase();
+        var nameB = b.name.toUpperCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+    })
+
     return (
         <React.Fragment>
             <div className="oz-file-tree-header">
                 {getFolderName(folderPath)}
             </div>
-            {files.sort((a, b) => {
-                var nameA = a.name.toUpperCase();
-                var nameB = b.name.toUpperCase();
-                if (nameA < nameB) return -1;
-                if (nameA > nameB) return 1;
-                return 0;
-            }).map(file => {
+            {sortedFiles.map(file => {
                 return (
                     <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
                         <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
