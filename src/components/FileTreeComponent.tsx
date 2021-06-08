@@ -49,11 +49,14 @@ export function FileTreeComponent({ files, app, folderPath, fileTreeView }: File
         return 0;
     })
 
-    const createNewFile = (e: React.MouseEvent, folderPath: string) => {
+    const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
         let targetFolder = app.vault.getAbstractFileByPath(folderPath);
         if (!targetFolder) return;
         // @ts-ignore
-        app.fileManager.createNewMarkdownFile(targetFolder, 'Untitled')
+        const newFile = await app.fileManager.createNewMarkdownFile(targetFolder, 'Untitled');
+        const newLeaf = app.workspace.activeLeaf
+        await newLeaf.openFile(newFile);
+        app.workspace.setActiveLeaf(newLeaf, false, true);
     }
 
     return (
