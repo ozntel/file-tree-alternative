@@ -1,5 +1,5 @@
 import { App } from 'obsidian';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FileComponent } from './FileComponent';
 import { FolderComponent } from './FolderComponent';
 import { FileTreeView } from '../FileTreeView';
@@ -12,7 +12,7 @@ interface MainTreeComponentProps {
 export function MainTreeComponent({ app, fileTreeView }: MainTreeComponentProps) {
 
     // View can be 'folder' or 'file'
-    const [view, SetView] = useState('folder');
+    const [view, setView] = useState('folder');
 
     // Active Folder Path for Files List
     const [folderPath, setFolderPath] = useState('');
@@ -24,12 +24,14 @@ export function MainTreeComponent({ app, fileTreeView }: MainTreeComponentProps)
                     <FolderComponent
                         app={app}
                         setFolderPath={setFolderPath}
+                        setView={setView}
                     />
                     :
                     <FileComponent
                         app={app}
                         folderPath={folderPath}
                         fileTreeView={fileTreeView}
+                        setView={setView}
                     />
             }
         </React.Fragment>

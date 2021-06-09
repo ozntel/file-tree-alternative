@@ -3,15 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { TFile, App, Keymap, TFolder } from 'obsidian';
 import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
+import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons'
 
 interface FilesProps {
     app: App,
     folderPath: string,
-    fileTreeView?: FileTreeView
+    fileTreeView?: FileTreeView,
+    setView: Function
 }
 
-export function FileComponent({ app, folderPath, fileTreeView }: FilesProps) {
+export function FileComponent({ app, folderPath, fileTreeView, setView }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
     const [fileList, setFileList] = useState([]);
@@ -80,15 +81,22 @@ export function FileComponent({ app, folderPath, fileTreeView }: FilesProps) {
         app.workspace.setActiveLeaf(newLeaf, false, true);
     }
 
+    const handleGoBack = (e: React.MouseEvent) => {
+        setView('folder');
+    }
+
     return (
         <React.Fragment>
             <div className="oz-flex-container">
-                <div className="oz-file-tree-header">
-                    {getFolderName(folderPath)}
+                <div className="nav-action-button">
+                    <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} />
                 </div>
                 <div className="nav-action-button">
                     <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, folderPath)} />
                 </div>
+            </div>
+            <div className="oz-file-tree-header">
+                {getFolderName(folderPath)}
             </div>
             {fileList.map(file => {
                 return (

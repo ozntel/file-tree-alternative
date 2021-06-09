@@ -36,7 +36,6 @@ const styles = {
 type TreeProps = {
     open?: boolean,
     visible?: boolean,
-    canHide?: boolean,
     content?: string,
     onClick?: Function,
     type?: any,
@@ -59,8 +58,6 @@ const Contents = ({ children, ...style }) => (
 )
 
 export default class Tree extends React.Component<TreeProps, TreeState> {
-
-    static defaultProps = { open: false, visible: true, canHide: false }
 
     state = {
         open: this.props.open,
@@ -96,7 +93,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
     render() {
 
         const { open, visible, immediate } = this.state
-        const { children, content, type, style, canHide, springConfig } = this.props
+        const { children, content, type, style, springConfig } = this.props
         const Icon = children ? open ? Icons['MinusSquareO'] : Icons['PlusSquareO'] : Icons['CloseSquareO']
 
         return (
@@ -109,13 +106,6 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
                 <span style={{ ...styles.type, marginRight: type ? 10 : 0 }}>
                     {type}
                 </span>
-                {canHide && (
-                    <Icons.EyeO
-                        className="toggle"
-                        style={{ ...styles.toggle, opacity: visible ? 1 : 0.4 }}
-                        onClick={this.toggleVisibility}
-                    />
-                )}
                 <span style={{ verticalAlign: 'middle' }} onClick={this.folderNameClickEvent}>{content}</span>
                 <Spring
                     native
