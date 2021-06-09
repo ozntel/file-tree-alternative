@@ -64,7 +64,7 @@ export class FileTreeUtils {
     // Create Splitted Leaf on the Left Side
     static openFileTreeLeaf = async (app: App) => {
         if (app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
-            let leaf = app.workspace.getLeftLeaf(true);
+            let leaf = app.workspace.getLeftLeaf(false);
             await leaf.setViewState({ type: VIEW_TYPE });
             app.workspace.revealLeaf(leaf);
         }

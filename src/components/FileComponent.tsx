@@ -1,24 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // @ts-ignore
-import { TFile, App, Keymap } from 'obsidian';
+import { TFile, App, Keymap, TFolder } from 'obsidian';
 import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 
-interface FileTreeProps {
-    files: TFile[],
+interface FilesProps {
     app: App,
     folderPath: string,
     fileTreeView?: FileTreeView
 }
 
-export function FileTreeComponent({ files, app, folderPath, fileTreeView }: FileTreeProps) {
+export function FileComponent({ app, folderPath, fileTreeView }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
+    const [fileList, setFileList] = useState([]);
+
+    useEffect(() => {
+        setFileList(
+            getFilesUnderPath(folderPath, app)
+        )
+    }, [])
 
     const openFile = (file: TFile, e: React.MouseEvent) => {
         app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
         setActiveFile(file);
+    }
+
+    const getFilesUnderPath = (path: string, app: App): TFile[] => {
+        var filesUnderPath: TFile[] = [];
+        recursiveFx(path, app);
+        function recursiveFx(path: string, app: App) {
+            var folderObj = app.vault.getAbstractFileByPath(path);
+            if (folderObj instanceof TFolder && folderObj.children) {
+                for (let child of folderObj.children) {
+                    if (child instanceof TFile) filesUnderPath.push(child);
+                    if (child instanceof TFolder) recursiveFx(child.path, app);
+                }
+            }
+        }
+        return filesUnderPath;
     }
 
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
@@ -41,7 +62,7 @@ export function FileTreeComponent({ files, app, folderPath, fileTreeView }: File
         return folderPath;
     }
 
-    const sortedFiles = files.sort((a, b) => {
+    const sortedFiles = fileList.sort((a, b) => {
         var nameA = a.name.toUpperCase();
         var nameB = b.name.toUpperCase();
         if (nameA < nameB) return -1;
@@ -69,7 +90,7 @@ export function FileTreeComponent({ files, app, folderPath, fileTreeView }: File
                     <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, folderPath)} />
                 </div>
             </div>
-            {sortedFiles.map(file => {
+            {fileList.map(file => {
                 return (
                     <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
                         <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
