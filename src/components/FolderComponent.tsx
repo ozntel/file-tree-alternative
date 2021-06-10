@@ -17,7 +17,7 @@ interface FolderTree {
 export function FolderComponent({ app, activeFolderPath, setActiveFolderPath, setView }: FolderProps) {
 
     const rootFolder: TFolder = app.vault.getRoot()
-    const treeStyles = { color: '--var(--text-on-accent)', fill: '--var(--text-on-accent)', width: '100%', left: 10, top: 10 }
+    const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 }
     const [folderTree, setFolderTree] = useState<FolderTree>(null);
 
     useEffect(() => {
