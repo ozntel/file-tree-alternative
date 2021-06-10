@@ -3,13 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { FileComponent } from './FileComponent';
 import { FolderComponent } from './FolderComponent';
 import { FileTreeView } from '../FileTreeView';
+import FileTreeAlternativePlugin from '../main';
 
 interface MainTreeComponentProps {
     app: App,
     fileTreeView?: FileTreeView,
+    plugin: FileTreeAlternativePlugin
 }
 
-export function MainTreeComponent({ app, fileTreeView }: MainTreeComponentProps) {
+export function MainTreeComponent({ app, fileTreeView, plugin }: MainTreeComponentProps) {
 
     // View can be 'folder' or 'file'
     const [view, setView] = useState('folder');

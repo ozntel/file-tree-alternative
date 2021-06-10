@@ -52,6 +52,7 @@ export class FileTreeView extends ItemView {
             <MainTreeComponent
                 app={this.app}
                 fileTreeView={this}
+                plugin={this.plugin}
             />,
             this.contentEl
         );
