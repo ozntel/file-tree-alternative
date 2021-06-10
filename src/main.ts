@@ -36,17 +36,17 @@ export default class FileTreeAlternativePlugin extends Plugin {
 
 	// Load Functions and Event Listeners
 	registerVaultEvent = async () => {
-		// Initial Check for Sub-Folders
-		FileTreeUtils.initialCheckForSubFolders(this.app);
-		// Click Event
-		this.addEventListenerForFolders();
-		// Vault Events
-		this.registerEvent(this.app.vault.on('create', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, 'create')));
-		this.registerEvent(this.app.vault.on('delete', (file) => FileTreeUtils.setFileTreeFiles('', this.app, 'delete')));
-		this.registerEvent(this.app.vault.on('rename', (file, oldPath) => {
-			FileTreeUtils.handleRenameFolder(file, oldPath);
-			FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, 'rename');
-		}));
+		// // Initial Check for Sub-Folders
+		// FileTreeUtils.initialCheckForSubFolders(this.app);
+		// // Click Event
+		// this.addEventListenerForFolders();
+		// // Vault Events
+		// this.registerEvent(this.app.vault.on('create', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, 'create')));
+		// this.registerEvent(this.app.vault.on('delete', (file) => FileTreeUtils.setFileTreeFiles('', this.app, 'delete')));
+		// this.registerEvent(this.app.vault.on('rename', (file, oldPath) => {
+		// 	FileTreeUtils.handleRenameFolder(file, oldPath);
+		// 	FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, 'rename');
+		// }));
 		// Add Leaf for File Tree
 		await FileTreeUtils.openFileTreeLeaf(this.app);
 	}
