@@ -1,4 +1,4 @@
-import { App, TFile, TFolder } from 'obsidian';
+import { App, TAbstractFile, TFile, TFolder } from 'obsidian';
 import React, { useEffect, useState } from 'react';
 import { FileComponent } from './FileComponent';
 import { FolderComponent } from './FolderComponent';
@@ -46,12 +46,25 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     componentDidMount() {
         console.log('Component Mounted')
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => {
+            this.handleFileRenameDelete(file);
+        }))
+        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => {
+            this.handleFileRenameDelete(file);
+        }))
+    }
+
+    handleFileRenameDelete = (file: TAbstractFile) => {
+        if (file instanceof TFile) {
             if (this.state.view === 'file') {
                 if (this.state.fileList.some(stateFile => stateFile.path === file.path)) {
                     this.setNewFileList();
                 }
             }
-        }))
+        } else if (file instanceof TFolder) {
+            if (this.state.view === 'folder') {
+
+            }
+        }
     }
 
     render() {
