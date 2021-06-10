@@ -4,12 +4,12 @@ import Tree from './treeComponent/TreeComponent';
 
 interface FolderProps {
     app: App,
-    folderPath: string,
-    setFolderPath: Function,
+    activeFolderPath: string,
+    setActiveFolderPath: Function,
     setView: Function
 }
 
-export function FolderComponent({ app, folderPath, setFolderPath, setView }: FolderProps) {
+export function FolderComponent({ app, activeFolderPath, setActiveFolderPath, setView }: FolderProps) {
 
     const rootFolder: TFolder = app.vault.getRoot()
     const treeStyles = { color: 'white', fill: 'white', width: '100%', left: 10, top: 10 }
@@ -19,8 +19,8 @@ export function FolderComponent({ app, folderPath, setFolderPath, setView }: Fol
             <Tree content={app.vault.getName()} open style={treeStyles}>
                 <NestedChildrenComponent
                     folder={rootFolder}
-                    folderPath={folderPath}
-                    setFolderPath={setFolderPath}
+                    activeFolderPath={activeFolderPath}
+                    setActiveFolderPath={setActiveFolderPath}
                     setView={setView}
                 />
             </Tree>
@@ -32,21 +32,21 @@ export function FolderComponent({ app, folderPath, setFolderPath, setView }: Fol
 
 interface NestedChildrenComponentProps {
     folder: TFolder,
-    folderPath: string,
-    setFolderPath: Function,
+    activeFolderPath: string,
+    setActiveFolderPath: Function,
     setView: Function
 }
 
-function NestedChildrenComponent({ folder, folderPath, setFolderPath, setView }: NestedChildrenComponentProps) {
+function NestedChildrenComponent({ folder, activeFolderPath, setActiveFolderPath, setView }: NestedChildrenComponentProps) {
     if (!folder.children) return null;
 
     const handleFolderNameClick = (folderPath: string) => {
-        setFolderPath(folderPath);
+        setActiveFolderPath(folderPath);
         setView('file');
     }
 
     const isTreeOpen = (fileName: string) => {
-        if (folderPath) return folderPath.split('/').includes(fileName);
+        if (activeFolderPath) return activeFolderPath.split('/').includes(fileName);
         return false;
     }
 
@@ -63,8 +63,8 @@ function NestedChildrenComponent({ folder, folderPath, setFolderPath, setView }:
                                         <Tree content={child.name} open={isTreeOpen(child.name) ? true : false} onClick={() => handleFolderNameClick(child.path)}>
                                             <NestedChildrenComponent
                                                 folder={(child as TFolder)}
-                                                folderPath={folderPath}
-                                                setFolderPath={setFolderPath}
+                                                activeFolderPath={activeFolderPath}
+                                                setActiveFolderPath={setActiveFolderPath}
                                                 setView={setView}
                                             />
                                         </Tree>

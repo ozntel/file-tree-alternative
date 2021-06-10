@@ -15,7 +15,7 @@ export function MainTreeComponent({ app, fileTreeView }: MainTreeComponentProps)
     const [view, setView] = useState('folder');
 
     // Active Folder Path for Files List
-    const [folderPath, setFolderPath] = useState('');
+    const [activeFolderPath, setActiveFolderPath] = useState('');
 
     return (
         <React.Fragment>
@@ -23,14 +23,14 @@ export function MainTreeComponent({ app, fileTreeView }: MainTreeComponentProps)
                 view === 'folder' ?
                     <FolderComponent
                         app={app}
-                        folderPath={folderPath}
-                        setFolderPath={setFolderPath}
+                        activeFolderPath={activeFolderPath}
+                        setActiveFolderPath={setActiveFolderPath}
                         setView={setView}
                     />
                     :
                     <FileComponent
                         app={app}
-                        folderPath={folderPath}
+                        activeFolderPath={activeFolderPath}
                         fileTreeView={fileTreeView}
                         setView={setView}
                     />

@@ -7,19 +7,19 @@ import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-ico
 
 interface FilesProps {
     app: App,
-    folderPath: string,
+    activeFolderPath: string,
     fileTreeView?: FileTreeView,
     setView: Function
 }
 
-export function FileComponent({ app, folderPath, fileTreeView, setView }: FilesProps) {
+export function FileComponent({ app, activeFolderPath, fileTreeView, setView }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
     const [fileList, setFileList] = useState([]);
 
     useEffect(() => {
         setFileList(
-            getFilesUnderPath(folderPath, app)
+            getFilesUnderPath(activeFolderPath, app)
         )
     }, [])
 
@@ -92,11 +92,11 @@ export function FileComponent({ app, folderPath, fileTreeView, setView }: FilesP
                     <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
                 </div>
                 <div className="nav-action-button oz-nav-action-button">
-                    <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, folderPath)} size="lg" />
+                    <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
                 </div>
             </div>
             <div className="oz-file-tree-header">
-                {getFolderName(folderPath)}
+                {getFolderName(activeFolderPath)}
             </div>
             {fileList.map(file => {
                 return (
