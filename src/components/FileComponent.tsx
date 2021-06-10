@@ -87,34 +87,38 @@ export function FileComponent({ app, activeFolderPath, fileTreeView, setView }: 
 
     return (
         <React.Fragment>
-            <div className="oz-flex-container">
-                <div className="nav-action-button oz-nav-action-button">
-                    <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
-                </div>
-                <div className="nav-action-button oz-nav-action-button">
-                    <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
-                </div>
-            </div>
-            <div className="oz-file-tree-header">
-                {getFolderName(activeFolderPath)}
-            </div>
-            {fileList.map(file => {
-                return (
-                    <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
-                        <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
-                            {
-                                getFileNameAndExtension(file.name).extension !== 'md' &&
-                                <span className="nav-file-tag">
-                                    {getFileNameAndExtension(file.name).extension}
-                                </span>
-                            }
-                            <div className="nav-file-title-content">
-                                {getFileNameAndExtension(file.name).fileName}
-                            </div>
-                        </div>
+            <div className="oz-explorer-container">
+                <div className="oz-flex-container">
+                    <div className="nav-action-button oz-nav-action-button">
+                        <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
                     </div>
-                )
-            })}
+                    <div className="nav-action-button oz-nav-action-button">
+                        <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
+                    </div>
+                </div>
+                <div className="oz-file-tree-header">
+                    {getFolderName(activeFolderPath)}
+                </div>
+                <div className="oz-file-tree-files">
+                    {fileList.map(file => {
+                        return (
+                            <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
+                                <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
+                                    {
+                                        getFileNameAndExtension(file.name).extension !== 'md' &&
+                                        <span className="nav-file-tag">
+                                            {getFileNameAndExtension(file.name).extension}
+                                        </span>
+                                    }
+                                    <div className="nav-file-title-content">
+                                        {getFileNameAndExtension(file.name).fileName}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
         </React.Fragment>
     )
 }
