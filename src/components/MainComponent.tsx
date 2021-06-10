@@ -76,12 +76,15 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                     if (this.state.fileList.some(stateFile => stateFile.path === file.path)) {
                         this.setNewFileList();
                     }
+                } else if (changeType === 'create') {
+                    if (file.path.match(new RegExp(this.state.activeFolderPath + '.*'))) {
+                        this.setNewFileList();
+                    }
                 }
             }
         } else if (file instanceof TFolder) {
-            if (this.state.view === 'folder') {
-
-            }
+            // @todo - After changes to keep the current view
+            this.setState({ folderTree: createFolderTree(this.rootFolder) });
         }
     }
 
