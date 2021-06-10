@@ -108,5 +108,6 @@ const styles = {
         marginLeft: 6,
         padding: '4px 0px 0px 14px',
         borderLeft: '1px dashed rgba(255,255,255,0.4)',
+        fontSize: 12.8
     } as React.CSSProperties,
 }
