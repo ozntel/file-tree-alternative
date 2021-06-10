@@ -1,10 +1,21 @@
 import { Plugin } from 'obsidian';
 import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
+import {
+	FileTreeAlternativePluginSettings,
+	FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS
+} from './settings';
 
 export default class FileTreeAlternativePlugin extends Plugin {
 
+	settings: FileTreeAlternativePluginSettings;
+	ribbonIconEl: HTMLElement | undefined = undefined;
+
 	async onload() {
 		console.log('Loading Alternative File Tree Plugin');
+
+		// Load Settings
+		this.addSettingTab(new FileTreeAlternativePluginSettingsTab(this.app, this));
+		await this.loadSettings();
 
 		// Register File Tree View
 		this.registerView(VIEW_TYPE, (leaf) => {
@@ -22,14 +33,29 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		});
 
 		// Ribbon Icon For Opening 
-		this.addRibbonIcon(ICON, 'Alternative File Tree Plugin', async () => {
-			await this.openFileTreeLeaf()
-		});
+		this.refreshIconRibbon();
 	}
 
 	onunload() {
 		console.log('Unloading Alternative File Tree Plugin');
 		this.detachFileTreeLeafs();
+	}
+
+	async loadSettings() {
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+	}
+
+	async saveSettings() {
+		await this.saveData(this.settings);
+	}
+
+	refreshIconRibbon = () => {
+		this.ribbonIconEl?.remove();
+		if (this.settings.ribbonIcon) {
+			this.ribbonIconEl = this.addRibbonIcon(ICON, 'Alternative File Tree Plugin', async () => {
+				await this.openFileTreeLeaf()
+			});;
+		}
 	}
 
 	openFileTreeLeaf = async () => {
