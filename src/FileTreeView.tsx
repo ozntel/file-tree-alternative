@@ -1,4 +1,4 @@
-import { ItemView, TFile, WorkspaceLeaf, App, TFolder } from 'obsidian';
+import { ItemView, WorkspaceLeaf } from 'obsidian';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FileTreeAlternativePlugin from './main';

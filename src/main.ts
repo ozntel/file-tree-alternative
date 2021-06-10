@@ -1,6 +1,5 @@
 import { Plugin } from 'obsidian';
 import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
-import { FileTreeUtils } from './utils';
 
 export default class FileTreeAlternativePlugin extends Plugin {
 

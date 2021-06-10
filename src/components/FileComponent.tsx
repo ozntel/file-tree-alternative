@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 // @ts-ignore
-import { TFile, App, Keymap, TFolder } from 'obsidian';
+import { TFile, App, Keymap } from 'obsidian';
 import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons'
