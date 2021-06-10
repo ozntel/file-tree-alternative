@@ -46,18 +46,24 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     componentDidMount() {
         console.log('Component Mounted')
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => {
-            this.handleFileRenameDelete(file);
+            this.handleVaultChanges(file, 'rename');
         }))
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => {
-            this.handleFileRenameDelete(file);
+            this.handleVaultChanges(file, 'delete');
+        }))
+        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('create', (file) => {
+            this.handleVaultChanges(file, 'create');
         }))
     }
 
-    handleFileRenameDelete = (file: TAbstractFile) => {
+    handleVaultChanges = (file: TAbstractFile, changeType: string) => {
         if (file instanceof TFile) {
             if (this.state.view === 'file') {
-                if (this.state.fileList.some(stateFile => stateFile.path === file.path)) {
-                    this.setNewFileList();
+                if (changeType === 'rename' || changeType === 'delete') {
+                    // If the file renamed and deleted is in the current view, it will be updated
+                    if (this.state.fileList.some(stateFile => stateFile.path === file.path)) {
+                        this.setNewFileList();
+                    }
                 }
             }
         } else if (file instanceof TFolder) {
