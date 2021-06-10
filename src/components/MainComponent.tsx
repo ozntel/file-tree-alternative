@@ -23,6 +23,7 @@ export function MainTreeComponent({ app, fileTreeView }: MainTreeComponentProps)
                 view === 'folder' ?
                     <FolderComponent
                         app={app}
+                        folderPath={folderPath}
                         setFolderPath={setFolderPath}
                         setView={setView}
                     />

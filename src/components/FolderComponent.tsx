@@ -4,11 +4,12 @@ import Tree from './treeComponent/TreeComponent';
 
 interface FolderProps {
     app: App,
+    folderPath: string,
     setFolderPath: Function,
     setView: Function
 }
 
-export function FolderComponent({ app, setFolderPath, setView }: FolderProps) {
+export function FolderComponent({ app, folderPath, setFolderPath, setView }: FolderProps) {
 
     const rootFolder: TFolder = app.vault.getRoot()
     const treeStyles = { color: 'white', fill: 'white', width: '100%', left: 10, top: 10 }
@@ -18,6 +19,7 @@ export function FolderComponent({ app, setFolderPath, setView }: FolderProps) {
             <Tree content={app.vault.getName()} open style={treeStyles}>
                 <NestedChildrenComponent
                     folder={rootFolder}
+                    folderPath={folderPath}
                     setFolderPath={setFolderPath}
                     setView={setView}
                 />
@@ -30,16 +32,22 @@ export function FolderComponent({ app, setFolderPath, setView }: FolderProps) {
 
 interface NestedChildrenComponentProps {
     folder: TFolder,
+    folderPath: string,
     setFolderPath: Function,
     setView: Function
 }
 
-function NestedChildrenComponent({ folder, setFolderPath, setView }: NestedChildrenComponentProps) {
+function NestedChildrenComponent({ folder, folderPath, setFolderPath, setView }: NestedChildrenComponentProps) {
     if (!folder.children) return null;
 
     const handleFolderNameClick = (folderPath: string) => {
         setFolderPath(folderPath);
         setView('file');
+    }
+
+    const isTreeOpen = (fileName: string) => {
+        if (folderPath) return folderPath.split('/').includes(fileName);
+        return false;
     }
 
     return (
@@ -52,9 +60,10 @@ function NestedChildrenComponent({ folder, setFolderPath, setView }: NestedChild
                             <React.Fragment key={child.path}>
                                 {
                                     (child as TFolder).children.some(child => child instanceof TFolder) ?
-                                        <Tree content={child.name} onClick={() => handleFolderNameClick(child.path)}>
+                                        <Tree content={child.name} open={isTreeOpen(child.name) ? true : false} onClick={() => handleFolderNameClick(child.path)}>
                                             <NestedChildrenComponent
                                                 folder={(child as TFolder)}
+                                                folderPath={folderPath}
                                                 setFolderPath={setFolderPath}
                                                 setView={setView}
                                             />
