@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { App, TFolder } from 'obsidian';
-import Tree from './file-tree/index';
+import Tree from './treeComponent/TreeComponent';
 
 interface FolderProps {
     app: App,
@@ -11,14 +11,7 @@ interface FolderProps {
 export function FolderComponent({ app, setFolderPath, setView }: FolderProps) {
 
     const rootFolder: TFolder = app.vault.getRoot()
-
-    const treeStyles = {
-        color: 'white',
-        fill: 'white',
-        width: '100%',
-        left: 10,
-        top: 10,
-    }
+    const treeStyles = { color: 'white', fill: 'white', width: '100%', left: 10, top: 10 }
 
     return (
         <React.Fragment>
@@ -42,9 +35,7 @@ interface NestedChildrenComponentProps {
 }
 
 function NestedChildrenComponent({ folder, setFolderPath, setView }: NestedChildrenComponentProps) {
-    if (!folder.children) {
-        return null
-    }
+    if (!folder.children) return null;
 
     const handleFolderNameClick = (folderPath: string) => {
         setFolderPath(folderPath);
@@ -71,7 +62,6 @@ function NestedChildrenComponent({ folder, setFolderPath, setView }: NestedChild
                                         :
                                         <Tree content={child.name} onClick={() => handleFolderNameClick(child.path)} />
                                 }
-
                             </React.Fragment>
                         )
                     })

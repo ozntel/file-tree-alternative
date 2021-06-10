@@ -88,11 +88,11 @@ export function FileComponent({ app, folderPath, fileTreeView, setView }: FilesP
     return (
         <React.Fragment>
             <div className="oz-flex-container">
-                <div className="nav-action-button">
-                    <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} />
+                <div className="nav-action-button oz-nav-action-button">
+                    <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
                 </div>
-                <div className="nav-action-button">
-                    <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, folderPath)} />
+                <div className="nav-action-button oz-nav-action-button">
+                    <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, folderPath)} size="lg" />
                 </div>
             </div>
             <div className="oz-file-tree-header">
