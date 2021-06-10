@@ -7,40 +7,19 @@ import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-ico
 
 interface FilesProps {
     app: App,
+    fileList: TFile[],
     activeFolderPath: string,
     fileTreeView?: FileTreeView,
     setView: Function
 }
 
-export function FileComponent({ app, activeFolderPath, fileTreeView, setView }: FilesProps) {
+export function FileComponent({ app, fileList, activeFolderPath, fileTreeView, setView }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
-    const [fileList, setFileList] = useState([]);
-
-    useEffect(() => {
-        setFileList(
-            getFilesUnderPath(activeFolderPath, app)
-        )
-    }, [])
 
     const openFile = (file: TFile, e: React.MouseEvent) => {
         app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
         setActiveFile(file);
-    }
-
-    const getFilesUnderPath = (path: string, app: App): TFile[] => {
-        var filesUnderPath: TFile[] = [];
-        recursiveFx(path, app);
-        function recursiveFx(path: string, app: App) {
-            var folderObj = app.vault.getAbstractFileByPath(path);
-            if (folderObj instanceof TFolder && folderObj.children) {
-                for (let child of folderObj.children) {
-                    if (child instanceof TFile) filesUnderPath.push(child);
-                    if (child instanceof TFolder) recursiveFx(child.path, app);
-                }
-            }
-        }
-        return filesUnderPath;
     }
 
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {

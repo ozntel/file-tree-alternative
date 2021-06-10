@@ -71,7 +71,6 @@ function NestedChildrenComponent({ folderTree, activeFolderPath, setActiveFolder
 
     const handleFolderNameClick = (folderPath: string) => {
         setActiveFolderPath(folderPath);
-        setView('file');
     }
 
     const isTreeOpen = (fileName: string) => {
