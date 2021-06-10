@@ -1,5 +1,6 @@
 import { App, TAbstractFile, TFolder } from "obsidian";
 import { VIEW_TYPE, FileTreeView } from './FileTreeView';
+import FileTreeAlternativePlugin from "./main";
 
 export class FileTreeUtils {
 
@@ -34,9 +35,9 @@ export class FileTreeUtils {
     }
 
     // Funciton used for creating & changing the list of files in view
-    static setFileTreeFiles = (folderPath: string, app: App, vaultChange: string) => {
+    static setFileTreeFiles = (folderPath: string, app: App, vaultChange: string, plugin: FileTreeAlternativePlugin) => {
         // Open File Tree Leaf If Closed
-        FileTreeUtils.openFileTreeLeaf(app);
+        plugin.openFileTreeLeaf();
         // Get File Tree Leaf To Update
         var filetreeViews = app.workspace.getLeavesOfType(VIEW_TYPE);
         // Add List of Files under Clicked Folder to the Leaf 
@@ -59,22 +60,6 @@ export class FileTreeUtils {
             }
         }
         return false;
-    }
-
-    // Create Splitted Leaf on the Left Side
-    static openFileTreeLeaf = async (app: App) => {
-        if (app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
-            let leaf = app.workspace.getLeftLeaf(false);
-            await leaf.setViewState({ type: VIEW_TYPE });
-            app.workspace.revealLeaf(leaf);
-        }
-    }
-
-    static detachFileTreeLeafs = (app: App) => {
-        let leafs = app.workspace.getLeavesOfType(VIEW_TYPE);
-        for (let leaf of leafs) {
-            leaf.detach()
-        }
     }
 
     // Obsidian doesn't change folder 'data-path' for Rename Folder - Needs to be handled manually

@@ -13,58 +13,39 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		});
 
 		// Event Listeners 
-		this.app.workspace.onLayoutReady(() => this.registerVaultEvent())
+		this.app.workspace.onLayoutReady(async () => await this.openFileTreeLeaf())
 
 		// Add Command to Open File Tree Leaf
 		this.addCommand({
 			id: 'open-file-tree-leaf',
 			name: 'Open File Tree Leaf',
-			callback: async () => await FileTreeUtils.openFileTreeLeaf(this.app),
+			callback: async () => await this.openFileTreeLeaf(),
 		});
 
 		// Ribbon Icon For Opening 
 		this.addRibbonIcon(ICON, 'Alternative File Tree Plugin', async () => {
-			await FileTreeUtils.openFileTreeLeaf(this.app)
+			await this.openFileTreeLeaf()
 		});
 	}
 
 	onunload() {
 		console.log('Unloading Alternative File Tree Plugin');
-		this.removeEventListenerForFolders();
-		FileTreeUtils.detachFileTreeLeafs(this.app);
+		this.detachFileTreeLeafs();
 	}
 
-	// Load Functions and Event Listeners
-	registerVaultEvent = async () => {
-		// // Initial Check for Sub-Folders
-		// FileTreeUtils.initialCheckForSubFolders(this.app);
-		// // Click Event
-		// this.addEventListenerForFolders();
-		// // Vault Events
-		// this.registerEvent(this.app.vault.on('create', (file) => FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, 'create')));
-		// this.registerEvent(this.app.vault.on('delete', (file) => FileTreeUtils.setFileTreeFiles('', this.app, 'delete')));
-		// this.registerEvent(this.app.vault.on('rename', (file, oldPath) => {
-		// 	FileTreeUtils.handleRenameFolder(file, oldPath);
-		// 	FileTreeUtils.setFileTreeFiles(file.parent.path, this.app, 'rename');
-		// }));
-		// Add Leaf for File Tree
-		await FileTreeUtils.openFileTreeLeaf(this.app);
+	openFileTreeLeaf = async () => {
+		if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
+			let leaf = this.app.workspace.getLeftLeaf(false);
+			await leaf.setViewState({ type: VIEW_TYPE });
+			this.app.workspace.revealLeaf(leaf);
+		}
 	}
 
-	// Click Event Function
-	folderClickEvent = (event: MouseEvent, navFolderTitleEl: HTMLElement) => {
-		FileTreeUtils.setFileTreeFiles(navFolderTitleEl.getAttr('data-path'), this.app, '');
+	detachFileTreeLeafs = () => {
+		let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+		for (let leaf of leafs) {
+			leaf.detach()
+		}
 	}
-
-	// Add Click Event Listener
-	addEventListenerForFolders = () => {
-		document.body.on("click", FileTreeUtils.folderSelector, this.folderClickEvent);
-	};
-
-	// Remove Click Event Listener
-	removeEventListenerForFolders = () => {
-		// @ts-ignore
-		document.body.off("click", FileTreeUtils.folderSelector, this.folderClickEvent)
-	};
 
 }

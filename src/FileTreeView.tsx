@@ -40,13 +40,6 @@ export class FileTreeView extends ItemView {
     }
 
     constructFileTree(folderPath: string, vaultChange: string) {
-        var files: TFile[] = [];
-        // if (vaultChange !== '') {
-        //     files = this.getFilesUnderPath(this.currentFolderPath, this.app);
-        // } else {
-        //     files = this.getFilesUnderPath(folderPath, this.app);
-        //     this.currentFolderPath = folderPath;
-        // }
         ReactDOM.unmountComponentAtNode(this.contentEl);
         ReactDOM.render(
             <MainTreeComponent
