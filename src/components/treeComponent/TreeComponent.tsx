@@ -14,26 +14,24 @@ type TreeProps = {
 
 type TreeState = {
     open: boolean,
-    immediate: boolean
 }
 
 export default class Tree extends React.Component<TreeProps, TreeState> {
 
     state = {
         open: this.props.open,
-        immediate: false
     }
 
     toggle = () => {
         this.props.children &&
-            this.setState(state => ({ open: !this.state.open, immediate: false }))
+            this.setState(state => ({ open: !this.state.open }))
     }
 
     folderNameClickEvent = () => this.props.onClick()
 
     render() {
 
-        const { open, immediate } = this.state
+        const { open } = this.state
         const { children, content, type, style, springConfig } = this.props
         const Icon = children ? open ? Icons['MinusSquareO'] : Icons['PlusSquareO'] : Icons['CloseSquareO']
 
@@ -52,7 +50,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
                 </span>
                 <Spring
                     native
-                    immediate={immediate}
+                    immediate={true}
                     config={{
                         ...config.default,
                         restSpeedThreshold: 1,
