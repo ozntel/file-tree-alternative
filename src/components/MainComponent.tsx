@@ -14,7 +14,13 @@ interface MainTreeComponentProps {
 interface MainTreeComponentState {
     view: string,
     activeFolderPath: string,
-    fileList: TFile[]
+    fileList: TFile[],
+    folderTree: FolderTree
+}
+
+export interface FolderTree {
+    folder: TFolder,
+    children: FolderTree[]
 }
 
 export default class MainTreeComponent extends React.Component<MainTreeComponentProps, MainTreeComponentState> {
@@ -23,7 +29,10 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         view: 'folder',
         activeFolderPath: '',
         fileList: [] as TFile[],
+        folderTree: null as FolderTree,
     }
+
+    rootFolder: TFolder = this.props.app.vault.getRoot()
 
     setView = (view: string) => {
         this.setState({ view });
@@ -44,7 +53,10 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     }
 
     componentDidMount() {
-        console.log('Component Mounted')
+        console.log('File Tree Component Mounted')
+        // Set the Folder Tree
+        this.setState({ folderTree: createFolderTree(this.rootFolder) });
+        // Register Events
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => {
             this.handleVaultChanges(file, 'rename');
         }))
@@ -80,6 +92,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                     this.state.view === 'folder' ?
                         <FolderComponent
                             app={this.props.app}
+                            folderTree={this.state.folderTree}
                             activeFolderPath={this.state.activeFolderPath}
                             setActiveFolderPath={this.setActiveFolderPath}
                             setView={this.setView}
@@ -112,4 +125,21 @@ const getFilesUnderPath = (path: string, app: App): TFile[] => {
         }
     }
     return filesUnderPath;
+}
+
+// Helper Function to Create Folder Tree
+const createFolderTree = (startFolder: TFolder) => {
+    const fileTree: { folder: TFolder, children: any } = { folder: startFolder, children: [] }
+    function recursive(folder: TFolder, object: { folder: TFolder, children: any }) {
+        for (let child of folder.children) {
+            if (child instanceof TFolder) {
+                let childFolder: TFolder = (child as TFolder);
+                let newObj: { folder: TFolder, children: any } = { folder: childFolder, children: [] }
+                object.children.push(newObj);
+                if (childFolder.children) recursive(childFolder, newObj);
+            }
+        }
+    }
+    recursive(startFolder, fileTree);
+    return fileTree;
 }

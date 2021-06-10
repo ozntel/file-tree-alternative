@@ -1,44 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { App, TFolder } from 'obsidian';
 import Tree from './treeComponent/TreeComponent';
+import { FolderTree } from './MainComponent';
 
 interface FolderProps {
     app: App,
+    folderTree: FolderTree,
     activeFolderPath: string,
     setActiveFolderPath: Function,
     setView: Function
 }
 
-interface FolderTree {
-    folder: TFolder,
-    children: FolderTree[]
-}
+export function FolderComponent({ app, folderTree, activeFolderPath, setActiveFolderPath, setView }: FolderProps) {
 
-export function FolderComponent({ app, activeFolderPath, setActiveFolderPath, setView }: FolderProps) {
-
-    const rootFolder: TFolder = app.vault.getRoot()
     const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 }
-    const [folderTree, setFolderTree] = useState<FolderTree>(null);
-
-    useEffect(() => {
-        setFolderTree(createFolderTree(rootFolder));
-    }, [])
-
-    const createFolderTree = (startFolder: TFolder) => {
-        const fileTree: { folder: TFolder, children: any } = { folder: startFolder, children: [] }
-        function recursive(folder: TFolder, object: { folder: TFolder, children: any }) {
-            for (let child of folder.children) {
-                if (child instanceof TFolder) {
-                    let childFolder: TFolder = (child as TFolder);
-                    let newObj: { folder: TFolder, children: any } = { folder: childFolder, children: [] }
-                    object.children.push(newObj);
-                    if (childFolder.children) recursive(childFolder, newObj);
-                }
-            }
-        }
-        recursive(startFolder, fileTree);
-        return fileTree;
-    }
 
     return (
         <React.Fragment>
