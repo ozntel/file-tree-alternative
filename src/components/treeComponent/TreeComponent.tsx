@@ -4,7 +4,6 @@ import * as Icons from './icons'
 
 type TreeProps = {
     open?: boolean,
-    visible?: boolean,
     content?: string,
     onClick?: Function,
     type?: any,
@@ -15,7 +14,6 @@ type TreeProps = {
 
 type TreeState = {
     open: boolean,
-    visible: boolean,
     immediate: boolean
 }
 
@@ -23,7 +21,6 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
 
     state = {
         open: this.props.open,
-        visible: this.props.visible,
         immediate: false
     }
 
@@ -32,20 +29,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
             this.setState(state => ({ open: !this.state.open, immediate: false }))
     }
 
-    folderNameClickEvent = () => {
-        this.props.onClick && this.props.onClick(this.state.visible)
-    }
-
-    componentWillReceiveProps(props: TreeProps) {
-        this.setState(state => {
-            return ['open', 'visible'].reduce(
-                (acc, val) =>
-                    // @ts-ignore
-                    this.props[val] !== props[val] ? { ...acc, [val]: props[val] } : acc,
-                {}
-            )
-        })
-    }
+    folderNameClickEvent = () => this.props.onClick()
 
     render() {
 
