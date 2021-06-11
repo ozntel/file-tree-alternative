@@ -55,7 +55,14 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
         let e = event;
         if (event === undefined) e = (window.event as MouseEvent);
         const fileMenu = new Menu(app);
-        app.workspace.trigger('file-menu', fileMenu, folder, 'link-context-menu');
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Delete');
+            menuItem.setIcon('trash');
+            menuItem.onClick((ev: MouseEvent) => {
+                app.vault.delete(folder, true);
+            })
+        })
+        app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
         fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
         return false;
     }
