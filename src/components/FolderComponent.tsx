@@ -1,5 +1,5 @@
 import React from 'react';
-import { App, Menu, TFolder } from 'obsidian';
+import { App, Menu, TAbstractFile, TFolder } from 'obsidian';
 import Tree from './treeComponent/TreeComponent';
 import { FolderTree } from './MainComponent';
 
@@ -51,9 +51,12 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
     }
 
     const handleContextMenu = (event: MouseEvent, folder: TFolder) => {
-        // let titleEl: HTMLElement = explorer.view.fileItems[folder.path].titleEl;
+
+        // Event Undefined Correction
         let e = event;
         if (event === undefined) e = (window.event as MouseEvent);
+
+        // Menu Items
         const fileMenu = new Menu(app);
         fileMenu.addItem((menuItem) => {
             menuItem.setTitle('Delete');
@@ -62,6 +65,16 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
                 app.vault.delete(folder, true);
             })
         })
+
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Rename');
+            menuItem.setIcon('pencil');
+            menuItem.onClick((ev: MouseEvent) => {
+                // Rename Action
+            })
+        })
+
+        // Trigger
         app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
         fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
         return false;
