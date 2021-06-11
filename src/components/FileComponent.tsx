@@ -5,21 +5,22 @@ import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons'
 import { VaultChangeModal } from '../modals';
+import FileTreeAlternativePlugin from '../main';
 
 interface FilesProps {
-    app: App,
+    plugin: FileTreeAlternativePlugin,
     fileList: TFile[],
     activeFolderPath: string,
     fileTreeView: FileTreeView,
     setView: Function
 }
 
-export function FileComponent({ app, fileList, activeFolderPath, fileTreeView, setView }: FilesProps) {
+export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView, setView }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
 
     const openFile = (file: TFile, e: React.MouseEvent) => {
-        app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
+        plugin.app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
         setActiveFile(file);
     }
 
@@ -37,7 +38,7 @@ export function FileComponent({ app, fileList, activeFolderPath, fileTreeView, s
     }
 
     const getFolderName = (folderPath: string) => {
-        if (folderPath === '/') return app.vault.getName();
+        if (folderPath === '/') return plugin.app.vault.getName();
         let index = folderPath.lastIndexOf('/');
         if (index !== -1) return folderPath.substring(index + 1);
         return folderPath;
@@ -52,9 +53,9 @@ export function FileComponent({ app, fileList, activeFolderPath, fileTreeView, s
     })
 
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
-        let targetFolder = app.vault.getAbstractFileByPath(folderPath);
+        let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
         if (!targetFolder) return;
-        let modal = new VaultChangeModal(app, targetFolder, 'create note');
+        let modal = new VaultChangeModal(plugin.app, targetFolder, 'create note');
         modal.open();
     }
 

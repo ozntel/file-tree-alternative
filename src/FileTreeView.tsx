@@ -43,7 +43,6 @@ export class FileTreeView extends ItemView {
         ReactDOM.unmountComponentAtNode(this.contentEl);
         ReactDOM.render(
             <MainTreeComponent
-                app={this.app}
                 fileTreeView={this}
                 plugin={this.plugin}
             />,

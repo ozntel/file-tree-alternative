@@ -6,7 +6,6 @@ import { FileTreeView } from '../FileTreeView';
 import FileTreeAlternativePlugin from '../main';
 
 interface MainTreeComponentProps {
-    app: App,
     fileTreeView: FileTreeView,
     plugin: FileTreeAlternativePlugin
 }
@@ -32,7 +31,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         folderTree: null as FolderTree,
     }
 
-    rootFolder: TFolder = this.props.app.vault.getRoot()
+
+    rootFolder: TFolder = this.props.plugin.app.vault.getRoot()
 
     setView = (view: string) => {
         this.setState({ view });
@@ -41,7 +41,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : this.state.activeFolderPath;
         this.setState({
-            fileList: getFilesUnderPath(filesPath, this.props.app)
+            fileList: getFilesUnderPath(filesPath, this.props.plugin.app)
         });
     }
 
@@ -94,7 +94,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                 {
                     this.state.view === 'folder' ?
                         <FolderComponent
-                            app={this.props.app}
+                            plugin={this.props.plugin}
                             folderTree={this.state.folderTree}
                             activeFolderPath={this.state.activeFolderPath}
                             setActiveFolderPath={this.setActiveFolderPath}
@@ -102,7 +102,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                         />
                         :
                         <FileComponent
-                            app={this.props.app}
+                            plugin={this.props.plugin}
                             fileList={this.state.fileList}
                             activeFolderPath={this.state.activeFolderPath}
                             fileTreeView={this.props.fileTreeView}

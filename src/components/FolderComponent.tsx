@@ -3,26 +3,27 @@ import { App, Menu, TFolder } from 'obsidian';
 import Tree from './treeComponent/TreeComponent';
 import { FolderTree } from './MainComponent';
 import { VaultChangeModal } from '../modals';
+import FileTreeAlternativePlugin from '../main'
 
 interface FolderProps {
-    app: App,
+    plugin: FileTreeAlternativePlugin;
     folderTree: FolderTree,
     activeFolderPath: string,
     setActiveFolderPath: Function,
     setView: Function
 }
 
-export function FolderComponent({ app, folderTree, activeFolderPath, setActiveFolderPath, setView }: FolderProps) {
+export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView }: FolderProps) {
 
     const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 }
 
     return (
         <React.Fragment>
-            <Tree content={app.vault.getName()} open style={treeStyles}>
+            <Tree content={plugin.app.vault.getName()} open style={treeStyles}>
                 {
                     folderTree &&
                     <NestedChildrenComponent
-                        app={app}
+                        plugin={plugin}
                         folderTree={folderTree}
                         activeFolderPath={activeFolderPath}
                         setActiveFolderPath={setActiveFolderPath}
@@ -37,14 +38,14 @@ export function FolderComponent({ app, folderTree, activeFolderPath, setActiveFo
 /* ------ Nested Children Component ------ */
 
 interface NestedChildrenComponentProps {
-    app: App,
+    plugin: FileTreeAlternativePlugin,
     folderTree: FolderTree,
     activeFolderPath: string,
     setActiveFolderPath: Function,
     setView: Function
 }
 
-function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveFolderPath, setView }: NestedChildrenComponentProps) {
+function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView }: NestedChildrenComponentProps) {
     if (!folderTree.children) return null;
 
     const handleFolderNameClick = (folderPath: string) => {
@@ -58,13 +59,13 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
         if (event === undefined) e = (window.event as MouseEvent);
 
         // Menu Items
-        const fileMenu = new Menu(app);
+        const fileMenu = new Menu(plugin.app);
 
         fileMenu.addItem((menuItem) => {
             menuItem.setTitle('New Folder');
             menuItem.setIcon('folder');
             menuItem.onClick((ev: MouseEvent) => {
-                let vaultChangeModal = new VaultChangeModal(app, folder, 'create folder');
+                let vaultChangeModal = new VaultChangeModal(plugin.app, folder, 'create folder');
                 vaultChangeModal.open();
             })
         })
@@ -73,7 +74,7 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
             menuItem.setTitle('Delete');
             menuItem.setIcon('trash');
             menuItem.onClick((ev: MouseEvent) => {
-                app.vault.delete(folder, true);
+                plugin.app.vault.delete(folder, true);
             })
         })
 
@@ -81,13 +82,13 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
             menuItem.setTitle('Rename');
             menuItem.setIcon('pencil');
             menuItem.onClick((ev: MouseEvent) => {
-                let vaultChangeModal = new VaultChangeModal(app, folder, 'rename');
+                let vaultChangeModal = new VaultChangeModal(plugin.app, folder, 'rename');
                 vaultChangeModal.open()
             })
         })
 
         // Trigger
-        app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
+        plugin.app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
         fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
         return false;
     }
@@ -111,7 +112,7 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
                                         onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
                                     >
                                         <NestedChildrenComponent
-                                            app={app}
+                                            plugin={plugin}
                                             folderTree={child}
                                             activeFolderPath={activeFolderPath}
                                             setActiveFolderPath={setActiveFolderPath}
