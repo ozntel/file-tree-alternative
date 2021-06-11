@@ -16,9 +16,9 @@
     margin-bottom: 2px !important;
 }
 
-.nav-folder-title:not([has-child-folder='true']) > div.nav-folder-collapse-indicator{
+/* .nav-folder-title:not([has-child-folder='true']) > div.nav-folder-collapse-indicator{
     visibility: hidden;
-}
+} */
 
 .oz-nav-file-title{
     padding-left: 2px !important;
