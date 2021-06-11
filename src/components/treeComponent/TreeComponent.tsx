@@ -1,3 +1,4 @@
+import { TFolder } from 'obsidian'
 import React from 'react'
 import { animated, config, Spring } from 'react-spring'
 import * as Icons from './icons'
@@ -11,6 +12,9 @@ type TreeProps = {
     style?: any,
     springConfig?: any,
     children?: any,
+    setOpenFolders: Function,
+    openFolders: TFolder[],
+    folder: TFolder
 }
 
 type TreeState = {
@@ -24,8 +28,20 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
     }
 
     toggle = () => {
-        this.props.children &&
-            this.setState(state => ({ open: !this.state.open }))
+        if (this.props.children) {
+            // Set State in Main Component for Keeping Folders Open
+            if (!this.state.open) {
+                this.props.setOpenFolders([...this.props.openFolders, this.props.folder]);
+            } else {
+                const newOpenFolders = this.props.openFolders.filter(folder => {
+                    if (this.props.folder === folder) return false;
+                    return true;
+                })
+                this.props.setOpenFolders(newOpenFolders);
+            }
+            // Set State Open for the Folder
+            this.setState(state => ({ open: !this.state.open }));
+        }
     }
 
     folderNameClickEvent = () => this.props.onClick()

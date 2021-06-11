@@ -14,6 +14,7 @@ interface MainTreeComponentState {
     view: string,
     activeFolderPath: string,
     fileList: TFile[],
+    openFolders: TFolder[]
     folderTree: FolderTree
 }
 
@@ -28,6 +29,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         view: 'folder',
         activeFolderPath: '',
         fileList: [] as TFile[],
+        openFolders: [] as TFolder[],
         folderTree: null as FolderTree,
     }
 
@@ -43,6 +45,11 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.setState({
             fileList: getFilesUnderPath(filesPath, this.props.plugin.app)
         });
+    }
+
+    // Folder Component to Set Expanded Folders
+    setOpenFolders = (openFolders: TFolder[]) => {
+        this.setState({ openFolders });
     }
 
     setActiveFolderPath = (activeFolderPath: string) => {
@@ -99,6 +106,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                             activeFolderPath={this.state.activeFolderPath}
                             setActiveFolderPath={this.setActiveFolderPath}
                             setView={this.setView}
+                            openFolders={this.state.openFolders}
+                            setOpenFolders={this.setOpenFolders}
                         />
                         :
                         <FileComponent

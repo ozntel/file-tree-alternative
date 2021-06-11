@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { App, Menu, TFolder } from 'obsidian';
 import Tree from './treeComponent/TreeComponent';
 import { FolderTree } from './MainComponent';
@@ -11,15 +11,23 @@ interface FolderProps {
     activeFolderPath: string,
     setActiveFolderPath: Function,
     setView: Function
+    openFolders: TFolder[],
+    setOpenFolders: Function
 }
 
-export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView }: FolderProps) {
+export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders }: FolderProps) {
 
     const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 }
 
     return (
         <React.Fragment>
-            <Tree content={plugin.app.vault.getName()} open style={treeStyles}>
+            <Tree
+                content={plugin.app.vault.getName()}
+                open style={treeStyles}
+                setOpenFolders={setOpenFolders}
+                openFolders={openFolders}
+                folder={plugin.app.vault.getRoot()}
+            >
                 {
                     folderTree &&
                     <NestedChildrenComponent
@@ -28,6 +36,8 @@ export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiv
                         activeFolderPath={activeFolderPath}
                         setActiveFolderPath={setActiveFolderPath}
                         setView={setView}
+                        openFolders={openFolders}
+                        setOpenFolders={setOpenFolders}
                     />
                 }
             </Tree>
@@ -42,10 +52,12 @@ interface NestedChildrenComponentProps {
     folderTree: FolderTree,
     activeFolderPath: string,
     setActiveFolderPath: Function,
-    setView: Function
+    setView: Function,
+    openFolders: TFolder[],
+    setOpenFolders: Function,
 }
 
-function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView }: NestedChildrenComponentProps) {
+function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders }: NestedChildrenComponentProps) {
     if (!folderTree.children) return null;
 
     const handleFolderNameClick = (folderPath: string) => {
@@ -107,9 +119,14 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                         <React.Fragment key={child.folder.path}>
                             {
                                 (child.folder as TFolder).children.some(child => child instanceof TFolder) ?
-                                    <Tree content={child.folder.name} open={isTreeOpen(child.folder.name) ? true : false}
+                                    <Tree
+                                        content={child.folder.name}
+                                        open={openFolders.contains(child.folder) ? true : false}
                                         onClick={() => handleFolderNameClick(child.folder.path)}
                                         onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
+                                        setOpenFolders={setOpenFolders}
+                                        openFolders={openFolders}
+                                        folder={child.folder}
                                     >
                                         <NestedChildrenComponent
                                             plugin={plugin}
@@ -117,12 +134,17 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                                             activeFolderPath={activeFolderPath}
                                             setActiveFolderPath={setActiveFolderPath}
                                             setView={setView}
+                                            openFolders={openFolders}
+                                            setOpenFolders={setOpenFolders}
                                         />
                                     </Tree>
                                     :
                                     <Tree content={child.folder.name}
                                         onClick={() => handleFolderNameClick(child.folder.path)}
                                         onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
+                                        setOpenFolders={setOpenFolders}
+                                        openFolders={openFolders}
+                                        folder={child.folder}
                                     />
                             }
                         </React.Fragment>
