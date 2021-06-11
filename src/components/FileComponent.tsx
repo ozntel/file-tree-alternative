@@ -4,6 +4,7 @@ import { TFile, App, Keymap } from 'obsidian';
 import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons'
+import { VaultChangeModal } from '../modals';
 
 interface FilesProps {
     app: App,
@@ -53,11 +54,8 @@ export function FileComponent({ app, fileList, activeFolderPath, fileTreeView, s
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
         let targetFolder = app.vault.getAbstractFileByPath(folderPath);
         if (!targetFolder) return;
-        // @ts-ignore
-        const newFile = await app.fileManager.createNewMarkdownFile(targetFolder, 'Untitled');
-        const newLeaf = app.workspace.activeLeaf
-        await newLeaf.openFile(newFile);
-        app.workspace.setActiveLeaf(newLeaf, false, true);
+        let modal = new VaultChangeModal(app, targetFolder, 'create note');
+        modal.open();
     }
 
     const handleGoBack = (e: React.MouseEvent) => {
