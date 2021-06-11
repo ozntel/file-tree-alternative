@@ -1,5 +1,5 @@
 import React from 'react';
-import { App, Menu, TAbstractFile, TFolder } from 'obsidian';
+import { App, Menu, TFolder, Modal, TFile } from 'obsidian';
 import Tree from './treeComponent/TreeComponent';
 import { FolderTree } from './MainComponent';
 
@@ -70,7 +70,8 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
             menuItem.setTitle('Rename');
             menuItem.setIcon('pencil');
             menuItem.onClick((ev: MouseEvent) => {
-                // Rename Action
+                let renameModal = new RenameModal(app, folder);
+                renameModal.open()
             })
         })
 
@@ -118,4 +119,47 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
             }
         </React.Fragment>
     )
+}
+
+class RenameModal extends Modal {
+
+    file: TFolder | TFile;
+
+    constructor(app: App, file: TFolder | TFile) {
+        super(app);
+        this.file = file;
+    }
+
+    onOpen() {
+        let { contentEl } = this;
+        let myModal = this;
+        // Header
+        const headerEl = contentEl.createEl('h3', { text: 'Rename: Provide New Name' })
+
+        // Input El
+        const inputEl = contentEl.createEl('input')
+        inputEl.style.cssText = 'width: 100%; height: 2.5em; margin-bottom: 15px;'
+        inputEl.value = this.file.name;
+
+        // Buttons
+        const changeButton = contentEl.createEl('button', { text: 'Change' });
+        const cancelButton = contentEl.createEl('button', { text: 'Cancel' });
+        cancelButton.style.cssText = 'float: right;';
+
+        // Event Listener
+        changeButton.addEventListener('click', () => {
+            let newName = inputEl.value;
+            this.app.fileManager.renameFile(this.file, this.file.parent.path + '/' + newName);
+            myModal.close()
+        })
+
+        cancelButton.addEventListener('click', () => {
+            myModal.close();
+        })
+    }
+
+    onClose() {
+        let { contentEl } = this;
+        contentEl.empty();
+    }
 }
