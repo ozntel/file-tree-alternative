@@ -9,7 +9,7 @@ interface FilesProps {
     app: App,
     fileList: TFile[],
     activeFolderPath: string,
-    fileTreeView?: FileTreeView,
+    fileTreeView: FileTreeView,
     setView: Function
 }
 
