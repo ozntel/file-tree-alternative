@@ -6,6 +6,7 @@ type TreeProps = {
     open?: boolean,
     content?: string,
     onClick?: Function,
+    onContextMenu?: Function,
     type?: any,
     style?: any,
     springConfig?: any,
@@ -29,6 +30,8 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
 
     folderNameClickEvent = () => this.props.onClick()
 
+    folderContextMenuEvent = () => this.props.onContextMenu();
+
     render() {
 
         const { open } = this.state
@@ -45,7 +48,11 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
                 <span style={{ ...styles.type, marginRight: type ? 10 : 0 }}>
                     {type}
                 </span>
-                <span style={{ verticalAlign: 'middle' }} onClick={this.folderNameClickEvent}>
+                <span
+                    style={{ verticalAlign: 'middle' }}
+                    onClick={this.folderNameClickEvent}
+                    onContextMenu={this.folderContextMenuEvent}
+                >
                     {content}
                 </span>
                 <Spring

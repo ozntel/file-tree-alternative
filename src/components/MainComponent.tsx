@@ -7,7 +7,7 @@ import FileTreeAlternativePlugin from '../main';
 
 interface MainTreeComponentProps {
     app: App,
-    fileTreeView?: FileTreeView,
+    fileTreeView: FileTreeView,
     plugin: FileTreeAlternativePlugin
 }
 
