@@ -1,5 +1,5 @@
 import React from 'react';
-import { App, TFolder } from 'obsidian';
+import { App, Menu, TFolder } from 'obsidian';
 import Tree from './treeComponent/TreeComponent';
 import { FolderTree } from './MainComponent';
 
@@ -50,8 +50,14 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
         setActiveFolderPath(folderPath);
     }
 
-    const handleContextMenu = (e: React.MouseEvent, folderPath: string) => {
-        // Context Menu Events
+    const handleContextMenu = (event: MouseEvent, folder: TFolder) => {
+        // let titleEl: HTMLElement = explorer.view.fileItems[folder.path].titleEl;
+        let e = event;
+        if (event === undefined) e = (window.event as MouseEvent);
+        const fileMenu = new Menu(app);
+        app.workspace.trigger('file-menu', fileMenu, folder, 'link-context-menu');
+        fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        return false;
     }
 
     const isTreeOpen = (fileName: string) => {
@@ -70,7 +76,7 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
                                 (child.folder as TFolder).children.some(child => child instanceof TFolder) ?
                                     <Tree content={child.folder.name} open={isTreeOpen(child.folder.name) ? true : false}
                                         onClick={() => handleFolderNameClick(child.folder.path)}
-                                        onContextMenu={(e: React.MouseEvent) => handleContextMenu(e, child.folder.path)}
+                                        onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
                                     >
                                         <NestedChildrenComponent
                                             app={app}
@@ -83,7 +89,7 @@ function NestedChildrenComponent({ app, folderTree, activeFolderPath, setActiveF
                                     :
                                     <Tree content={child.folder.name}
                                         onClick={() => handleFolderNameClick(child.folder.path)}
-                                        onContextMenu={(e: React.MouseEvent) => handleContextMenu(e, child.folder.path)}
+                                        onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
                                     />
                             }
                         </React.Fragment>
