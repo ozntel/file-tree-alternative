@@ -1,7 +1,7 @@
 # Obsidian File Tree Alternative Plugin
 
-This Obsidian Plugin allows users to have file explorer similar to Evernote. 
-Folders and files are in separate leafs.
+This Obsidian Plugin allows users to have a different file explorer experience.
+Folders and files are in separate views. Please watch the sample record to see the details.
 The plugin lists all files including the files under sub-folders.
 
 ## Sample View Record
