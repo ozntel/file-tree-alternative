@@ -1,6 +1,6 @@
-.nav-file:not(.oz-nav-file) { 
+/* .nav-file:not(.oz-nav-file) { 
     display: none !important;
-}
+} */
 
 .oz-file-tree-header{
     height: 22px;
@@ -9,6 +9,11 @@
     font-size: 16px;
     font-weight: bold;
     margin-bottom: 5px;
+    text-align: center;
+}
+
+.oz-nav-action-button{
+    margin-bottom: 2px !important;
 }
 
 .nav-folder-title:not([has-child-folder='true']) > div.nav-folder-collapse-indicator{
@@ -32,4 +37,13 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 
 .nav-folder-children:first-child{
     margin-bottom: 0px !important;
+}
+
+.oz-explorer-container{
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+}
+
+.oz-file-tree-files{
+    padding-top: 3px !important;
 }
