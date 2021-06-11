@@ -6,7 +6,7 @@ The plugin lists all files including the files under sub-folders.
 
 ## Sample View Record
 
-[![File Tree Alternative Plugin Video](https://github.com/ozntel/file-tree-alternative/raw/main/images/file-tree-alternative-youtube.png)](https://youtu.be/ahwt4vXQLt0)
+[![File Tree Alternative Plugin Video](https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png)](https://www.youtube.com/watch?v=25crdxtyENA)
 
 ## Contact
 
