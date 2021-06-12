@@ -44,13 +44,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
         return folderPath;
     }
 
-    const sortedFiles = fileList.sort((a, b) => {
-        var nameA = a.name.toUpperCase();
-        var nameB = b.name.toUpperCase();
-        if (nameA < nameB) return -1;
-        if (nameA > nameB) return 1;
-        return 0;
-    })
+    const customSort = (fileList: TFile[]) => fileList.sort((a, b) => a.name.localeCompare(b.name))
 
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
         let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
@@ -78,7 +72,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
                     {getFolderName(activeFolderPath)}
                 </div>
                 <div className="oz-file-tree-files">
-                    {fileList.map(file => {
+                    {customSort(fileList).map(file => {
                         return (
                             <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
                                 <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>

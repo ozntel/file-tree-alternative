@@ -105,16 +105,15 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
         return false;
     }
 
-    const isTreeOpen = (fileName: string) => {
-        if (activeFolderPath) return activeFolderPath.split('/').includes(fileName);
-        return false;
+    const customSort = (folderTree: FolderTree[]) => {
+        return folderTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name))
     }
 
     return (
         <React.Fragment>
             {
                 Array.isArray(folderTree.children) &&
-                folderTree.children.map(child => {
+                customSort(folderTree.children).map(child => {
                     return (
                         <React.Fragment key={child.folder.path}>
                             {
