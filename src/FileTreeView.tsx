@@ -31,6 +31,10 @@ export class FileTreeView extends ItemView {
     }
 
     async onClose() {
+        this.destroy()
+    }
+
+    destroy() {
         ReactDOM.unmountComponentAtNode(this.contentEl);
     }
 

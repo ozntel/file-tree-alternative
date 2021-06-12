@@ -69,7 +69,8 @@ export default class FileTreeAlternativePlugin extends Plugin {
 	detachFileTreeLeafs = () => {
 		let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
 		for (let leaf of leafs) {
-			leaf.detach()
+			(leaf.view as FileTreeView).destroy();
+			leaf.detach();
 		}
 	}
 

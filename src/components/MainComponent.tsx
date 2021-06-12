@@ -33,18 +33,13 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         folderTree: null as FolderTree,
     }
 
-
     rootFolder: TFolder = this.props.plugin.app.vault.getRoot()
 
-    setView = (view: string) => {
-        this.setState({ view });
-    }
+    setView = (view: string) => this.setState({ view });
 
     setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : this.state.activeFolderPath;
-        this.setState({
-            fileList: getFilesUnderPath(filesPath, this.props.plugin.app)
-        });
+        this.setState({ fileList: getFilesUnderPath(filesPath, this.props.plugin.app) });
     }
 
     // Folder Component to Set Expanded Folders
@@ -52,6 +47,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.setState({ openFolders });
     }
 
+    // Function used for File View
     setActiveFolderPath = (activeFolderPath: string) => {
         // If activeFolderPath is set, it means it should go to 'file' view
         this.setState({ activeFolderPath: activeFolderPath });
@@ -59,22 +55,45 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.setState({ view: 'file' });
     }
 
+    // Load The String List and Set Open Folders State
+    loadOpenFoldersFromSettings() {
+        let openFolders: TFolder[] = [];
+        for (let folder of this.props.plugin.settings.openFolders) {
+            let openFolder = this.props.plugin.app.vault.getAbstractFileByPath(folder);
+            if (openFolder) openFolders.push((openFolder as TFolder));
+        }
+        this.setState({ openFolders })
+    }
+
+    // Get The Folders State and Save in Data as String Array
+    saveOpenFoldersToSettings() {
+        let openFolders: string[] = [];
+        for (let folder of this.state.openFolders) {
+            openFolders.push(folder.path);
+        }
+        this.props.plugin.settings.openFolders = openFolders;
+        this.props.plugin.saveSettings();
+    }
+
+    // First Time Compount Mount
     componentDidMount() {
         console.log('File Tree Component Mounted')
         // Set the Folder Tree
         this.setState({ folderTree: createFolderTree(this.rootFolder) });
-        // Register Events
-        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => {
-            this.handleVaultChanges(file, 'rename');
-        }))
-        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => {
-            this.handleVaultChanges(file, 'delete');
-        }))
-        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('create', (file) => {
-            this.handleVaultChanges(file, 'create');
-        }))
+        // Set/Remember Open Folders from Last Session
+        this.loadOpenFoldersFromSettings();
+        // Register Vault Events
+        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => this.handleVaultChanges(file, 'rename')));
+        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete')));
+        this.props.plugin.registerEvent(this.props.plugin.app.vault.on('create', (file) => this.handleVaultChanges(file, 'create')));
+        // Workspace Quit to Save Last Status of Open Folders
+        this.props.plugin.registerEvent(this.props.plugin.app.workspace.on('quit', () => this.saveOpenFoldersToSettings()))
     }
 
+    // Before Compount Unmounted
+    componentWillUnmount = () => this.saveOpenFoldersToSettings()
+
+    // Function for Event Handlers
     handleVaultChanges = (file: TAbstractFile, changeType: string) => {
         if (file instanceof TFile) {
             if (this.state.view === 'file') {
