@@ -116,7 +116,10 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete')));
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('create', (file) => this.handleVaultChanges(file, 'create')));
         // Workspace Quit to Save Last Status of Open Folders
-        this.props.plugin.registerEvent(this.props.plugin.app.workspace.on('quit', () => this.saveOpenFoldersToSettings()))
+        this.props.plugin.registerEvent(this.props.plugin.app.workspace.on('quit', () => {
+            this.saveOpenFoldersToSettings();
+            this.savePinnedFilesToSettings();
+        }))
     }
 
     // Before Compount Unmounted Save Last States

@@ -137,7 +137,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
                                         {getFileNameAndExtension(file.name).fileName}
                                         {
                                             pinnedFiles.contains(file) &&
-                                            <FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px' }} size="xs" />
+                                            <FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
                                         }
                                     </div>
                                 </div>
