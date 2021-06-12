@@ -19,11 +19,16 @@ export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiv
 
     const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 }
 
+    const handleFolderNameClick = (folderPath: string) => {
+        setActiveFolderPath(folderPath);
+    }
+
     return (
         <React.Fragment>
             <Tree
                 content={plugin.app.vault.getName()}
                 open style={treeStyles}
+                onClick={() => handleFolderNameClick('/')}
                 setOpenFolders={setOpenFolders}
                 openFolders={openFolders}
                 folder={plugin.app.vault.getRoot()}
