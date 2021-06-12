@@ -14,9 +14,10 @@ interface FolderProps {
     openFolders: TFolder[],
     setOpenFolders: Function,
     excludedFolders: string[],
+    folderFileCountMap: { [key: string]: number },
 }
 
-export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders, excludedFolders }: FolderProps) {
+export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders, excludedFolders, folderFileCountMap }: FolderProps) {
 
     const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 }
 
@@ -33,6 +34,7 @@ export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiv
                 setOpenFolders={setOpenFolders}
                 openFolders={openFolders}
                 folder={plugin.app.vault.getRoot()}
+                folderFileCountMap={folderFileCountMap}
             >
                 {
                     folderTree &&
@@ -45,6 +47,7 @@ export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiv
                         openFolders={openFolders}
                         setOpenFolders={setOpenFolders}
                         excludedFolders={excludedFolders}
+                        folderFileCountMap={folderFileCountMap}
                     />
                 }
             </Tree>
@@ -63,9 +66,10 @@ interface NestedChildrenComponentProps {
     openFolders: TFolder[],
     setOpenFolders: Function,
     excludedFolders: string[],
+    folderFileCountMap: { [key: string]: number },
 }
 
-function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders, excludedFolders }: NestedChildrenComponentProps) {
+function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders, excludedFolders, folderFileCountMap }: NestedChildrenComponentProps) {
     if (!folderTree.children) return null;
 
     const handleFolderNameClick = (folderPath: string) => {
@@ -137,6 +141,7 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                                         setOpenFolders={setOpenFolders}
                                         openFolders={openFolders}
                                         folder={child.folder}
+                                        folderFileCountMap={folderFileCountMap}
                                     >
                                         <NestedChildrenComponent
                                             plugin={plugin}
@@ -147,6 +152,7 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                                             openFolders={openFolders}
                                             setOpenFolders={setOpenFolders}
                                             excludedFolders={excludedFolders}
+                                            folderFileCountMap={folderFileCountMap}
                                         />
                                     </Tree>
                                     :
@@ -156,6 +162,7 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                                         setOpenFolders={setOpenFolders}
                                         openFolders={openFolders}
                                         folder={child.folder}
+                                        folderFileCountMap={folderFileCountMap}
                                     />
                             }
                         </React.Fragment>

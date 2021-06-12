@@ -19,6 +19,7 @@ interface MainTreeComponentState {
     folderTree: FolderTree,
     excludedExtensions: string[],
     excludedFolders: string[],
+    folderFileCountMap: { [key: string]: number },
 }
 
 export interface FolderTree {
@@ -37,6 +38,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         folderTree: null as FolderTree,
         excludedExtensions: [] as string[],
         excludedFolders: [] as string[],
+        folderFileCountMap: {},
     }
 
     rootFolder: TFolder = this.props.plugin.app.vault.getRoot()
@@ -129,8 +131,11 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     // First Time Compount Mount
     componentDidMount() {
         console.log('File Tree Component Mounted')
-        // Set the Folder Tree
-        this.setState({ folderTree: createFolderTree(this.rootFolder) });
+        // Set the Folder Tree and Folder Count Map
+        this.setState({
+            folderTree: createFolderTree(this.rootFolder),
+            folderFileCountMap: getFolderNoteCountMap(this.props.plugin)
+        });
         // Set/Remember Open Folders from Last Session
         this.loadOpenFoldersFromSettings();
         // Set/Remember Pinned Files
@@ -172,9 +177,10 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                 }
             }
         } else if (file instanceof TFolder) {
-            // @todo - After changes to keep the current view
             this.setState({ folderTree: createFolderTree(this.rootFolder) });
         }
+        // After Each Vault Change Folder Count Map to Be Updated
+        this.setState({ folderFileCountMap: getFolderNoteCountMap(this.props.plugin) });
     }
 
     render() {
@@ -191,6 +197,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                             openFolders={this.state.openFolders}
                             setOpenFolders={this.setOpenFolders}
                             excludedFolders={this.state.excludedFolders}
+                            folderFileCountMap={this.state.folderFileCountMap}
                         />
                         :
                         <FileComponent
@@ -240,4 +247,16 @@ const createFolderTree = (startFolder: TFolder) => {
     }
     recursive(startFolder, fileTree);
     return fileTree;
+}
+
+// Create Folder File Count Map
+const getFolderNoteCountMap = (plugin: FileTreeAlternativePlugin) => {
+    const counts: { [key: string]: number } = {};
+    var mdNotes = plugin.app.vault.getMarkdownFiles();
+    mdNotes.forEach(mdNote => {
+        for (let folder = mdNote.parent; folder != null; folder = folder.parent) {
+            counts[folder.path] = 1 + (counts[folder.path] || 0)
+        }
+    })
+    return counts;
 }

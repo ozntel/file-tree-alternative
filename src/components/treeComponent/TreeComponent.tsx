@@ -14,7 +14,8 @@ type TreeProps = {
     children?: any,
     setOpenFolders: Function,
     openFolders: TFolder[],
-    folder: TFolder
+    folder: TFolder,
+    folderFileCountMap: { [key: string]: number },
 }
 
 type TreeState = {
@@ -71,6 +72,12 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
                 >
                     {content}
                 </span>
+                {
+                    (!open && this.props.folderFileCountMap[this.props.folder.path]) &&
+                    <span style={{ float: 'right', paddingRight: '12px' }}>
+                        {this.props.folderFileCountMap[this.props.folder.path]}
+                    </span>
+                }
                 <Spring
                     native
                     immediate={true}
