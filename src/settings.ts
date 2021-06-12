@@ -4,6 +4,7 @@ import { PluginSettingTab, Setting, App } from 'obsidian';
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
     excludedExtensions: string;
+    excludedFolders: string;
     openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
     pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
 }
@@ -11,6 +12,7 @@ export interface FileTreeAlternativePluginSettings {
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     ribbonIcon: true,
     excludedExtensions: '',
+    excludedFolders: '',
     openFolders: [],
     pinnedFiles: []
 }
@@ -43,13 +45,25 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             )
 
         new Setting(containerEl)
-            .setName('Excluded Extensions')
+            .setName('Excluded File Extensions')
             .setDesc(`Provide extension of files, which you want to exclude from listing in file tree, divided by comma. i.e. 'png, pdf, jpeg'.
             You need to reload the vault to make changes effective.`)
             .addTextArea((text) => text
                 .setValue(this.plugin.settings.excludedExtensions)
                 .onChange((value) => {
                     this.plugin.settings.excludedExtensions = value;
+                    this.plugin.saveSettings();
+                })
+            )
+
+        new Setting(containerEl)
+            .setName('Excluded Folder Paths')
+            .setDesc(`Provide full path of folders, which you want to exclude from listing in file tree, divided by comma. i.e. 'Personal/Attachments, Work/Documents/Folders'.
+            All subfolders are going to be excluded, as well. You need to reload the vault to make changes effective.`)
+            .addTextArea((text) => text
+                .setValue(this.plugin.settings.excludedFolders)
+                .onChange((value) => {
+                    this.plugin.settings.excludedFolders = value;
                     this.plugin.saveSettings();
                 })
             )

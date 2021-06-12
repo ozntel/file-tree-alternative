@@ -12,10 +12,11 @@ interface FolderProps {
     setActiveFolderPath: Function,
     setView: Function
     openFolders: TFolder[],
-    setOpenFolders: Function
+    setOpenFolders: Function,
+    excludedFolders: string[],
 }
 
-export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders }: FolderProps) {
+export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders, excludedFolders }: FolderProps) {
 
     const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 }
 
@@ -43,6 +44,7 @@ export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiv
                         setView={setView}
                         openFolders={openFolders}
                         setOpenFolders={setOpenFolders}
+                        excludedFolders={excludedFolders}
                     />
                 }
             </Tree>
@@ -60,9 +62,10 @@ interface NestedChildrenComponentProps {
     setView: Function,
     openFolders: TFolder[],
     setOpenFolders: Function,
+    excludedFolders: string[],
 }
 
-function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders }: NestedChildrenComponentProps) {
+function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActiveFolderPath, setView, openFolders, setOpenFolders, excludedFolders }: NestedChildrenComponentProps) {
     if (!folderTree.children) return null;
 
     const handleFolderNameClick = (folderPath: string) => {
@@ -111,7 +114,10 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
     }
 
     const customSort = (folderTree: FolderTree[]) => {
-        return folderTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name))
+        let newTree: FolderTree[];
+        if (excludedFolders.length > 0) newTree = folderTree.filter(tree => !excludedFolders.contains(tree.folder.path));
+        newTree = newTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name))
+        return newTree
     }
 
     return (
@@ -140,6 +146,7 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                                             setView={setView}
                                             openFolders={openFolders}
                                             setOpenFolders={setOpenFolders}
+                                            excludedFolders={excludedFolders}
                                         />
                                     </Tree>
                                     :

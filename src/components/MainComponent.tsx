@@ -18,6 +18,7 @@ interface MainTreeComponentState {
     openFolders: TFolder[]
     folderTree: FolderTree,
     excludedExtensions: string[],
+    excludedFolders: string[],
 }
 
 export interface FolderTree {
@@ -35,6 +36,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         openFolders: [] as TFolder[],
         folderTree: null as FolderTree,
         excludedExtensions: [] as string[],
+        excludedFolders: [] as string[],
     }
 
     rootFolder: TFolder = this.props.plugin.app.vault.getRoot()
@@ -67,11 +69,21 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     // Load Excluded Extensions as State
     loadExcludedExtensions = () => {
         let extensionsString: string = this.props.plugin.settings.excludedExtensions;
-        let extensionsList: string[] = [];
+        let excludedExtensions: string[] = [];
         for (let extension of extensionsString.split(',')) {
-            extensionsList.push(extension.trim());
+            excludedExtensions.push(extension.trim());
         }
-        this.setState({ excludedExtensions: extensionsList });
+        this.setState({ excludedExtensions });
+    }
+
+    // Load Excluded Folders
+    loadExcludedFolders = () => {
+        let excludedString: string = this.props.plugin.settings.excludedFolders;
+        let excludedFolders: string[] = [];
+        for (let excludedFolder of excludedString.split(',')) {
+            excludedFolders.push(excludedFolder.trim());
+        }
+        this.setState({ excludedFolders });
     }
 
     // Load The String List and Set Open Folders State
@@ -125,6 +137,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.loadPinnedFilesFromSettings();
         // Set Excluded File Extensions
         this.loadExcludedExtensions();
+        // Set Excluded Folders
+        this.loadExcludedFolders();
         // Register Vault Events
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => this.handleVaultChanges(file, 'rename')));
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete')));
@@ -176,6 +190,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                             setView={this.setView}
                             openFolders={this.state.openFolders}
                             setOpenFolders={this.setOpenFolders}
+                            excludedFolders={this.state.excludedFolders}
                         />
                         :
                         <FileComponent

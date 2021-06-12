@@ -5,7 +5,7 @@ import FileTreeAlternativePlugin from './main';
 import MainTreeComponent from './components/MainComponent';
 
 export const VIEW_TYPE = 'file-tree-view';
-export const VIEW_DISPLAY_TEXT = 'File Tree View';
+export const VIEW_DISPLAY_TEXT = 'File Tree';
 export const ICON = 'sheets-in-box';
 
 export class FileTreeView extends ItemView {
