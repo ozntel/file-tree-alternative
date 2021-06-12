@@ -16,7 +16,8 @@ interface MainTreeComponentState {
     fileList: TFile[],
     pinnedFiles: TFile[],
     openFolders: TFolder[]
-    folderTree: FolderTree
+    folderTree: FolderTree,
+    excludedExtensions: string[],
 }
 
 export interface FolderTree {
@@ -33,6 +34,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         pinnedFiles: [] as TFile[],
         openFolders: [] as TFolder[],
         folderTree: null as FolderTree,
+        excludedExtensions: [] as string[],
     }
 
     rootFolder: TFolder = this.props.plugin.app.vault.getRoot()
@@ -60,6 +62,16 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.setState({ activeFolderPath: activeFolderPath });
         this.setNewFileList(activeFolderPath);
         this.setState({ view: 'file' });
+    }
+
+    // Load Excluded Extensions as State
+    loadExcludedExtensions = () => {
+        let extensionsString: string = this.props.plugin.settings.excludedExtensions;
+        let extensionsList: string[] = [];
+        for (let extension of extensionsString.split(',')) {
+            extensionsList.push(extension.trim());
+        }
+        this.setState({ excludedExtensions: extensionsList });
     }
 
     // Load The String List and Set Open Folders State
@@ -111,6 +123,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.loadOpenFoldersFromSettings();
         // Set/Remember Pinned Files
         this.loadPinnedFilesFromSettings();
+        // Set Excluded File Extensions
+        this.loadExcludedExtensions();
         // Register Vault Events
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => this.handleVaultChanges(file, 'rename')));
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete')));
@@ -172,6 +186,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                             setView={this.setView}
                             pinnedFiles={this.state.pinnedFiles}
                             setPinnedFiles={this.setPinnedFiles}
+                            excludedExtensions={this.state.excludedExtensions}
                         />
                 }
             </React.Fragment>

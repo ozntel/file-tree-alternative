@@ -14,10 +14,11 @@ interface FilesProps {
     fileTreeView: FileTreeView,
     setView: Function,
     pinnedFiles: TFile[],
-    setPinnedFiles: Function
+    setPinnedFiles: Function,
+    excludedExtensions: string[],
 }
 
-export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView, setView, pinnedFiles, setPinnedFiles }: FilesProps) {
+export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView, setView, pinnedFiles, setPinnedFiles, excludedExtensions }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
 
@@ -87,14 +88,16 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
     }
 
     const customSort = (fileList: TFile[]) => {
-        let sortedfileList = fileList.sort((a, b) => a.name.localeCompare(b.name));
-        return sortedfileList.reduce((acc, element) => {
-            if (pinnedFiles.contains(element)) {
-                return [element, ...acc];
-            } else {
+        let sortedfileList: TFile[];
+        if (excludedExtensions.length > 0) sortedfileList = fileList.filter(file => !excludedExtensions.contains(file.extension));
+        sortedfileList = sortedfileList.sort((a, b) => a.name.localeCompare(b.name));
+        if (pinnedFiles.length > 0) {
+            sortedfileList = sortedfileList.reduce((acc, element) => {
+                if (pinnedFiles.contains(element)) return [element, ...acc];
                 return [...acc, element];
-            }
-        }, [])
+            }, [])
+        }
+        return sortedfileList
     }
 
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
