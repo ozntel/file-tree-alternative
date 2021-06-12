@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 // @ts-ignore
-import { TFile, App, Keymap } from 'obsidian';
+import { TFile, Menu, Keymap } from 'obsidian';
 import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons'
@@ -12,10 +12,12 @@ interface FilesProps {
     fileList: TFile[],
     activeFolderPath: string,
     fileTreeView: FileTreeView,
-    setView: Function
+    setView: Function,
+    pinnedFiles: TFile[],
+    setPinnedFiles: Function
 }
 
-export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView, setView }: FilesProps) {
+export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView, setView, pinnedFiles, setPinnedFiles }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
 
@@ -25,8 +27,48 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
     }
 
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
-        // @ts-ignore
-        fileTreeView.app.workspace.onLinkContextMenu(e, file.path, file.path);
+        // Menu Items
+        const fileMenu = new Menu(plugin.app);
+
+        fileMenu.addItem((menuItem) => {
+            menuItem.setIcon('pin');
+            if (pinnedFiles.contains(file)) {
+                menuItem.setTitle('Unpin');
+            } else {
+                menuItem.setTitle('Pin to Top');
+            }
+            menuItem.onClick((ev: MouseEvent) => {
+                if (pinnedFiles.contains(file)) {
+                    let newPinnedFiles = pinnedFiles.filter(pinnedFile => pinnedFile !== file);
+                    setPinnedFiles(newPinnedFiles);
+                } else {
+                    setPinnedFiles([...pinnedFiles, file])
+                }
+            })
+        })
+
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Rename');
+            menuItem.setIcon('pencil');
+            menuItem.onClick((ev: MouseEvent) => {
+                // @todo - Rename shouldn't include .md extension - Change Modal
+                let vaultChangeModal = new VaultChangeModal(plugin.app, file, 'rename');
+                vaultChangeModal.open()
+            })
+        })
+
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Delete');
+            menuItem.setIcon('trash');
+            menuItem.onClick((ev: MouseEvent) => {
+                plugin.app.vault.delete(file, true);
+            })
+        })
+
+        // Trigger
+        plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
+        fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        return false;
     }
 
     const getFileNameAndExtension = (fullName: string) => {

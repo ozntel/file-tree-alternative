@@ -1,14 +1,16 @@
 import FileTreeAlternativePlugin from "./main";
-import { PluginSettingTab, Setting, App, TFolder } from 'obsidian';
+import { PluginSettingTab, Setting, App } from 'obsidian';
 
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
-    openFolders: string[]; // Keeping the state of Open Folders - Not open for edit
+    openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
+    pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     ribbonIcon: true,
-    openFolders: []
+    openFolders: [],
+    pinnedFiles: []
 }
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {

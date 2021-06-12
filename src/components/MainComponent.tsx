@@ -14,6 +14,7 @@ interface MainTreeComponentState {
     view: string,
     activeFolderPath: string,
     fileList: TFile[],
+    pinnedFiles: TFile[],
     openFolders: TFolder[]
     folderTree: FolderTree
 }
@@ -29,6 +30,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         view: 'folder',
         activeFolderPath: '',
         fileList: [] as TFile[],
+        pinnedFiles: [] as TFile[],
         openFolders: [] as TFolder[],
         folderTree: null as FolderTree,
     }
@@ -36,6 +38,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     rootFolder: TFolder = this.props.plugin.app.vault.getRoot()
 
     setView = (view: string) => this.setState({ view });
+
+    setPinnedFiles = (pinnedFiles: TFile[]) => this.setState({ pinnedFiles });
 
     setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : this.state.activeFolderPath;
@@ -65,6 +69,16 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.setState({ openFolders })
     }
 
+    // Load The String List anad Set Pinned Files State
+    loadPinnedFilesFromSettings() {
+        let pinnedFiles: TFile[] = [];
+        for (let file of this.props.plugin.settings.pinnedFiles) {
+            let pinnedFile = this.props.plugin.app.vault.getAbstractFileByPath(file);
+            if (pinnedFile) pinnedFiles.push((pinnedFile as TFile));
+        }
+        this.setState({ pinnedFiles });
+    }
+
     // Get The Folders State and Save in Data as String Array
     saveOpenFoldersToSettings() {
         let openFolders: string[] = [];
@@ -75,6 +89,16 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.props.plugin.saveSettings();
     }
 
+    // Get The Pinned Files State and Save in Data as String Array
+    savePinnedFilesToSettings() {
+        let pinnedFiles: string[] = [];
+        for (let file of this.state.pinnedFiles) {
+            pinnedFiles.push(file.path);
+        }
+        this.props.plugin.settings.pinnedFiles = pinnedFiles;
+        this.props.plugin.saveSettings();
+    }
+
     // First Time Compount Mount
     componentDidMount() {
         console.log('File Tree Component Mounted')
@@ -82,6 +106,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.setState({ folderTree: createFolderTree(this.rootFolder) });
         // Set/Remember Open Folders from Last Session
         this.loadOpenFoldersFromSettings();
+        // Set/Remember Pinned Files
+        this.loadPinnedFilesFromSettings();
         // Register Vault Events
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('rename', (file, oldPath) => this.handleVaultChanges(file, 'rename')));
         this.props.plugin.registerEvent(this.props.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete')));
@@ -90,8 +116,11 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.props.plugin.registerEvent(this.props.plugin.app.workspace.on('quit', () => this.saveOpenFoldersToSettings()))
     }
 
-    // Before Compount Unmounted
-    componentWillUnmount = () => this.saveOpenFoldersToSettings()
+    // Before Compount Unmounted Save Last States
+    componentWillUnmount = () => {
+        this.saveOpenFoldersToSettings();
+        this.savePinnedFilesToSettings();
+    }
 
     // Function for Event Handlers
     handleVaultChanges = (file: TAbstractFile, changeType: string) => {
@@ -135,6 +164,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                             activeFolderPath={this.state.activeFolderPath}
                             fileTreeView={this.props.fileTreeView}
                             setView={this.setView}
+                            pinnedFiles={this.state.pinnedFiles}
+                            setPinnedFiles={this.setPinnedFiles}
                         />
                 }
             </React.Fragment>
