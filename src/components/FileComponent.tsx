@@ -86,7 +86,16 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
         return folderPath;
     }
 
-    const customSort = (fileList: TFile[]) => fileList.sort((a, b) => a.name.localeCompare(b.name))
+    const customSort = (fileList: TFile[]) => {
+        let sortedfileList = fileList.sort((a, b) => a.name.localeCompare(b.name));
+        return sortedfileList.reduce((acc, element) => {
+            if (pinnedFiles.contains(element)) {
+                return [element, ...acc];
+            } else {
+                return [...acc, element];
+            }
+        }, [])
+    }
 
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
         let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
