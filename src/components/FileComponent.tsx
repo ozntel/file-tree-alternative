@@ -52,7 +52,6 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
             menuItem.setTitle('Rename');
             menuItem.setIcon('pencil');
             menuItem.onClick((ev: MouseEvent) => {
-                // @todo - Rename shouldn't include .md extension - Change Modal
                 let vaultChangeModal = new VaultChangeModal(plugin.app, file, 'rename');
                 vaultChangeModal.open()
             })

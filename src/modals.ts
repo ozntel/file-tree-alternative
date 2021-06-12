@@ -34,7 +34,12 @@ export class VaultChangeModal extends Modal {
 
         inputEl.style.cssText = 'width: 100%; height: 2.5em; margin-bottom: 15px;'
         if (this.action === 'rename') {
-            inputEl.value = this.file.name;
+            // Manual Rename Handler For md Files
+            if (this.file.name.endsWith('.md')) {
+                inputEl.value = this.file.name.substring(0, this.file.name.lastIndexOf('.'));
+            } else {
+                inputEl.value = this.file.name;
+            }
         }
 
         // Buttons
@@ -60,6 +65,8 @@ export class VaultChangeModal extends Modal {
         changeButton.addEventListener('click', async () => {
             let newName = inputEl.value;
             if (this.action === 'rename') {
+                // Manual Rename Handler For md Files
+                if (this.file.name.endsWith('.md')) newName = newName + '.md';
                 this.app.fileManager.renameFile(this.file, this.file.parent.path + '/' + newName);
             } else if (this.action === 'create folder') {
                 this.app.vault.createFolder(this.file.path + '/' + newName);
