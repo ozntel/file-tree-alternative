@@ -128,7 +128,8 @@ const styles = {
         willChange: 'transform, opacity, height',
         marginLeft: 6,
         padding: '4px 0px 0px 14px',
-        borderLeft: '1px dashed rgba(255,255,255,0.4)',
+        borderLeft: '1px dashed',
+        borderLeftColor: 'var(--text-muted)',
         fontSize: 12.8
     } as React.CSSProperties,
 }
