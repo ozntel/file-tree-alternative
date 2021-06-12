@@ -1,5 +1,8 @@
 # Obsidian File Tree Alternative Plugin
 
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ozntel/file-tree-alternative?style=for-the-badge)
+![GitHub all releases](https://img.shields.io/github/downloads/ozntel/file-tree-alternative/total?style=for-the-badge)
+
 This Obsidian Plugin allows users to have a different file explorer experience.
 Please watch the sample record to see the details.
 
