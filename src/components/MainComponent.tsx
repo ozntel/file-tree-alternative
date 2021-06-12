@@ -39,7 +39,10 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 
     setView = (view: string) => this.setState({ view });
 
-    setPinnedFiles = (pinnedFiles: TFile[]) => this.setState({ pinnedFiles });
+    setPinnedFiles = (pinnedFiles: TFile[]) => {
+        this.setState({ pinnedFiles });
+        this.setNewFileList(this.state.activeFolderPath);
+    }
 
     setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : this.state.activeFolderPath;

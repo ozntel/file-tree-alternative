@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { TFile, Menu, Keymap } from 'obsidian';
 import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlusCircle, faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons'
+import { faPlusCircle, faArrowCircleLeft, faThumbtack } from '@fortawesome/free-solid-svg-icons'
 import { VaultChangeModal } from '../modals';
 import FileTreeAlternativePlugin from '../main';
 
@@ -126,6 +126,10 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
                                     }
                                     <div className="nav-file-title-content">
                                         {getFileNameAndExtension(file.name).fileName}
+                                        {
+                                            pinnedFiles.contains(file) &&
+                                            <FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px' }} size="xs" />
+                                        }
                                     </div>
                                 </div>
                             </div>
