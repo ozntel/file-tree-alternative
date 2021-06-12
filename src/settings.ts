@@ -44,7 +44,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Excluded Extensions')
-            .setDesc(`Provide extension of files, which you want to exclude from listing in file tree, divided by comma. i.e. 'png, pdf, excalidraw.
+            .setDesc(`Provide extension of files, which you want to exclude from listing in file tree, divided by comma. i.e. 'png, pdf, jpeg'.
             You need to reload the vault to make changes effective.`)
             .addTextArea((text) => text
                 .setValue(this.plugin.settings.excludedExtensions)

@@ -13,6 +13,7 @@ Please watch the sample record to see the details.
  - The plugin remembers `last expanded folders` state to load for the following session.
  - The plugin allows you to `Pin` your favorite files to the top. They are saved for the following sessions.
  - You can use `ribbon icon` to activate the `File Tree Leaf` in case you close by mistake. You can turn off `ribbon icon` from the plugin settings.
+ - You can define certain `file extensions` in plugin settings to exclude from listing in file explorer.
 
  **Note**: The last state of `expanded folders` and `pinned files` are saved in `data.json`. Please ensure that you don't delete them manually from `plugin settings` since it will delete all your configuration.
 
