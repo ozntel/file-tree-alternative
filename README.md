@@ -10,6 +10,7 @@ Please watch the sample record to see the details.
 
  - The plugin lists all files including the `files under sub-folders`.
  - Folders and files are in `separate views`.
+ - You can see the number of notes under each folder within the `folders` view.
  - The plugin remembers `last expanded folders` state to load for the following session.
  - The plugin allows you to `Pin` your favorite files to the top. They are saved for the following sessions.
  - You can use `ribbon icon` to activate the `File Tree Leaf` in case you close by mistake. You can turn off `ribbon icon` from the plugin settings.
