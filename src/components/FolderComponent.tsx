@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { App, Menu, TFolder } from 'obsidian';
+import React from 'react';
+import { Menu, TFolder } from 'obsidian';
 import Tree from './treeComponent/TreeComponent';
 import { FolderTree } from './MainComponent';
 import { VaultChangeModal } from '../modals';
