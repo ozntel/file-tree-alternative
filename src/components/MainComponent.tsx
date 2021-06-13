@@ -202,7 +202,6 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                             plugin={this.props.plugin}
                             fileList={this.state.fileList}
                             activeFolderPath={this.state.activeFolderPath}
-                            fileTreeView={this.props.fileTreeView}
                             setView={this.setView}
                             pinnedFiles={this.state.pinnedFiles}
                             setPinnedFiles={this.setPinnedFiles}

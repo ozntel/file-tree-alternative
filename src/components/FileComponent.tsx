@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 // @ts-ignore
 import { TFile, Menu, Keymap } from 'obsidian';
-import { FileTreeView } from 'src/FileTreeView';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle, faArrowCircleLeft, faThumbtack } from '@fortawesome/free-solid-svg-icons'
 import { VaultChangeModal } from '../modals';
@@ -11,33 +11,41 @@ interface FilesProps {
     plugin: FileTreeAlternativePlugin,
     fileList: TFile[],
     activeFolderPath: string,
-    fileTreeView: FileTreeView,
     setView: Function,
     pinnedFiles: TFile[],
     setPinnedFiles: Function,
     excludedExtensions: string[],
 }
 
-export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView, setView, pinnedFiles, setPinnedFiles, excludedExtensions }: FilesProps) {
+export function FileComponent({ plugin, fileList, activeFolderPath, setView, pinnedFiles, setPinnedFiles, excludedExtensions }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
 
+    // Drag Drop File Into File List to Load into Folder
+    const { acceptedFiles, getRootProps, getInputProps } = useDropzone({ noClick: true });
+
+    const files = acceptedFiles.map(async (file) => {
+        file.arrayBuffer().then(arrayBuffer => {
+            plugin.app.vault.adapter.writeBinary(activeFolderPath + '/' + file.name, arrayBuffer);
+        })
+    })
+
+    // Handle Click Event on File - Allows Open with Cmd/Ctrl
     const openFile = (file: TFile, e: React.MouseEvent) => {
         plugin.app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
         setActiveFile(file);
     }
 
+    // Handle Right Click Event on File - Custom Menu
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
-        // Menu Items
+
         const fileMenu = new Menu(plugin.app);
 
+        // Pin - Unpin Item
         fileMenu.addItem((menuItem) => {
             menuItem.setIcon('pin');
-            if (pinnedFiles.contains(file)) {
-                menuItem.setTitle('Unpin');
-            } else {
-                menuItem.setTitle('Pin to Top');
-            }
+            if (pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
+            else menuItem.setTitle('Pin to Top');
             menuItem.onClick((ev: MouseEvent) => {
                 if (pinnedFiles.contains(file)) {
                     let newPinnedFiles = pinnedFiles.filter(pinnedFile => pinnedFile !== file);
@@ -48,6 +56,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
             })
         })
 
+        // Rename Item
         fileMenu.addItem((menuItem) => {
             menuItem.setTitle('Rename');
             menuItem.setIcon('pencil');
@@ -57,6 +66,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
             })
         })
 
+        // Delete Item
         fileMenu.addItem((menuItem) => {
             menuItem.setTitle('Delete');
             menuItem.setIcon('trash');
@@ -71,6 +81,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
         return false;
     }
 
+    // Files out of Md should be listed with extension badge - Md without extension
     const getFileNameAndExtension = (fullName: string) => {
         var index = fullName.lastIndexOf('.');
         return {
@@ -79,6 +90,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
         }
     }
 
+    // Convert Full Path to Final Folder Name
     const getFolderName = (folderPath: string) => {
         if (folderPath === '/') return plugin.app.vault.getName();
         let index = folderPath.lastIndexOf('/');
@@ -86,7 +98,8 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
         return folderPath;
     }
 
-    const customSort = (fileList: TFile[]) => {
+    // Sort - Filter Files Depending on Preferences
+    const customFiles = (fileList: TFile[]) => {
         let sortedfileList: TFile[];
         if (excludedExtensions.length > 0) sortedfileList = fileList.filter(file => !excludedExtensions.contains(file.extension));
         sortedfileList = sortedfileList.sort((a, b) => a.name.localeCompare(b.name));
@@ -99,6 +112,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
         return sortedfileList
     }
 
+    // Handle Plus Button - Opens Modal to Create a New File
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
         let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
         if (!targetFolder) return;
@@ -106,13 +120,14 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
         modal.open();
     }
 
+    // Go Back Button - Sets Main Component View to Folder
     const handleGoBack = (e: React.MouseEvent) => {
         setView('folder');
     }
 
     return (
         <React.Fragment>
-            <div className="oz-explorer-container">
+            <div className="oz-explorer-container" style={{ width: '100%', height: '100%' }}>
                 <div className="oz-flex-container">
                     <div className="nav-action-button oz-nav-action-button">
                         <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
@@ -124,29 +139,37 @@ export function FileComponent({ plugin, fileList, activeFolderPath, fileTreeView
                 <div className="oz-file-tree-header">
                     {getFolderName(activeFolderPath)}
                 </div>
-                <div className="oz-file-tree-files">
-                    {customSort(fileList).map(file => {
-                        return (
-                            <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
-                                <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
-                                    {
-                                        getFileNameAndExtension(file.name).extension !== 'md' &&
-                                        <span className="nav-file-tag">
-                                            {getFileNameAndExtension(file.name).extension}
-                                        </span>
-                                    }
-                                    <div className="nav-file-title-content">
-                                        {getFileNameAndExtension(file.name).fileName}
+
+                <div {...getRootProps()} style={{ width: '100%', height: '100%' }}>
+
+                    <input {...getInputProps()} />
+
+                    <div className="oz-file-tree-files">
+                        {customFiles(fileList).map(file => {
+                            return (
+                                <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
+                                    <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
                                         {
-                                            pinnedFiles.contains(file) &&
-                                            <FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
+                                            getFileNameAndExtension(file.name).extension !== 'md' &&
+                                            <span className="nav-file-tag">
+                                                {getFileNameAndExtension(file.name).extension}
+                                            </span>
                                         }
+                                        <div className="nav-file-title-content">
+                                            {getFileNameAndExtension(file.name).fileName}
+                                            {
+                                                pinnedFiles.contains(file) &&
+                                                <FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
+                                            }
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
-                    })}
+                            )
+                        })}
+                    </div>
+
                 </div>
+
             </div>
         </React.Fragment>
     )
