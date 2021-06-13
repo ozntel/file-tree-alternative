@@ -6,6 +6,7 @@ export interface FileTreeAlternativePluginSettings {
     excludedExtensions: string;
     excludedFolders: string;
     folderCount: boolean;
+    folderCountOption: string;
     openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
     pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
 }
@@ -15,6 +16,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     excludedExtensions: '',
     excludedFolders: '',
     folderCount: true,
+    folderCountOption: 'notes',
     openFolders: [],
     pinnedFiles: []
 }
@@ -32,7 +34,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         let { containerEl } = this;
         containerEl.empty();
-        containerEl.createEl("h2", { text: "File Tree Alternative Settings" });
+        containerEl.createEl("h2", { text: "General" });
 
         new Setting(containerEl)
             .setName('Ribbon Icon')
@@ -46,9 +48,11 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 })
             )
 
+        containerEl.createEl("h2", { text: "Folder Count Settings" });
+
         new Setting(containerEl)
-            .setName('Folder Note Count')
-            .setDesc('Turn on if you want see the number of notes under file tree.')
+            .setName('Folder Count')
+            .setDesc('Turn on if you want see the number of notes/files under file tree.')
             .addToggle((toggle) => toggle
                 .setValue(this.plugin.settings.folderCount)
                 .onChange((value) => {
@@ -58,6 +62,23 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.openFileTreeLeaf();
                 })
             )
+
+        new Setting(containerEl)
+            .setName('Folder Count Details')
+            .setDesc('Select which files you want to be included into count')
+            .addDropdown((dropdown) => {
+                dropdown.addOption('notes', 'Notes');
+                dropdown.addOption('files', 'All Files');
+                dropdown.setValue(this.plugin.settings.folderCountOption);
+                dropdown.onChange((option) => {
+                    this.plugin.settings.folderCountOption = option;
+                    this.plugin.saveSettings();
+                    this.plugin.detachFileTreeLeafs();
+                    this.plugin.openFileTreeLeaf();
+                })
+            })
+
+        containerEl.createEl("h2", { text: "Exclude Settings" });
 
         new Setting(containerEl)
             .setName('Excluded File Extensions')

@@ -250,9 +250,15 @@ const createFolderTree = (startFolder: TFolder) => {
 // Create Folder File Count Map
 const getFolderNoteCountMap = (plugin: FileTreeAlternativePlugin) => {
     const counts: { [key: string]: number } = {};
-    var mdNotes = plugin.app.vault.getMarkdownFiles();
-    mdNotes.forEach(mdNote => {
-        for (let folder = mdNote.parent; folder != null; folder = folder.parent) {
+    let files: TFile[];
+    if (plugin.settings.folderCountOption === 'notes') {
+        files = plugin.app.vault.getMarkdownFiles();
+    } else {
+        files = plugin.app.vault.getFiles();
+    }
+
+    files.forEach(file => {
+        for (let folder = file.parent; folder != null; folder = folder.parent) {
             counts[folder.path] = 1 + (counts[folder.path] || 0)
         }
     })
