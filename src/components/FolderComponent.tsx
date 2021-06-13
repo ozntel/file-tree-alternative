@@ -6,7 +6,7 @@ import { VaultChangeModal } from '../modals';
 import FileTreeAlternativePlugin from '../main'
 
 interface FolderProps {
-    plugin: FileTreeAlternativePlugin;
+    plugin: FileTreeAlternativePlugin,
     folderTree: FolderTree,
     activeFolderPath: string,
     setActiveFolderPath: Function,

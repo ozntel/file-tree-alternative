@@ -24,11 +24,9 @@
     "prop-types": "^15.7.2",
     "react": "npm:@preact/compat",
     "react-dom": "npm:@preact/compat",
+    "react-dropzone": "^11.3.2",
     "react-spring": "^5.9.2",
     "tslib": "^2.2.0",
     "typescript": "^4.2.4"
-  },
-  "dependencies": {
-    "react-dropzone": "^11.3.2"
   }
 }
