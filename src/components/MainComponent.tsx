@@ -132,10 +132,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
     componentDidMount() {
         console.log('File Tree Component Mounted')
         // Set the Folder Tree and Folder Count Map
-        this.setState({
-            folderTree: createFolderTree(this.rootFolder),
-            folderFileCountMap: getFolderNoteCountMap(this.props.plugin)
-        });
+        this.setState({ folderTree: createFolderTree(this.rootFolder) });
+        if (this.props.plugin.settings.folderCount) this.setState({ folderFileCountMap: getFolderNoteCountMap(this.props.plugin) });
         // Set/Remember Open Folders from Last Session
         this.loadOpenFoldersFromSettings();
         // Set/Remember Pinned Files
@@ -180,7 +178,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
             this.setState({ folderTree: createFolderTree(this.rootFolder) });
         }
         // After Each Vault Change Folder Count Map to Be Updated
-        this.setState({ folderFileCountMap: getFolderNoteCountMap(this.props.plugin) });
+        if (this.props.plugin.settings.folderCount) this.setState({ folderFileCountMap: getFolderNoteCountMap(this.props.plugin) });
     }
 
     render() {

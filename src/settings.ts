@@ -5,6 +5,7 @@ export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
     excludedExtensions: string;
     excludedFolders: string;
+    folderCount: boolean;
     openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
     pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
 }
@@ -13,6 +14,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     ribbonIcon: true,
     excludedExtensions: '',
     excludedFolders: '',
+    folderCount: true,
     openFolders: [],
     pinnedFiles: []
 }
@@ -41,6 +43,19 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.settings.ribbonIcon = value;
                     this.plugin.saveSettings();
                     this.plugin.refreshIconRibbon();
+                })
+            )
+
+        new Setting(containerEl)
+            .setName('Folder Note Count')
+            .setDesc('Turn on if you want see the number of notes under file tree.')
+            .addToggle((toggle) => toggle
+                .setValue(this.plugin.settings.folderCount)
+                .onChange((value) => {
+                    this.plugin.settings.folderCount = value;
+                    this.plugin.saveSettings();
+                    this.plugin.detachFileTreeLeafs();
+                    this.plugin.openFileTreeLeaf();
                 })
             )
 
