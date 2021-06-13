@@ -47,7 +47,6 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 
     setPinnedFiles = (pinnedFiles: TFile[]) => {
         this.setState({ pinnedFiles });
-        this.setNewFileList(this.state.activeFolderPath);
         this.savePinnedFilesToSettings();
     }
 
