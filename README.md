@@ -21,7 +21,7 @@ Please watch the sample record to see the details.
 
 ## Sample View Record
 
-[![File Tree Alternative Plugin Video](https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png)](https://www.youtube.com/watch?v=25crdxtyENA)
+[![File Tree Alternative Plugin Video](https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png)](https://youtu.be/ICjvXpbSmuU)
 
 ## Sample Images
 
