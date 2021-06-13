@@ -1,6 +1,8 @@
 import { TFolder } from 'obsidian'
 import React from 'react'
 import { animated, config, Spring } from 'react-spring'
+import FileTreeAlternativePlugin from 'src/main'
+import Dropzone from 'react-dropzone';
 import * as Icons from './icons'
 
 type TreeProps = {
@@ -10,24 +12,27 @@ type TreeProps = {
     onContextMenu?: Function,
     type?: any,
     style?: any,
-    springConfig?: any,
     children?: any,
     setOpenFolders: Function,
     openFolders: TFolder[],
     folder: TFolder,
     folderFileCountMap: { [key: string]: number },
+    plugin: FileTreeAlternativePlugin,
 }
 
 type TreeState = {
     open: boolean,
+    highlight: boolean,
 }
 
 export default class Tree extends React.Component<TreeProps, TreeState> {
 
     state = {
         open: this.props.open,
+        highlight: false,
     }
 
+    // Icon to be toggled between min(-) and plus(+) - Each click sets openFolders Main Component state to save in settings
     toggle = () => {
         if (this.props.children) {
             // Set State in Main Component for Keeping Folders Open
@@ -45,59 +50,78 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
         }
     }
 
-    folderNameClickEvent = () => this.props.onClick()
+    // Function After an External File Dropped into Folder Name
+    onDrop = (files: File[]) => {
+        files.map(async (file) => {
+            file.arrayBuffer().then(arrayBuffer => {
+                this.props.plugin.app.vault.adapter.writeBinary(this.props.folder.path + '/' + file.name, arrayBuffer);
+            })
+        })
+    }
 
+    // Click Events
+    folderNameClickEvent = () => this.props.onClick()
     folderContextMenuEvent = () => this.props.onContextMenu();
 
     render() {
-
-        const { open } = this.state
-        const { children, content, type, style, springConfig } = this.props
-        const Icon = children ? open ? Icons['MinusSquareO'] : Icons['PlusSquareO'] : Icons['CloseSquareO']
-
+        const Icon = this.props.children ? this.props.open ? Icons['MinusSquareO'] : Icons['PlusSquareO'] : Icons['CloseSquareO']
         return (
-            <div style={{ ...styles.tree, ...style }} className="treeview">
-                <Icon
-                    className="toggle"
-                    style={{ ...styles.toggle, opacity: children ? 1 : 0.3 }}
-                    onClick={this.toggle}
-                />
-                <span style={{ ...styles.type, marginRight: type ? 10 : 0 }}>
-                    {type}
-                </span>
-                <span
-                    style={{ verticalAlign: 'middle' }}
-                    onClick={this.folderNameClickEvent}
-                    onContextMenu={this.folderContextMenuEvent}
-                >
-                    {content}
-                </span>
-                {
-                    (!open && this.props.folderFileCountMap[this.props.folder.path]) &&
-                    <span style={{ float: 'right', paddingRight: '12px' }}>
-                        {this.props.folderFileCountMap[this.props.folder.path]}
-                    </span>
-                }
-                <Spring
-                    native
-                    immediate={true}
-                    config={{
-                        ...config.default,
-                        restSpeedThreshold: 1,
-                        restDisplacementThreshold: 0.01,
-                    }}
-                    from={{ height: 0, opacity: 0, transform: 'translate3d(20px,0,0)' }}
-                    to={{
-                        height: open ? 'auto' : 0,
-                        opacity: open ? 1 : 0,
-                        transform: open ? 'translate3d(0px,0,0)' : 'translate3d(20px,0,0)',
-                    }}
-                    {...springConfig && springConfig(open)}
-                    render={Contents}
-                >
-                    {this.props.children}
-                </Spring>
-            </div>
+            <Dropzone
+                onDrop={this.onDrop}
+                noClick={true}
+                onDragEnter={() => this.setState({ highlight: true })}
+                onDragLeave={() => this.setState({ highlight: false })}
+            >
+
+                {({ getRootProps, getInputProps }) => (
+
+                    <div style={{ ...styles.tree, ...this.props.style }} className="treeview">
+
+                        <div {...getRootProps({ className: 'dropzone' })}
+                            className={"oz-folder-element " + (this.state.highlight && "drag-entered")}
+                            data-path={this.props.folder.path}
+                        >
+
+                            <input {...getInputProps()} />
+
+                            <div>
+                                <Icon className="toggle" style={{ ...styles.toggle, opacity: this.props.children ? 1 : 0.3 }} onClick={this.toggle} />
+                                <span style={{ ...styles.type, marginRight: this.props.type ? 10 : 0 }}> {this.props.type} </span>
+                                <span style={{ verticalAlign: 'middle' }} onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
+                                    {this.props.content}
+                                </span>
+                                {
+                                    (!this.state.open && this.props.folderFileCountMap[this.props.folder.path]) &&
+                                    <span style={{ float: 'right', paddingRight: '12px' }}>
+                                        {this.props.folderFileCountMap[this.props.folder.path]}
+                                    </span>
+                                }
+                            </div>
+
+                        </div>
+
+                        <Spring
+                            native
+                            immediate={true}
+                            config={{
+                                ...config.default,
+                                restSpeedThreshold: 1,
+                                restDisplacementThreshold: 0.01,
+                            }}
+                            from={{ height: 0, opacity: 0, transform: 'translate3d(20px,0,0)' }}
+                            to={{
+                                height: this.state.open ? 'auto' : 0,
+                                opacity: this.state.open ? 1 : 0,
+                                transform: this.state.open ? 'translate3d(0px,0,0)' : 'translate3d(20px,0,0)',
+                            }}
+                            render={Contents}
+                        >
+                            {this.props.children}
+                        </Spring>
+
+                    </div>
+                )}
+            </Dropzone>
         )
     }
 }

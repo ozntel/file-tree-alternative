@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 // @ts-ignore
 import { TFile, Menu, Keymap } from 'obsidian';
@@ -22,13 +22,17 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
     const [activeFile, setActiveFile] = useState(null);
 
     // Drag Drop File Into File List to Load into Folder
-    const { acceptedFiles, getRootProps, getInputProps } = useDropzone({ noClick: true });
+    const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({ noClick: true });
 
     const files = acceptedFiles.map(async (file) => {
         file.arrayBuffer().then(arrayBuffer => {
             plugin.app.vault.adapter.writeBinary(activeFolderPath + '/' + file.name, arrayBuffer);
         })
     })
+
+    const dragActiveStyle: React.CSSProperties = { backgroundColor: 'var(--text-selection)' }
+    const dragStyle = useMemo(() => ({ ...(isDragActive ? dragActiveStyle : {}) }), [isDragActive]);
+    const fullHeightStyle: React.CSSProperties = { width: '100%', height: '100%' }
 
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
     const openFile = (file: TFile, e: React.MouseEvent) => {
@@ -127,7 +131,8 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
 
     return (
         <React.Fragment>
-            <div className="oz-explorer-container" style={{ width: '100%', height: '100%' }}>
+            <div className="oz-explorer-container" style={fullHeightStyle}>
+
                 <div className="oz-flex-container">
                     <div className="nav-action-button oz-nav-action-button">
                         <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
@@ -136,15 +141,16 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
                         <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
                     </div>
                 </div>
+
                 <div className="oz-file-tree-header">
                     {getFolderName(activeFolderPath)}
                 </div>
 
-                <div {...getRootProps()} style={{ width: '100%', height: '100%' }}>
+                <div {...getRootProps()} style={{ ...fullHeightStyle, ...dragStyle }}>
 
                     <input {...getInputProps()} />
 
-                    <div className="oz-file-tree-files">
+                    <div className={"oz-file-tree-files " + (isDragActive && "drag-entered")}>
                         {customFiles(fileList).map(file => {
                             return (
                                 <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>

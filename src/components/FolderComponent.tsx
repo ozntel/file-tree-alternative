@@ -28,6 +28,7 @@ export function FolderComponent({ plugin, folderTree, activeFolderPath, setActiv
     return (
         <React.Fragment>
             <Tree
+                plugin={plugin}
                 content={plugin.app.vault.getName()}
                 open style={treeStyles}
                 onClick={() => handleFolderNameClick('/')}
@@ -134,6 +135,7 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                             {
                                 (child.folder as TFolder).children.some(child => child instanceof TFolder) ?
                                     <Tree
+                                        plugin={plugin}
                                         content={child.folder.name}
                                         open={openFolders.contains(child.folder) ? true : false}
                                         onClick={() => handleFolderNameClick(child.folder.path)}
@@ -156,7 +158,9 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
                                         />
                                     </Tree>
                                     :
-                                    <Tree content={child.folder.name}
+                                    <Tree
+                                        plugin={plugin}
+                                        content={child.folder.name}
                                         onClick={() => handleFolderNameClick(child.folder.path)}
                                         onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
                                         setOpenFolders={setOpenFolders}
