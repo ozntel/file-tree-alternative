@@ -25,18 +25,18 @@ Please watch the sample record to see the details.
 
 ### Update v1.1.5
 
-<a href="https://youtu.be/i3Ly06IurCA">
+<a href="https://youtu.be/i3Ly06IurCA" target=“_blank”>
     <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/update-1.1.5.png" style="width: 600px;" /> 
 </a>
 
 ### Update v1.1.4
 
-<a href="https://youtu.be/ICjvXpbSmuU">
+<a href="https://youtu.be/ICjvXpbSmuU" target=“_blank”>
     <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/file-tree-alternative-youtube.png" style="width: 600px;" /> 
 </a>
 
 ### Update v1.1.0
-<a href="https://youtu.be/25crdxtyENA">
+<a href="https://youtu.be/25crdxtyENA" target=“_blank”>
     <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 600px;" /> 
 </a>
 
