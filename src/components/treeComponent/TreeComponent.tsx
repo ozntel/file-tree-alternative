@@ -84,18 +84,25 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
 
                             <input {...getInputProps()} />
 
-                            <div>
-                                <Icon className="toggle" style={{ ...styles.toggle, opacity: this.props.children ? 1 : 0.3 }} onClick={this.toggle} />
-                                <span style={{ ...styles.type, marginRight: this.props.type ? 10 : 0 }}> {this.props.type} </span>
-                                <span style={{ verticalAlign: 'middle' }} onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
-                                    {this.props.content}
-                                </span>
-                                {
-                                    (!this.state.open && this.props.folderFileCountMap[this.props.folder.path]) &&
-                                    <span style={{ float: 'right', paddingRight: '12px' }}>
-                                        {this.props.folderFileCountMap[this.props.folder.path]}
-                                    </span>
-                                }
+                            <div style={{ width: '100%' }}>
+
+                                <div style={{ display: 'inline-block' }}>
+                                    <Icon className="toggle" style={{ ...styles.toggle, opacity: this.props.children ? 1 : 0.3 }} onClick={this.toggle} />
+                                </div>
+
+                                <div style={{ display: 'inline-block', width: '85%' }} onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
+                                    <div style={{ ...styles.type, marginRight: this.props.type ? 10 : 0 }}> {this.props.type} </div>
+                                    <div style={{ verticalAlign: 'middle', display: 'inline-block' }}>
+                                        {this.props.content}
+                                    </div>
+                                    {
+                                        (!this.state.open && this.props.folderFileCountMap[this.props.folder.path]) &&
+                                        <div style={{ float: 'right', display: 'inline-block' }}>
+                                            {this.props.folderFileCountMap[this.props.folder.path]}
+                                        </div>
+                                    }
+                                </div>
+
                             </div>
 
                         </div>
