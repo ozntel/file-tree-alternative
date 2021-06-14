@@ -27,10 +27,6 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     justify-content: space-between;
 }
 
-.nav-folder-children:first-child{
-    margin-bottom: 0px !important;
-}
-
 .oz-explorer-container{
     padding-left: 3px !important;
     padding-right: 3px !important;
