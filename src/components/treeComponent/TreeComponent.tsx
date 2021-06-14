@@ -64,7 +64,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
     folderContextMenuEvent = () => this.props.onContextMenu();
 
     render() {
-        const Icon = this.props.children ? this.props.open ? Icons['MinusSquareO'] : Icons['PlusSquareO'] : Icons['CloseSquareO']
+        const Icon = this.props.children ? this.state.open ? Icons['MinusSquareO'] : Icons['PlusSquareO'] : Icons['CloseSquareO']
         return (
             <Dropzone
                 onDrop={this.onDrop}
