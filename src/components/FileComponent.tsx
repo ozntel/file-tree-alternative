@@ -106,7 +106,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
     const customFiles = (fileList: TFile[]) => {
         let sortedfileList: TFile[];
         if (excludedExtensions.length > 0) sortedfileList = fileList.filter(file => !excludedExtensions.contains(file.extension));
-        sortedfileList = sortedfileList.sort((a, b) => a.name.localeCompare(b.name));
+        sortedfileList = sortedfileList.sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
         if (pinnedFiles.length > 0) {
             sortedfileList = sortedfileList.reduce((acc, element) => {
                 if (pinnedFiles.contains(element)) return [element, ...acc];

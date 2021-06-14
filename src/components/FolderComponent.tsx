@@ -121,7 +121,7 @@ function NestedChildrenComponent({ plugin, folderTree, activeFolderPath, setActi
     const customSort = (folderTree: FolderTree[]) => {
         let newTree: FolderTree[];
         if (excludedFolders.length > 0) newTree = folderTree.filter(tree => !excludedFolders.contains(tree.folder.path));
-        newTree = newTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name))
+        newTree = newTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name, 'en', { numeric: true }))
         return newTree
     }
 
