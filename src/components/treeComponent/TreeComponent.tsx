@@ -97,7 +97,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
                                     </div>
                                     {
                                         (!this.state.open && this.props.folderFileCountMap[this.props.folder.path]) &&
-                                        <div style={{ float: 'right', paddingRight: '40px', display: 'inline-block' }}>
+                                        <div style={{ float: 'right', paddingRight: '34px', display: 'inline-block' }}>
                                             {this.props.folderFileCountMap[this.props.folder.path]}
                                         </div>
                                     }
