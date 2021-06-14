@@ -78,7 +78,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
                     <div style={{ ...styles.tree, ...this.props.style }} className="treeview">
 
                         <div {...getRootProps({ className: 'dropzone' })}
-                            className={"oz-folder-element " + (this.state.highlight && "drag-entered")}
+                            className={"oz-folder-element" + (this.state.highlight ? " drag-entered" : '')}
                             data-path={this.props.folder.path}
                         >
 
