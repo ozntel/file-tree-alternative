@@ -90,14 +90,14 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
                                     <Icon className="toggle" style={{ ...styles.toggle, opacity: this.props.children ? 1 : 0.3 }} onClick={this.toggle} />
                                 </div>
 
-                                <div style={{ display: 'inline-block', width: '85%' }} onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
+                                <div style={{ display: 'inline-block', width: '100%' }} onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
                                     <div style={{ ...styles.type, marginRight: this.props.type ? 10 : 0 }}> {this.props.type} </div>
                                     <div style={{ verticalAlign: 'middle', display: 'inline-block' }}>
                                         {this.props.content}
                                     </div>
                                     {
                                         (!this.state.open && this.props.folderFileCountMap[this.props.folder.path]) &&
-                                        <div style={{ float: 'right', display: 'inline-block' }}>
+                                        <div style={{ float: 'right', paddingRight: '40px', display: 'inline-block' }}>
                                             {this.props.folderFileCountMap[this.props.folder.path]}
                                         </div>
                                     }
