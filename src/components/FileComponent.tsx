@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 // @ts-ignore
 import { TFile, Menu, Keymap } from 'obsidian';
@@ -20,6 +20,11 @@ interface FilesProps {
 export function FileComponent({ plugin, fileList, activeFolderPath, setView, pinnedFiles, setPinnedFiles, excludedExtensions }: FilesProps) {
 
     const [activeFile, setActiveFile] = useState(null);
+
+    // Scroll Top Once The File List is Loaded
+    useEffect(() => {
+        document.querySelector('div.workspace-leaf-content[data-type="file-tree-view"] > div.view-content').scrollTo(0, 0);
+    }, [])
 
     // Drag Drop File Into File List to Load into Folder
     const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({ noClick: true });
