@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
+import React from 'react';
+import Dropzone from 'react-dropzone';
 // @ts-ignore
 import { TFile, Menu, Keymap } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -17,50 +17,56 @@ interface FilesProps {
     excludedExtensions: string[],
 }
 
-export function FileComponent({ plugin, fileList, activeFolderPath, setView, pinnedFiles, setPinnedFiles, excludedExtensions }: FilesProps) {
+interface FilesState {
+    activeFile: TFile,
+    highlight: boolean,
+}
 
-    const [activeFile, setActiveFile] = useState(null);
+export class FileComponent extends React.Component<FilesProps, FilesState>{
+
+    state = {
+        activeFile: null as TFile,
+        highlight: false,
+    }
 
     // Scroll Top Once The File List is Loaded
-    useEffect(() => {
+    componentDidMount() {
         document.querySelector('div.workspace-leaf-content[data-type="file-tree-view"] > div.view-content').scrollTo(0, 0);
-    }, [])
+    }
 
-    // Drag Drop File Into File List to Load into Folder
-    const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({ noClick: true });
-
-    const files = acceptedFiles.map(async (file) => {
-        file.arrayBuffer().then(arrayBuffer => {
-            plugin.app.vault.adapter.writeBinary(activeFolderPath + '/' + file.name, arrayBuffer);
+    // Function After an External File Dropped into Folder Name
+    onDrop = (files: File[]) => {
+        files.map(async file => {
+            file.arrayBuffer().then(arrayBuffer => {
+                this.props.plugin.app.vault.adapter.writeBinary(this.props.activeFolderPath + '/' + file.name, arrayBuffer);
+            })
         })
-    })
+    }
 
-    const dragActiveStyle: React.CSSProperties = { backgroundColor: 'var(--text-selection)' }
-    const dragStyle = useMemo(() => ({ ...(isDragActive ? dragActiveStyle : {}) }), [isDragActive]);
-    const fullHeightStyle: React.CSSProperties = { width: '100%', height: '100%' }
+    fullHeightStyle: React.CSSProperties = { width: '100%', height: '100%' }
 
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
-    const openFile = (file: TFile, e: React.MouseEvent) => {
-        plugin.app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
-        setActiveFile(file);
+    openFile = (file: TFile, e: React.MouseEvent) => {
+        this.props.plugin.app.workspace.openLinkText(file.path, "/", Keymap.isModifier(e, "Mod") || 1 === e.button);
+        this.setState({ activeFile: file });
     }
 
     // Handle Right Click Event on File - Custom Menu
-    const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
+    triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
 
-        const fileMenu = new Menu(plugin.app);
+        const fileMenu = new Menu(this.props.plugin.app);
 
         // Pin - Unpin Item
         fileMenu.addItem((menuItem) => {
             menuItem.setIcon('pin');
-            if (pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
+            if (this.props.pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
             else menuItem.setTitle('Pin to Top');
             menuItem.onClick((ev: MouseEvent) => {
-                if (pinnedFiles.contains(file)) {
-                    let newPinnedFiles = pinnedFiles.filter(pinnedFile => pinnedFile !== file);
-                    setPinnedFiles(newPinnedFiles);
+                if (this.props.pinnedFiles.contains(file)) {
+                    let newPinnedFiles = this.props.pinnedFiles.filter(pinnedFile => pinnedFile !== file);
+                    this.props.setPinnedFiles(newPinnedFiles);
                 } else {
-                    setPinnedFiles([...pinnedFiles, file])
+                    this.props.setPinnedFiles([...this.props.pinnedFiles, file])
                 }
             })
         })
@@ -70,7 +76,7 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
             menuItem.setTitle('Rename');
             menuItem.setIcon('pencil');
             menuItem.onClick((ev: MouseEvent) => {
-                let vaultChangeModal = new VaultChangeModal(plugin.app, file, 'rename');
+                let vaultChangeModal = new VaultChangeModal(this.props.plugin.app, file, 'rename');
                 vaultChangeModal.open()
             })
         })
@@ -80,18 +86,18 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
             menuItem.setTitle('Delete');
             menuItem.setIcon('trash');
             menuItem.onClick((ev: MouseEvent) => {
-                plugin.app.vault.delete(file, true);
+                this.props.plugin.app.vault.delete(file, true);
             })
         })
 
         // Trigger
-        plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
+        this.props.plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
         fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
         return false;
     }
 
     // Files out of Md should be listed with extension badge - Md without extension
-    const getFileNameAndExtension = (fullName: string) => {
+    getFileNameAndExtension = (fullName: string) => {
         var index = fullName.lastIndexOf('.');
         return {
             fileName: fullName.substring(0, index),
@@ -100,21 +106,23 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
     }
 
     // Convert Full Path to Final Folder Name
-    const getFolderName = (folderPath: string) => {
-        if (folderPath === '/') return plugin.app.vault.getName();
+    getFolderName = (folderPath: string) => {
+        if (folderPath === '/') return this.props.plugin.app.vault.getName();
         let index = folderPath.lastIndexOf('/');
         if (index !== -1) return folderPath.substring(index + 1);
         return folderPath;
     }
 
     // Sort - Filter Files Depending on Preferences
-    const customFiles = (fileList: TFile[]) => {
+    customFiles = (fileList: TFile[]) => {
         let sortedfileList: TFile[];
-        if (excludedExtensions.length > 0) sortedfileList = fileList.filter(file => !excludedExtensions.contains(file.extension));
+        if (this.props.excludedExtensions.length > 0) {
+            sortedfileList = fileList.filter(file => !this.props.excludedExtensions.contains(file.extension));
+        }
         sortedfileList = sortedfileList.sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
-        if (pinnedFiles.length > 0) {
+        if (this.props.pinnedFiles.length > 0) {
             sortedfileList = sortedfileList.reduce((acc, element) => {
-                if (pinnedFiles.contains(element)) return [element, ...acc];
+                if (this.props.pinnedFiles.contains(element)) return [element, ...acc];
                 return [...acc, element];
             }, [])
         }
@@ -122,66 +130,83 @@ export function FileComponent({ plugin, fileList, activeFolderPath, setView, pin
     }
 
     // Handle Plus Button - Opens Modal to Create a New File
-    const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
-        let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
+    createNewFile = async (e: React.MouseEvent, folderPath: string) => {
+        let targetFolder = this.props.plugin.app.vault.getAbstractFileByPath(folderPath);
         if (!targetFolder) return;
-        let modal = new VaultChangeModal(plugin.app, targetFolder, 'create note');
+        let modal = new VaultChangeModal(this.props.plugin.app, targetFolder, 'create note');
         modal.open();
     }
 
     // Go Back Button - Sets Main Component View to Folder
-    const handleGoBack = (e: React.MouseEvent) => {
-        setView('folder');
+    handleGoBack = (e: React.MouseEvent) => {
+        this.props.setView('folder');
     }
 
-    return (
-        <React.Fragment>
-            <div className="oz-explorer-container" style={fullHeightStyle}>
+    render() {
+        return (
+            <React.Fragment>
+                <div className="oz-explorer-container" style={this.fullHeightStyle}>
 
-                <div className="oz-flex-container">
-                    <div className="nav-action-button oz-nav-action-button">
-                        <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
+                    <div className="oz-flex-container">
+                        <div className="nav-action-button oz-nav-action-button">
+                            <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => this.handleGoBack(e)} size="lg" />
+                        </div>
+                        <div className="nav-action-button oz-nav-action-button">
+                            <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => this.createNewFile(e, this.props.activeFolderPath)} size="lg" />
+                        </div>
                     </div>
-                    <div className="nav-action-button oz-nav-action-button">
-                        <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
+
+                    <div className="oz-file-tree-header">
+                        {this.getFolderName(this.props.activeFolderPath)}
                     </div>
-                </div>
 
-                <div className="oz-file-tree-header">
-                    {getFolderName(activeFolderPath)}
-                </div>
+                    <Dropzone
+                        onDrop={this.onDrop}
+                        noClick={true}
+                        onDragEnter={() => this.setState({ highlight: true })}
+                        onDragLeave={() => this.setState({ highlight: false })}
+                        onDropAccepted={() => this.setState({ highlight: false })}
+                        onDropRejected={() => this.setState({ highlight: false })}
+                    >
 
-                <div {...getRootProps()} style={{ ...fullHeightStyle, ...dragStyle }}>
+                        {({ getRootProps, getInputProps }) => (
 
-                    <input {...getInputProps()} />
+                            <div {...getRootProps()} className={this.state.highlight ? "drag-entered" : ''} style={this.fullHeightStyle}>
 
-                    <div className={"oz-file-tree-files " + (isDragActive && "drag-entered")}>
-                        {customFiles(fileList).map(file => {
-                            return (
-                                <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => openFile(file, e)} onContextMenu={(e) => triggerContextMenu(file, e)}>
-                                    <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
-                                        {
-                                            getFileNameAndExtension(file.name).extension !== 'md' &&
-                                            <span className="nav-file-tag">
-                                                {getFileNameAndExtension(file.name).extension}
-                                            </span>
-                                        }
-                                        <div className="nav-file-title-content">
-                                            {getFileNameAndExtension(file.name).fileName}
-                                            {
-                                                pinnedFiles.contains(file) &&
-                                                <FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
-                                            }
-                                        </div>
-                                    </div>
+                                <input {...getInputProps()} />
+
+                                <div className="oz-file-tree-files">
+                                    {this.customFiles(this.props.fileList).map(file => {
+                                        return (
+                                            <div className="nav-file oz-nav-file" key={file.path} onClick={(e) => this.openFile(file, e)} onContextMenu={(e) => this.triggerContextMenu(file, e)}>
+                                                <div className={'nav-file-title oz-nav-file-title' + (this.state.activeFile === file ? ' is-active' : '')} data-path={file.path}>
+                                                    {
+                                                        this.getFileNameAndExtension(file.name).extension !== 'md' &&
+                                                        <span className="nav-file-tag">
+                                                            {this.getFileNameAndExtension(file.name).extension}
+                                                        </span>
+                                                    }
+                                                    <div className="nav-file-title-content">
+                                                        {this.getFileNameAndExtension(file.name).fileName}
+                                                        {
+                                                            this.props.pinnedFiles.contains(file) &&
+                                                            <FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
                                 </div>
-                            )
-                        })}
-                    </div>
+
+                            </div>
+
+                        )}
+                    </Dropzone>
 
                 </div>
+            </React.Fragment>
+        )
+    }
 
-            </div>
-        </React.Fragment>
-    )
 }
