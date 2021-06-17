@@ -14,6 +14,7 @@ interface FolderProps {
     openFolders: TFolder[],
     setOpenFolders: Function,
     excludedFolders: string[],
+    setExcludedFolders: Function,
     folderFileCountMap: { [key: string]: number },
 }
 
@@ -49,6 +50,7 @@ export class FolderComponent extends React.Component<FolderProps>{
                             openFolders={this.props.openFolders}
                             setOpenFolders={this.props.setOpenFolders}
                             excludedFolders={this.props.excludedFolders}
+                            setExcludedFolders={this.props.setExcludedFolders}
                             folderFileCountMap={this.props.folderFileCountMap}
                         />
                     }
@@ -69,6 +71,7 @@ interface NestedChildrenComponentProps {
     openFolders: TFolder[],
     setOpenFolders: Function,
     excludedFolders: string[],
+    setExcludedFolders: Function,
     folderFileCountMap: { [key: string]: number },
 }
 
@@ -110,6 +113,14 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
             menuItem.onClick((ev: MouseEvent) => {
                 let vaultChangeModal = new VaultChangeModal(this.props.plugin.app, folder, 'rename');
                 vaultChangeModal.open()
+            })
+        })
+
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Add to Excluded Folders');
+            menuItem.setIcon('switch');
+            menuItem.onClick((ev: MouseEvent) => {
+                this.props.setExcludedFolders([...this.props.excludedFolders, folder.path]);
             })
         })
 
@@ -161,6 +172,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
                                                 openFolders={this.props.openFolders}
                                                 setOpenFolders={this.props.setOpenFolders}
                                                 excludedFolders={this.props.excludedFolders}
+                                                setExcludedFolders={this.props.setExcludedFolders}
                                                 folderFileCountMap={this.props.folderFileCountMap}
                                             />
                                         </Tree>

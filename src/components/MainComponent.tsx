@@ -128,6 +128,18 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.props.plugin.saveSettings();
     }
 
+    // Save Excluded Folders to Settings as String
+    saveExcludedFoldersToSettings() {
+        this.props.plugin.settings.excludedFolders = this.state.excludedFolders.join(', ');
+        this.props.plugin.saveSettings();
+    }
+
+    // Set New Excluded Folders List and Save to Settings
+    setExcludedFolders = (excludedFolders: string[]) => {
+        this.setState({ excludedFolders });
+        this.saveExcludedFoldersToSettings();
+    }
+
     // First Time Compount Mount
     componentDidMount() {
         console.log('File Tree Component Mounted')
@@ -195,6 +207,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                             openFolders={this.state.openFolders}
                             setOpenFolders={this.setOpenFolders}
                             excludedFolders={this.state.excludedFolders}
+                            setExcludedFolders={this.setExcludedFolders}
                             folderFileCountMap={this.state.folderFileCountMap}
                         />
                         :
