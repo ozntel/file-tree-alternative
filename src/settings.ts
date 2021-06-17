@@ -3,6 +3,7 @@ import { PluginSettingTab, Setting, App } from 'obsidian';
 
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
+    showRootFolder: boolean;
     excludedExtensions: string;
     excludedFolders: string;
     folderCount: boolean;
@@ -13,6 +14,7 @@ export interface FileTreeAlternativePluginSettings {
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     ribbonIcon: true,
+    showRootFolder: true,
     excludedExtensions: '',
     excludedFolders: '',
     folderCount: true,
@@ -48,6 +50,18 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 })
             )
 
+        new Setting(containerEl)
+            .setName('Show Root Folder')
+            .setDesc(`Turn on if you want your Root Folder "${this.plugin.app.vault.getName()}" to be visible in the file tree`)
+            .addToggle((toggle) => toggle
+                .setValue(this.plugin.settings.showRootFolder)
+                .onChange((value) => {
+                    this.plugin.settings.showRootFolder = value;
+                    this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
+                })
+            )
+
         containerEl.createEl("h2", { text: "Folder Count Settings" });
 
         new Setting(containerEl)
@@ -58,8 +72,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 .onChange((value) => {
                     this.plugin.settings.folderCount = value;
                     this.plugin.saveSettings();
-                    this.plugin.detachFileTreeLeafs();
-                    this.plugin.openFileTreeLeaf();
+                    this.plugin.refreshTreeLeafs();
                 })
             )
 

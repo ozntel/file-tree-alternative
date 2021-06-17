@@ -74,4 +74,9 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		}
 	}
 
+	refreshTreeLeafs = () => {
+		this.detachFileTreeLeafs();
+		this.openFileTreeLeaf();
+	}
+
 }

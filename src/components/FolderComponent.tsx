@@ -29,15 +29,24 @@ export class FolderComponent extends React.Component<FolderProps>{
     render() {
         return (
             <React.Fragment>
-                <Tree
-                    plugin={this.props.plugin}
-                    content={this.props.plugin.app.vault.getName()}
-                    open style={this.treeStyles}
-                    onClick={() => this.handleFolderNameClick('/')}
-                    setOpenFolders={this.props.setOpenFolders}
-                    openFolders={this.props.openFolders}
-                    folder={this.props.plugin.app.vault.getRoot()}
-                    folderFileCountMap={this.props.folderFileCountMap}
+                <ConditionalRootFolderWrapper
+                    condition={this.props.plugin.settings.showRootFolder}
+                    wrapper={children => {
+                        return (
+                            <Tree
+                                plugin={this.props.plugin}
+                                content={this.props.plugin.app.vault.getName()}
+                                open style={this.treeStyles}
+                                onClick={() => this.handleFolderNameClick('/')}
+                                setOpenFolders={this.props.setOpenFolders}
+                                openFolders={this.props.openFolders}
+                                folder={this.props.plugin.app.vault.getRoot()}
+                                folderFileCountMap={this.props.folderFileCountMap}
+                            >
+                                {children}
+                            </Tree>
+                        )
+                    }}
                 >
                     {
                         this.props.folderTree &&
@@ -54,11 +63,22 @@ export class FolderComponent extends React.Component<FolderProps>{
                             folderFileCountMap={this.props.folderFileCountMap}
                         />
                     }
-                </Tree>
+                </ConditionalRootFolderWrapper>
             </React.Fragment>
         )
     }
 }
+
+/* ------ Conditional Root Folder Wrapper ------ */
+
+type ConditionalRootFolderWrapper = {
+    children: React.ReactElement,
+    condition: boolean,
+    wrapper: (children: React.ReactElement) => JSX.Element;
+}
+
+const ConditionalRootFolderWrapper: React.FC<ConditionalRootFolderWrapper> = ({ condition, wrapper, children }) =>
+    condition ? wrapper(children) : children;
 
 /* ------ Nested Children Component ------ */
 
