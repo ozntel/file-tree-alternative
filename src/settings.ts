@@ -4,6 +4,7 @@ import { PluginSettingTab, Setting, App } from 'obsidian';
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
     showRootFolder: boolean;
+    showFilesFromSubFolders: boolean;
     excludedExtensions: string;
     excludedFolders: string;
     folderCount: boolean;
@@ -15,6 +16,7 @@ export interface FileTreeAlternativePluginSettings {
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     ribbonIcon: true,
     showRootFolder: true,
+    showFilesFromSubFolders: true,
     excludedExtensions: '',
     excludedFolders: '',
     folderCount: true,
@@ -59,6 +61,17 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.settings.showRootFolder = value;
                     this.plugin.saveSettings();
                     this.plugin.refreshTreeLeafs();
+                })
+            )
+
+        new Setting(containerEl)
+            .setName('Include Files From Subfolders to the File List')
+            .setDesc(`Turn on this option if you want to see the list of files from all subfolders in addition to the selected folder`)
+            .addToggle((toggle) => toggle
+                .setValue(this.plugin.settings.showFilesFromSubFolders)
+                .onChange((value) => {
+                    this.plugin.settings.showFilesFromSubFolders = value;
+                    this.plugin.saveSettings();
                 })
             )
 
