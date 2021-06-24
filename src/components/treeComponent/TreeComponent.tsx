@@ -92,7 +92,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
 
                                 <div style={{ display: 'inline-block', width: '100%' }} onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
                                     <div style={{ ...styles.type, marginRight: this.props.type ? 10 : 0 }}> {this.props.type} </div>
-                                    <div style={{ verticalAlign: 'middle', display: 'inline-block' }}>
+                                    <div style={{ verticalAlign: 'middle', display: 'inline-block' }} className="oz-folder-name" >
                                         {this.props.content}
                                     </div>
                                     {
