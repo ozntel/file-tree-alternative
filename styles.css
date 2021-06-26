@@ -39,3 +39,55 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 .drag-entered, .oz-folder-element:hover, .oz-nav-file:hover{
     background-color: var(--text-selection);
 }
+
+.oz-folder-contents{
+    will-change: transform, opacity, height;
+    margin-left: 6;
+    padding: 4px 0px 0px 14px;
+    border-left: 1px dashed;
+    border-left-color: var(--text-muted);
+    font-size: 12.8px;
+}
+
+.oz-folder-toggle{
+    width: 1em;
+    height: 1em;
+    margin-right: 10px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.treeview{
+    position: relative;
+    padding: 4px 0px 0px 0px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.oz-folder-type{
+    text-transform: uppercase;
+    font-family: monospace;
+    font-size: 0.6em;
+    vertical-align: middle;
+}
+
+.oz-folder-name{
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.oz-icon-div{
+    display: inline-block;
+}
+
+.oz-folder-block{
+    display: inline-block;
+    width: 100%;
+}
+
+.oz-folder-count{
+    float: right;
+    padding-right: 34px;
+}

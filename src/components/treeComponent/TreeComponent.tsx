@@ -75,7 +75,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
 
                 {({ getRootProps, getInputProps }) => (
 
-                    <div style={{ ...styles.tree, ...this.props.style }} className="treeview">
+                    <div style={{ ...this.props.style }} className="treeview">
 
                         <div {...getRootProps({ className: 'dropzone' })}
                             className={"oz-folder-element" + (this.state.highlight ? " drag-entered" : '')}
@@ -86,18 +86,18 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
 
                             <div style={{ width: '100%' }}>
 
-                                <div style={{ display: 'inline-block' }}>
-                                    <Icon className="toggle" style={{ ...styles.toggle, opacity: this.props.children ? 1 : 0.3 }} onClick={this.toggle} />
+                                <div className="oz-icon-div">
+                                    <Icon className="oz-folder-toggle" style={{ opacity: this.props.children ? 1 : 0.3 }} onClick={this.toggle} />
                                 </div>
 
-                                <div style={{ display: 'inline-block', width: '100%' }} onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
-                                    <div style={{ ...styles.type, marginRight: this.props.type ? 10 : 0 }}> {this.props.type} </div>
-                                    <div style={{ verticalAlign: 'middle', display: 'inline-block' }} className="oz-folder-name" >
+                                <div className="oz-folder-block" onClick={this.folderNameClickEvent} onContextMenu={this.folderContextMenuEvent}>
+                                    <div className="oz-folder-type" style={{ marginRight: this.props.type ? 10 : 0 }}> {this.props.type} </div>
+                                    <div className="oz-folder-name" >
                                         {this.props.content}
                                     </div>
                                     {
                                         (!this.state.open && this.props.folderFileCountMap[this.props.folder.path]) &&
-                                        <div style={{ float: 'right', paddingRight: '34px', display: 'inline-block' }} className="oz-folder-count">
+                                        <div className="oz-folder-count">
                                             <span className="nav-file-tag">
                                                 {this.props.folderFileCountMap[this.props.folder.path]}
                                             </span>
@@ -137,39 +137,7 @@ export default class Tree extends React.Component<TreeProps, TreeState> {
 
 // @ts-ignore
 const Contents = ({ children, ...style }) => (
-    <animated.div style={{ ...style, ...styles.contents }}>
+    <animated.div style={{ ...style }} className="oz-folder-contents" >
         {children}
     </animated.div>
 )
-
-const styles = {
-    tree: {
-        position: 'relative',
-        padding: '4px 0px 0px 0px',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        verticalAlign: 'middle',
-    } as React.CSSProperties,
-    toggle: {
-        width: '1em',
-        height: '1em',
-        marginRight: 10,
-        cursor: 'pointer',
-        verticalAlign: 'middle',
-    } as React.CSSProperties,
-    type: {
-        textTransform: 'uppercase',
-        fontFamily: 'monospace',
-        fontSize: '0.6em',
-        verticalAlign: 'middle',
-    } as React.CSSProperties,
-    contents: {
-        willChange: 'transform, opacity, height',
-        marginLeft: 6,
-        padding: '4px 0px 0px 14px',
-        borderLeft: '1px dashed',
-        borderLeftColor: 'var(--text-muted)',
-        fontSize: 12.8
-    } as React.CSSProperties,
-}
