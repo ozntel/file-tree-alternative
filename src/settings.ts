@@ -5,6 +5,7 @@ export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
     showRootFolder: boolean;
     showFilesFromSubFolders: boolean;
+    searchFunction: boolean;
     excludedExtensions: string;
     excludedFolders: string;
     folderCount: boolean;
@@ -17,6 +18,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     ribbonIcon: true,
     showRootFolder: true,
     showFilesFromSubFolders: true,
+    searchFunction: true,
     excludedExtensions: '',
     excludedFolders: '',
     folderCount: true,
@@ -71,6 +73,17 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 .setValue(this.plugin.settings.showFilesFromSubFolders)
                 .onChange((value) => {
                     this.plugin.settings.showFilesFromSubFolders = value;
+                    this.plugin.saveSettings();
+                })
+            )
+
+        new Setting(containerEl)
+            .setName('Search in File List')
+            .setDesc(`Turn on this option if you want to enable search function to filter files by name.`)
+            .addToggle((toggle) => toggle
+                .setValue(this.plugin.settings.searchFunction)
+                .onChange((value) => {
+                    this.plugin.settings.searchFunction = value;
                     this.plugin.saveSettings();
                 })
             )

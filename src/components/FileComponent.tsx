@@ -175,9 +175,12 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                             <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => this.handleGoBack(e)} size="lg" />
                         </div>
                         <div className="oz-nav-buttons-right-block">
-                            <div className="nav-action-button oz-nav-action-button">
-                                <FontAwesomeIcon icon={faSearch} onClick={this.toggleSearchBox} size="lg" />
-                            </div>
+                            {
+                                this.props.plugin.settings.searchFunction &&
+                                <div className="nav-action-button oz-nav-action-button">
+                                    <FontAwesomeIcon icon={faSearch} onClick={this.toggleSearchBox} size="lg" />
+                                </div>
+                            }
                             <div className="nav-action-button oz-nav-action-button">
                                 <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => this.createNewFile(e, this.props.activeFolderPath)} size="lg" />
                             </div>
@@ -185,7 +188,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                     </div>
 
                     {
-                        this.state.searchBoxVisible &&
+                        (this.state.searchBoxVisible) &&
                         <div className="search-input-container oz-input-container">
                             <input type="text" placeholder="Search..."
                                 value={this.state.searchPhrase}
