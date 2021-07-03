@@ -83,6 +83,7 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     font-family: monospace;
     font-size: 0.6em;
     vertical-align: middle;
+    display: inline-block;
 }
 
 .oz-folder-name{
