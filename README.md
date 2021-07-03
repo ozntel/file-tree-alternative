@@ -8,7 +8,7 @@ Please watch the sample record to see the details.
 
 ### Features: 
 
- - The plugin lists all files including the `files under sub-folders`.
+ - The plugin lists all files including the `files under sub-folders`. You can turn off this option from plugin settings if you want to see only the files under certain folder.
  - Folders and files are in `separate views`.
  - You can see the `number of notes` under each folder within the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
  - The plugin remembers `last expanded folders` state to load for the following session.
@@ -18,6 +18,8 @@ Please watch the sample record to see the details.
  - You can define certain `folder paths` in plugin settings to exclude from main folder list. All subfolders are going to be excluded, as well.
 - You can `star`/`unstar` your files in case you have `Starred` plugin turned on.
 - You can drop `external files` into file list to add the files into current active folder path.
+- You can turn on `search` feature from plugin settings to filter files with their names.
+- You can turn on/off `root folder` within the file tree.
 
  **Note**: The last state of `expanded folders` and `pinned files` are saved in `data.json`. Please ensure that you don't delete them manually from `plugin settings` since it will delete all your configuration.
 
