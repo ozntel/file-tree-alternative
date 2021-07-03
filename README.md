@@ -75,5 +75,5 @@ If you have any issue or you have any suggestion, please feel free to reach me o
 If you are enjoying the plugin then you can support my work and enthusiasm by buying me a coffee:
 
 <a href='https://ko-fi.com/L3L356V6Q' target='_blank'>
-    <img height='45' style='border:0px;height:45px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' />
+    <img height='48' style='border:0px;height:48px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 </a>
