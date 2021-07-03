@@ -72,6 +72,8 @@ If you have any issue or you have any suggestion, please feel free to reach me o
 
 ## Support
 
-<a href="https://www.buymeacoffee.com/ozante">
-    <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=ozante&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" style="max-width: 40%">
+If you are enjoying the plugin then you can support my work and enthusiasm by buying me a coffee:
+
+<a href='https://ko-fi.com/L3L356V6Q' target='_blank'>
+    <img height='36' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 </a>
