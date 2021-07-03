@@ -1,10 +1,10 @@
 .oz-file-tree-header{
     height: 22px;
     color: var(--text-normal);
-    margin-top: 0px;
+    margin-top: 3px;
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     text-align: center;
 }
 
@@ -12,6 +12,7 @@
     margin-bottom: 2px !important;
     color: var(--text-normal);
     display: inline-block;
+    padding: 3px 0px 0 3px !important;
 }
 
 .oz-input-container{
