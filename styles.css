@@ -10,6 +10,17 @@
 
 .oz-nav-action-button{
     margin-bottom: 2px !important;
+    color: var(--text-normal);
+    display: inline-block;
+}
+
+.oz-input-container{
+    margin-bottom: 3px !important;
+    margin-top: 3px !important;
+}
+
+.oz-nav-buttons-right-block{
+    text-align: right;
 }
 
 .oz-nav-file-title{

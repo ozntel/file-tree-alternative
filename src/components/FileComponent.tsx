@@ -3,13 +3,15 @@ import Dropzone from 'react-dropzone';
 // @ts-ignore
 import { TFile, Menu, Keymap } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlusCircle, faArrowCircleLeft, faThumbtack } from '@fortawesome/free-solid-svg-icons'
+import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch } from '@fortawesome/free-solid-svg-icons'
 import { VaultChangeModal } from '../modals';
 import FileTreeAlternativePlugin from '../main';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin,
     fileList: TFile[],
+    setFileList: Function,
+    getFilesUnderPath: Function,
     activeFolderPath: string,
     setView: Function,
     pinnedFiles: TFile[],
@@ -20,6 +22,8 @@ interface FilesProps {
 interface FilesState {
     activeFile: TFile,
     highlight: boolean,
+    searchPhrase: string,
+    searchBoxVisible: boolean,
 }
 
 export class FileComponent extends React.Component<FilesProps, FilesState>{
@@ -27,6 +31,8 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
     state = {
         activeFile: null as TFile,
         highlight: false,
+        searchPhrase: '',
+        searchBoxVisible: false,
     }
 
     // Scroll Top Once The File List is Loaded
@@ -142,6 +148,23 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
         this.props.setView('folder');
     }
 
+    // Toggle Search Box Visibility State
+    toggleSearchBox = (e: React.MouseEvent) => {
+        this.setState({ searchPhrase: '' });
+        this.setState({ searchBoxVisible: !this.state.searchBoxVisible });
+        this.props.setFileList(this.props.getFilesUnderPath(this.props.activeFolderPath, this.props.plugin));
+    }
+
+    // Search Function
+    handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        var searchPhrase = e.target.value
+        this.setState({ searchPhrase });
+        var files: TFile[] = this.props.getFilesUnderPath(this.props.activeFolderPath, this.props.plugin);
+        if (!files) return;
+        var filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchPhrase.toLowerCase()))
+        this.props.setFileList(filteredFiles);
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -151,10 +174,25 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                         <div className="nav-action-button oz-nav-action-button">
                             <FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => this.handleGoBack(e)} size="lg" />
                         </div>
-                        <div className="nav-action-button oz-nav-action-button">
-                            <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => this.createNewFile(e, this.props.activeFolderPath)} size="lg" />
+                        <div className="oz-nav-buttons-right-block">
+                            <div className="nav-action-button oz-nav-action-button">
+                                <FontAwesomeIcon icon={faSearch} onClick={this.toggleSearchBox} size="lg" />
+                            </div>
+                            <div className="nav-action-button oz-nav-action-button">
+                                <FontAwesomeIcon icon={faPlusCircle} onClick={(e) => this.createNewFile(e, this.props.activeFolderPath)} size="lg" />
+                            </div>
                         </div>
                     </div>
+
+                    {
+                        this.state.searchBoxVisible &&
+                        <div className="search-input-container oz-input-container">
+                            <input type="text" placeholder="Search..."
+                                value={this.state.searchPhrase}
+                                onChange={this.handleSearch}
+                            />
+                        </div>
+                    }
 
                     <div className="oz-file-tree-header">
                         {this.getFolderName(this.props.activeFolderPath)}

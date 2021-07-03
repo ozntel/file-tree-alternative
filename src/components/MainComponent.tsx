@@ -50,6 +50,10 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
         this.savePinnedFilesToSettings();
     }
 
+    setFileList = (fileList: TFile[]) => {
+        this.setState({ fileList });
+    }
+
     setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : this.state.activeFolderPath;
         this.setState({ fileList: getFilesUnderPath(filesPath, this.props.plugin) });
@@ -214,6 +218,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
                         <FileComponent
                             plugin={this.props.plugin}
                             fileList={this.state.fileList}
+                            setFileList={this.setFileList}
+                            getFilesUnderPath={getFilesUnderPath}
                             activeFolderPath={this.state.activeFolderPath}
                             setView={this.setView}
                             pinnedFiles={this.state.pinnedFiles}
