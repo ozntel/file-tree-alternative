@@ -35,6 +35,13 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
         searchBoxVisible: false,
     }
 
+    private searchInput: React.RefObject<HTMLInputElement>;
+
+    constructor(props: FilesProps) {
+        super(props);
+        this.searchInput = React.createRef();
+    }
+
     // Scroll Top Once The File List is Loaded
     componentDidMount() {
         document.querySelector('div.workspace-leaf-content[data-type="file-tree-view"] > div.view-content').scrollTo(0, 0);
@@ -151,7 +158,9 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
     // Toggle Search Box Visibility State
     toggleSearchBox = (e: React.MouseEvent) => {
         this.setState({ searchPhrase: '' });
-        this.setState({ searchBoxVisible: !this.state.searchBoxVisible });
+        this.setState({ searchBoxVisible: !this.state.searchBoxVisible }, () => {
+            if (this.state.searchBoxVisible) this.searchInput.current.focus()
+        });
         this.props.setFileList(this.props.getFilesUnderPath(this.props.activeFolderPath, this.props.plugin));
     }
 
@@ -190,7 +199,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                     {
                         (this.state.searchBoxVisible) &&
                         <div className="search-input-container oz-input-container">
-                            <input type="text" placeholder="Search..."
+                            <input type="text" placeholder="Search..." ref={this.searchInput}
                                 value={this.state.searchPhrase}
                                 onChange={this.handleSearch}
                             />
