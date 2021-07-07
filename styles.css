@@ -104,3 +104,8 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     float: right;
     padding-right: 28px;
 }
+
+.oz-input-container > input {
+    padding-left: 8px;
+    padding-right: 4px;
+}
