@@ -199,7 +199,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                     {
                         (this.state.searchBoxVisible) &&
                         <div className="search-input-container oz-input-container">
-                            <input type="text" placeholder="Search..." ref={this.searchInput}
+                            <input type="search" placeholder="Search..." ref={this.searchInput}
                                 value={this.state.searchPhrase}
                                 onChange={this.handleSearch}
                             />
