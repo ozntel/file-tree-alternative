@@ -5,6 +5,7 @@
 
 This Obsidian Plugin allows users to have a different file explorer experience.
 Please watch the sample record to see the details.
+You can find all release details under the [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
 
 ### Features: 
 
