@@ -24,15 +24,25 @@ interface FilesState {
     highlight: boolean,
     searchPhrase: string,
     searchBoxVisible: boolean,
+    treeHeader: string,
 }
 
 export class FileComponent extends React.Component<FilesProps, FilesState>{
+
+    // Convert Full Path to Final Folder Name
+    getFolderName = (folderPath: string) => {
+        if (folderPath === '/') return this.props.plugin.app.vault.getName();
+        let index = folderPath.lastIndexOf('/');
+        if (index !== -1) return folderPath.substring(index + 1);
+        return folderPath;
+    }
 
     state = {
         activeFile: null as TFile,
         highlight: false,
         searchPhrase: '',
         searchBoxVisible: false,
+        treeHeader: this.getFolderName(this.props.activeFolderPath),
     }
 
     private searchInput: React.RefObject<HTMLInputElement>;
@@ -118,14 +128,6 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
         }
     }
 
-    // Convert Full Path to Final Folder Name
-    getFolderName = (folderPath: string) => {
-        if (folderPath === '/') return this.props.plugin.app.vault.getName();
-        let index = folderPath.lastIndexOf('/');
-        if (index !== -1) return folderPath.substring(index + 1);
-        return folderPath;
-    }
-
     // Sort - Filter Files Depending on Preferences
     customFiles = (fileList: TFile[]) => {
         let sortedfileList: TFile[];
@@ -165,12 +167,25 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
     }
 
     // Search Function
+    searchAllRegex = new RegExp('all:(.*)?');
     handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        var searchPhrase = e.target.value
+        var searchPhrase = e.target.value;
         this.setState({ searchPhrase });
-        var files: TFile[] = this.props.getFilesUnderPath(this.props.activeFolderPath, this.props.plugin);
+        var searchFolder = this.props.activeFolderPath;
+
+        // Check search phrase for search folder
+        let allRegexMatch = searchPhrase.match(this.searchAllRegex);
+        if (allRegexMatch) {
+            searchPhrase = allRegexMatch[1] ? allRegexMatch[1] : '';
+            searchFolder = '/';
+            this.setState({ treeHeader: 'All Files' })
+        } else {
+            this.setState({ treeHeader: this.getFolderName(this.props.activeFolderPath) })
+        }
+
+        var files: TFile[] = this.props.getFilesUnderPath(searchFolder, this.props.plugin);
         if (!files) return;
-        var filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchPhrase.toLowerCase()))
+        var filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()))
         this.props.setFileList(filteredFiles);
     }
 
@@ -207,7 +222,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                     }
 
                     <div className="oz-file-tree-header">
-                        {this.getFolderName(this.props.activeFolderPath)}
+                        {this.state.treeHeader}
                     </div>
 
                     <Dropzone
