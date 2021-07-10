@@ -168,12 +168,25 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
 
     // Search Function
     searchAllRegex = new RegExp('all:(.*)?');
+    searchTagRegex = new RegExp('tag:(.*)?');
     handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         var searchPhrase = e.target.value;
         this.setState({ searchPhrase });
         var searchFolder = this.props.activeFolderPath;
 
-        // Check search phrase for search folder
+        // Check Tag Regex in Search Phrase
+        let tagRegexMatch = searchPhrase.match(this.searchTagRegex);
+        if (tagRegexMatch) {
+            this.setState({ treeHeader: 'Files with Tag' })
+            if (tagRegexMatch[1] === undefined || tagRegexMatch[1].replace(/\s/g, '').length === 0) {
+                this.props.setFileList([]);
+                return;
+            };
+            this.props.setFileList(this.getFilesWithTag(tagRegexMatch[1]));
+            return
+        }
+
+        // Check All Regex in Search Phrase
         let allRegexMatch = searchPhrase.match(this.searchAllRegex);
         if (allRegexMatch) {
             searchPhrase = allRegexMatch[1] ? allRegexMatch[1] : '';
@@ -183,10 +196,31 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
             this.setState({ treeHeader: this.getFolderName(this.props.activeFolderPath) })
         }
 
-        var files: TFile[] = this.props.getFilesUnderPath(searchFolder, this.props.plugin);
-        if (!files) return;
-        var filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()))
+        let getAllFiles = allRegexMatch ? true : false;
+        let filteredFiles = this.getFilesWithName(searchPhrase, searchFolder, getAllFiles);
         this.props.setFileList(filteredFiles);
+    }
+
+    getFilesWithName = (searchPhrase: string, searchFolder: string, getAllFiles?: boolean): TFile[] => {
+        var files: TFile[] = this.props.getFilesUnderPath(searchFolder, this.props.plugin, getAllFiles);
+        var filteredFiles = files.filter(file => file.name.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
+        return filteredFiles;
+    }
+
+    getFilesWithTag = (searchTag: string): TFile[] => {
+        let filesWithTag: TFile[] = [];
+        let mdFiles = this.props.plugin.app.vault.getMarkdownFiles();
+        for (let mdFile of mdFiles) {
+            let fileCache = this.props.plugin.app.metadataCache.getFileCache(mdFile);
+            if (fileCache.tags) {
+                for (let fileTag of fileCache.tags) {
+                    if (fileTag.tag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
+                        if (!filesWithTag.contains(mdFile)) filesWithTag.push(mdFile);
+                    }
+                }
+            }
+        }
+        return filesWithTag;
     }
 
     render() {

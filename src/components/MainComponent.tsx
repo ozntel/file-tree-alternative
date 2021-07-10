@@ -233,15 +233,16 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 }
 
 // Helper Function To Get List of Files
-const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin): TFile[] => {
+const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): TFile[] => {
     var filesUnderPath: TFile[] = [];
+    var showFilesFromSubFolders = getAllFiles ? true : plugin.settings.showFilesFromSubFolders;
     recursiveFx(path, plugin.app);
     function recursiveFx(path: string, app: App) {
         var folderObj = app.vault.getAbstractFileByPath(path);
         if (folderObj instanceof TFolder && folderObj.children) {
             for (let child of folderObj.children) {
                 if (child instanceof TFile) filesUnderPath.push(child);
-                if (child instanceof TFolder && plugin.settings.showFilesFromSubFolders) recursiveFx(child.path, app);
+                if (child instanceof TFolder && showFilesFromSubFolders) recursiveFx(child.path, app);
             }
         }
     }
