@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.2.8
+
+- Search `all files with certain tag` under the vault feature using `tag:` syntaxt in the input box.
+- Settings `Ribbon Icon` description correction.
+
 ## Version 1.2.7
 
 - Search `all` files under the vault feature by using `all:` syntax in the input box

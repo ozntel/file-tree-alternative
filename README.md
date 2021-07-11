@@ -21,6 +21,7 @@ You can find all release details under the [Release Updates](https://github.com/
 - You can drop `external files` into file list to add the files into current active folder path.
 - You can turn on `search` feature from plugin settings to filter files with their names.
 - You can use `all:` syntax in search box to search files from all folders rather than the active folder.
+- You can use `tag:` syntaxt in search box to search files with tag. It will show all files with full or partial match.
 - You can turn on/off `root folder` within the file tree.
 
  **Note**: The last state of `expanded folders` and `pinned files` are saved in `data.json`. Please ensure that you don't delete them manually from `plugin settings` since it will delete all your configuration.
