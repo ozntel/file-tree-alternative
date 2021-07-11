@@ -44,7 +44,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Ribbon Icon')
-            .setDesc('Turn on if you want Ribbon Icon for clearing the images.')
+            .setDesc('Turn on if you want Ribbon Icon for activating the File Tree.')
             .addToggle((toggle) => toggle
                 .setValue(this.plugin.settings.ribbonIcon)
                 .onChange((value) => {

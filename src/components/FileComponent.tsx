@@ -182,7 +182,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                 this.props.setFileList([]);
                 return;
             };
-            this.props.setFileList(this.getFilesWithTag(tagRegexMatch[1]));
+            this.props.setFileList([...this.getFilesWithTag(tagRegexMatch[1])]);
             return
         }
 
@@ -207,15 +207,15 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
         return filteredFiles;
     }
 
-    getFilesWithTag = (searchTag: string): TFile[] => {
-        let filesWithTag: TFile[] = [];
+    getFilesWithTag = (searchTag: string): Set<TFile> => {
+        let filesWithTag: Set<TFile> = new Set();
         let mdFiles = this.props.plugin.app.vault.getMarkdownFiles();
         for (let mdFile of mdFiles) {
             let fileCache = this.props.plugin.app.metadataCache.getFileCache(mdFile);
             if (fileCache.tags) {
                 for (let fileTag of fileCache.tags) {
                     if (fileTag.tag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
-                        if (!filesWithTag.contains(mdFile)) filesWithTag.push(mdFile);
+                        if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
                     }
                 }
             }
