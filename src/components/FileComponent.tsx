@@ -4,7 +4,7 @@ import Dropzone from 'react-dropzone';
 import { TFile, Menu, Keymap } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch } from '@fortawesome/free-solid-svg-icons'
-import { VaultChangeModal } from '../modals';
+import { VaultChangeModal, FolderMoveSuggesterModal } from '../modals';
 import FileTreeAlternativePlugin from '../main';
 
 interface FilesProps {
@@ -112,6 +112,19 @@ export class FileComponent extends React.Component<FilesProps, FilesState>{
                 this.props.plugin.app.vault.delete(file, true);
             })
         })
+
+        // Move Item
+        // @ts-ignore
+        if (!this.props.plugin.app.internalPlugins.plugins["file-explorer"]?._loaded) {
+            fileMenu.addItem((menuItem) => {
+                menuItem.setTitle('Move file to...');
+                menuItem.setIcon('paper-plane');
+                menuItem.onClick((ev: MouseEvent) => {
+                    let folderSuggesterModal = new FolderMoveSuggesterModal(this.props.plugin.app, file);
+                    folderSuggesterModal.open();
+                })
+            })
+        }
 
         // Trigger
         this.props.plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');

@@ -1,4 +1,4 @@
-import { Modal, App, TFolder, TFile, TAbstractFile } from 'obsidian';
+import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal } from 'obsidian';
 
 export class VaultChangeModal extends Modal {
 
@@ -86,4 +86,45 @@ export class VaultChangeModal extends Modal {
         let { contentEl } = this;
         contentEl.empty();
     }
+}
+
+
+export class FolderMoveSuggesterModal extends FuzzySuggestModal<TFolder> {
+
+    app: App;
+    fileToMove: TFile;
+
+    constructor(app: App, fileToMove: TFile) {
+        super(app);
+        this.fileToMove = fileToMove;
+    }
+
+    getItemText(item: TFolder): string {
+        return item.path;
+    }
+
+    getItems(): TFolder[] {
+        return this.getFolders();
+    }
+
+    getFolders(): TFolder[] {
+        let folders: TFolder[] = [];
+        let rootFolder = this.app.vault.getRoot();
+        function recursiveFx(folder: TFolder) {
+            for (let child of folder.children) {
+                if (child instanceof TFolder) {
+                    let childFolder: TFolder = (child as TFolder);
+                    folders.push(childFolder);
+                    if (childFolder.children) recursiveFx(childFolder);
+                }
+            }
+        }
+        recursiveFx(rootFolder);
+        return folders;
+    }
+
+    onChooseItem(item: TFolder, evt: MouseEvent | KeyboardEvent) {
+        this.app.vault.rename(this.fileToMove, item.path + '/' + this.fileToMove.name);
+    }
+
 }
