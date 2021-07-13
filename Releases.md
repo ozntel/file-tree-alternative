@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.2.9
+
+- `Move file to` option to be available when core plugin `file-explorer` is disabled in `context-menu`
+
 ## Version 1.2.8
 
 - Search `all files with certain tag` under the vault feature using `tag:` syntaxt in the input box.
