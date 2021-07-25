@@ -109,3 +109,11 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     padding-left: 8px;
     padding-right: 4px;
 }
+
+.oz-nav-action-button:hover {
+    color: var(--interactive-accent);
+}
+
+.oz-nav-action-button .fa-lg {
+    font-size: 1.15em;
+}

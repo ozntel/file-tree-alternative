@@ -26,8 +26,8 @@ export class VaultChangeModal extends Modal {
             headerText = 'Create Note: Provide Name'
         }
 
-        const headerEl = contentEl.createEl('h4', { text: headerText })
-        headerEl.style.cssText = 'text-align: center; font-weight: normal'
+        const headerEl = contentEl.createEl('div', { text: headerText })
+        headerEl.addClass('modal-title')
 
         // Input El
         const inputEl = contentEl.createEl('input')
