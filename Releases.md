@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.3.0
+
+- Small style corrections
+
 ## Version 1.2.9
 
 - `Move file to` option to be available when core plugin `file-explorer` is disabled in `context-menu`
