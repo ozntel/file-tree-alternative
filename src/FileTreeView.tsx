@@ -2,7 +2,7 @@ import { ItemView, WorkspaceLeaf } from 'obsidian';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FileTreeAlternativePlugin from './main';
-import MainTreeComponent from './components/MainComponent';
+import MainTreeComponent from './components/MainView/MainComponent';
 
 export const VIEW_TYPE = 'file-tree-view';
 export const VIEW_DISPLAY_TEXT = 'File Tree';

@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"jsx": "react",
 		"esModuleInterop": true,
-		"baseUrl": ".",
+		"baseUrl": "src",
 		"inlineSourceMap": true,
 		"inlineSources": true,
 		"isolatedModules": true,

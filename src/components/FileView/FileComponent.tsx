@@ -4,8 +4,8 @@ import Dropzone from 'react-dropzone';
 import { TFile, Menu, Keymap } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch } from '@fortawesome/free-solid-svg-icons';
-import { VaultChangeModal, FolderMoveSuggesterModal } from '../modals';
-import FileTreeAlternativePlugin from '../main';
+import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
+import FileTreeAlternativePlugin from 'main';
 
 interface FilesProps {
 	plugin: FileTreeAlternativePlugin;

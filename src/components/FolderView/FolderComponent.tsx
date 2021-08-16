@@ -1,9 +1,9 @@
 import React from 'react';
 import { Menu, TFolder } from 'obsidian';
-import Tree from './treeComponent/TreeComponent';
-import { FolderTree } from './MainComponent';
-import { VaultChangeModal } from '../modals';
-import FileTreeAlternativePlugin from '../main';
+import Tree from 'components/FolderView/treeComponent/TreeComponent';
+import { FolderTree } from 'state/types';
+import { VaultChangeModal } from 'modals';
+import FileTreeAlternativePlugin from 'main';
 
 interface FolderProps {
 	plugin: FileTreeAlternativePlugin;
