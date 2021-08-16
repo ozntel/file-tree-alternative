@@ -1,7 +1,6 @@
 import { TFile, TFolder, App } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
-import { FolderFileCountMap, FolderTree } from 'state/types';
-import clonedeep from 'lodash';
+import { FolderFileCountMap, FolderTree } from 'utils/types';
 
 export class FileTreeUtils {
 	// Helper Function To Get List of Files

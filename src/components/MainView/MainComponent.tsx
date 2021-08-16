@@ -5,7 +5,7 @@ import { FolderComponent } from 'components/FolderView/FolderComponent';
 import { FileTreeView } from 'FileTreeView';
 import FileTreeAlternativePlugin from 'main';
 import { FileTreeUtils } from 'utils/Utils';
-import { FolderTree } from 'state/types';
+import { FolderTree } from 'utils/types';
 
 interface MainTreeComponentProps {
 	fileTreeView: FileTreeView;

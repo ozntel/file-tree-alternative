@@ -1,3 +1,7 @@
+.file-tree-plugin-view {
+	height: 80vh;
+}
+
 .oz-file-tree-header {
 	height: 22px;
 	color: var(--text-normal);

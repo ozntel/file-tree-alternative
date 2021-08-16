@@ -1,9 +1,10 @@
 import React from 'react';
 import { Menu, TFolder } from 'obsidian';
 import Tree from 'components/FolderView/treeComponent/TreeComponent';
-import { FolderTree } from 'state/types';
+import { FolderTree } from 'utils/types';
 import { VaultChangeModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
+import ConditionalRootFolderWrapper from 'components/FolderView/ConditionalWrapper';
 
 interface FolderProps {
 	plugin: FileTreeAlternativePlugin;
@@ -65,17 +66,6 @@ export class FolderComponent extends React.Component<FolderProps> {
 		);
 	}
 }
-
-/* ------ Conditional Root Folder Wrapper ------ */
-
-type ConditionalRootFolderWrapper = {
-	children: React.ReactElement;
-	condition: boolean;
-	wrapper: (children: React.ReactElement) => JSX.Element;
-};
-
-const ConditionalRootFolderWrapper: React.FC<ConditionalRootFolderWrapper> = ({ condition, wrapper, children }) =>
-	condition ? wrapper(children) : children;
 
 /* ------ Nested Children Component ------ */
 

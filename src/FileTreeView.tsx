@@ -44,6 +44,11 @@ export class FileTreeView extends ItemView {
 
 	constructFileTree(folderPath: string, vaultChange: string) {
 		ReactDOM.unmountComponentAtNode(this.contentEl);
-		ReactDOM.render(<MainTreeComponent fileTreeView={this} plugin={this.plugin} />, this.contentEl);
+		ReactDOM.render(
+			<div className="file-tree-plugin-view">
+				<MainTreeComponent fileTreeView={this} plugin={this.plugin} />
+			</div>,
+			this.contentEl
+		);
 	}
 }
