@@ -1,4 +1,4 @@
-import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal } from 'obsidian';
+import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal, MarkdownEditView } from 'obsidian';
 
 export class VaultChangeModal extends Modal {
 	file: TFolder | TFile | TAbstractFile;
@@ -73,9 +73,10 @@ export class VaultChangeModal extends Modal {
 			} else if (this.action === 'create note') {
 				// @ts-ignore
 				const newFile = await this.app.fileManager.createNewMarkdownFile(this.file, newName);
-				// const newLeaf = this.app.workspace.activeLeaf;
-				// await newLeaf.openFile(newFile);
-				// this.app.workspace.setActiveLeaf(newLeaf, false, true);
+				this.app.workspace.activeLeaf.setViewState({
+					type: 'markdown',
+					state: { file: newFile.path },
+				});
 			}
 			myModal.close();
 		};
