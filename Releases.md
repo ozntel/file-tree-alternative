@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.3.2
+
+-   Component Height Issue
+
 ## Version 1.3.1
 
 -   Input focus issue
