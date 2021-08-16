@@ -7,24 +7,24 @@ This Obsidian Plugin allows users to have a different file explorer experience.
 Please watch the sample record to see the details.
 You can find all release details under the [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
 
-### Features: 
+### Features:
 
- - The plugin lists all files including the `files under sub-folders`. You can turn off this option from plugin settings if you want to see only the files under certain folder.
- - Folders and files are in `separate views`.
- - You can see the `number of notes` under each folder within the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
- - The plugin remembers `last expanded folders` state to load for the following session.
- - The plugin allows you to `Pin` your favorite files to the top. They are saved for the following sessions.
- - You can use `ribbon icon` to activate the `File Tree Leaf` in case you close by mistake. You can turn off `ribbon icon` from the plugin settings.
- - You can define certain `file extensions` in plugin settings to exclude from listing in file explorer.
- - You can define certain `folder paths` in plugin settings to exclude from main folder list. All subfolders are going to be excluded, as well.
-- You can `star`/`unstar` your files in case you have `Starred` plugin turned on.
-- You can drop `external files` into file list to add the files into current active folder path.
-- You can turn on `search` feature from plugin settings to filter files with their names.
-- You can use `all:` syntax in search box to search files from all folders rather than the active folder.
-- You can use `tag:` syntaxt in search box to search files with tag. It will show all files with full or partial match.
-- You can turn on/off `root folder` within the file tree.
+-   The plugin lists all files including the `files under sub-folders`. You can turn off this option from plugin settings if you want to see only the files under certain folder.
+-   Folders and files are in `separate views`.
+-   You can see the `number of notes` under each folder within the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
+-   The plugin remembers `last expanded folders` state to load for the following session.
+-   The plugin allows you to `Pin` your favorite files to the top. They are saved for the following sessions.
+-   You can use `ribbon icon` to activate the `File Tree Leaf` in case you close by mistake. You can turn off `ribbon icon` from the plugin settings.
+-   You can define certain `file extensions` in plugin settings to exclude from listing in file explorer.
+-   You can define certain `folder paths` in plugin settings to exclude from main folder list. All subfolders are going to be excluded, as well.
+-   You can `star`/`unstar` your files in case you have `Starred` plugin turned on.
+-   You can drop `external files` into file list to add the files into current active folder path.
+-   You can turn on `search` feature from plugin settings to filter files with their names.
+-   You can use `all:` syntax in search box to search files from all folders rather than the active folder.
+-   You can use `tag:` syntaxt in search box to search files with tag. It will show all files with full or partial match.
+-   You can turn on/off `root folder` within the file tree.
 
- **Note**: The last state of `expanded folders` and `pinned files` are saved in `data.json`. Please ensure that you don't delete them manually from `plugin settings` since it will delete all your configuration.
+    **Note**: The last state of `expanded folders` and `pinned files` are saved in `data.json`. Please ensure that you don't delete them manually from `plugin settings` since it will delete all your configuration.
 
 ## See Sample Records
 
@@ -41,6 +41,7 @@ You can find all release details under the [Release Updates](https://github.com/
 </a>
 
 ### Update v1.1.0
+
 <a href="https://youtu.be/25crdxtyENA" target=“_blank”>
     <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 600px;" /> 
 </a>
@@ -53,7 +54,7 @@ You can find all release details under the [Release Updates](https://github.com/
 
 ## Old Version (Evernote Style)
 
-Due to fact that there was a limitation to manipulate the default `file explorer` of Obsidian, I needed to move away from the Evernote style approach. 
+Due to fact that there was a limitation to manipulate the default `file explorer` of Obsidian, I needed to move away from the Evernote style approach.
 
 **If you still want to use this version, you need to handle the installation manually from `v1.0.1`:**
 

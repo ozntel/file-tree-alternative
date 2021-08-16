@@ -1,12 +1,8 @@
 import { Plugin } from 'obsidian';
 import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
-import {
-	FileTreeAlternativePluginSettings,
-	FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS
-} from './settings';
+import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
 
 export default class FileTreeAlternativePlugin extends Plugin {
-
 	settings: FileTreeAlternativePluginSettings;
 	ribbonIconEl: HTMLElement | undefined = undefined;
 
@@ -22,8 +18,8 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			return new FileTreeView(leaf, this);
 		});
 
-		// Event Listeners 
-		this.app.workspace.onLayoutReady(async () => await this.openFileTreeLeaf())
+		// Event Listeners
+		this.app.workspace.onLayoutReady(async () => await this.openFileTreeLeaf());
 
 		// Add Command to Open File Tree Leaf
 		this.addCommand({
@@ -32,7 +28,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			callback: async () => await this.openFileTreeLeaf(),
 		});
 
-		// Ribbon Icon For Opening 
+		// Ribbon Icon For Opening
 		this.refreshIconRibbon();
 	}
 
@@ -53,10 +49,10 @@ export default class FileTreeAlternativePlugin extends Plugin {
 		this.ribbonIconEl?.remove();
 		if (this.settings.ribbonIcon) {
 			this.ribbonIconEl = this.addRibbonIcon(ICON, 'Alternative File Tree Plugin', async () => {
-				await this.openFileTreeLeaf()
-			});;
+				await this.openFileTreeLeaf();
+			});
 		}
-	}
+	};
 
 	openFileTreeLeaf = async () => {
 		if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
@@ -64,7 +60,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			await leaf.setViewState({ type: VIEW_TYPE });
 			this.app.workspace.revealLeaf(leaf);
 		}
-	}
+	};
 
 	detachFileTreeLeafs = () => {
 		let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
@@ -72,11 +68,10 @@ export default class FileTreeAlternativePlugin extends Plugin {
 			(leaf.view as FileTreeView).destroy();
 			leaf.detach();
 		}
-	}
+	};
 
 	refreshTreeLeafs = () => {
 		this.detachFileTreeLeafs();
 		this.openFileTreeLeaf();
-	}
-
+	};
 }

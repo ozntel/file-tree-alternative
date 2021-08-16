@@ -9,49 +9,41 @@ export const VIEW_DISPLAY_TEXT = 'File Tree';
 export const ICON = 'sheets-in-box';
 
 export class FileTreeView extends ItemView {
+	plugin: FileTreeAlternativePlugin;
+	currentFolderPath: string;
 
-    plugin: FileTreeAlternativePlugin;
-    currentFolderPath: string;
+	constructor(leaf: WorkspaceLeaf, plugin: FileTreeAlternativePlugin) {
+		super(leaf);
+		this.plugin = plugin;
+	}
 
-    constructor(leaf: WorkspaceLeaf, plugin: FileTreeAlternativePlugin) {
-        super(leaf);
-        this.plugin = plugin;
-    }
+	getViewType(): string {
+		return VIEW_TYPE;
+	}
 
-    getViewType(): string {
-        return VIEW_TYPE;
-    }
+	getDisplayText(): string {
+		return VIEW_DISPLAY_TEXT;
+	}
 
-    getDisplayText(): string {
-        return VIEW_DISPLAY_TEXT;
-    }
+	getIcon(): string {
+		return ICON;
+	}
 
-    getIcon(): string {
-        return ICON;
-    }
+	async onClose() {
+		this.destroy();
+	}
 
-    async onClose() {
-        this.destroy()
-    }
+	destroy() {
+		ReactDOM.unmountComponentAtNode(this.contentEl);
+	}
 
-    destroy() {
-        ReactDOM.unmountComponentAtNode(this.contentEl);
-    }
+	async onOpen(): Promise<void> {
+		ReactDOM.unmountComponentAtNode(this.contentEl);
+		this.constructFileTree(this.app.vault.getRoot().path, '');
+	}
 
-    async onOpen(): Promise<void> {
-        ReactDOM.unmountComponentAtNode(this.contentEl);
-        this.constructFileTree(this.app.vault.getRoot().path, '');
-    }
-
-    constructFileTree(folderPath: string, vaultChange: string) {
-        ReactDOM.unmountComponentAtNode(this.contentEl);
-        ReactDOM.render(
-            <MainTreeComponent
-                fileTreeView={this}
-                plugin={this.plugin}
-            />,
-            this.contentEl
-        );
-    }
-
+	constructFileTree(folderPath: string, vaultChange: string) {
+		ReactDOM.unmountComponentAtNode(this.contentEl);
+		ReactDOM.render(<MainTreeComponent fileTreeView={this} plugin={this.plugin} />, this.contentEl);
+	}
 }
