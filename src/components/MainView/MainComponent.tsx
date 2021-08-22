@@ -37,13 +37,13 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 		folderFileCountMap: {},
 	};
 
-	rootFolder: TFolder = this.props.plugin.app.vault.getRoot();
+	plugin = this.props.plugin;
+	rootFolder: TFolder = this.plugin.app.vault.getRoot();
 
 	setView = (view: string) => this.setState({ view });
 
 	setPinnedFiles = (pinnedFiles: TFile[]) => {
-		this.setState({ pinnedFiles });
-		this.savePinnedFilesToSettings();
+		this.setState({ pinnedFiles }, () => this.savePinnedFilesToSettings());
 	};
 
 	setFileList = (fileList: TFile[]) => {
@@ -52,12 +52,12 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 
 	setNewFileList = (folderPath?: string) => {
 		let filesPath = folderPath ? folderPath : this.state.activeFolderPath;
-		this.setState({ fileList: FileTreeUtils.getFilesUnderPath(filesPath, this.props.plugin) });
+		this.setState({ fileList: FileTreeUtils.getFilesUnderPath(filesPath, this.plugin) });
 	};
 
 	// Folder Component to Set Expanded Folders
 	setOpenFolders = (openFolders: TFolder[]) => {
-		this.setState({ openFolders });
+		this.setState({ openFolders }, () => this.saveOpenFoldersToSettings());
 	};
 
 	// Function used for File View
@@ -70,7 +70,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 
 	// Load Excluded Extensions as State
 	loadExcludedExtensions = () => {
-		let extensionsString: string = this.props.plugin.settings.excludedExtensions;
+		let extensionsString: string = this.plugin.settings.excludedExtensions;
 		let excludedExtensions: string[] = [];
 		for (let extension of extensionsString.split(',')) {
 			excludedExtensions.push(extension.trim());
@@ -80,7 +80,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 
 	// Load Excluded Folders
 	loadExcludedFolders = () => {
-		let excludedString: string = this.props.plugin.settings.excludedFolders;
+		let excludedString: string = this.plugin.settings.excludedFolders;
 		let excludedFolders: string[] = [];
 		for (let excludedFolder of excludedString.split(',')) {
 			excludedFolders.push(excludedFolder.trim());
@@ -91,8 +91,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 	// Load The String List and Set Open Folders State
 	loadOpenFoldersFromSettings() {
 		let openFolders: TFolder[] = [];
-		for (let folder of this.props.plugin.settings.openFolders) {
-			let openFolder = this.props.plugin.app.vault.getAbstractFileByPath(folder);
+		for (let folder of this.plugin.settings.openFolders) {
+			let openFolder = this.plugin.app.vault.getAbstractFileByPath(folder);
 			if (openFolder) openFolders.push(openFolder as TFolder);
 		}
 		this.setState({ openFolders });
@@ -101,8 +101,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 	// Load The String List anad Set Pinned Files State
 	loadPinnedFilesFromSettings() {
 		let pinnedFiles: TFile[] = [];
-		for (let file of this.props.plugin.settings.pinnedFiles) {
-			let pinnedFile = this.props.plugin.app.vault.getAbstractFileByPath(file);
+		for (let file of this.plugin.settings.pinnedFiles) {
+			let pinnedFile = this.plugin.app.vault.getAbstractFileByPath(file);
 			if (pinnedFile) pinnedFiles.push(pinnedFile as TFile);
 		}
 		this.setState({ pinnedFiles });
@@ -114,8 +114,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 		for (let folder of this.state.openFolders) {
 			openFolders.push(folder.path);
 		}
-		this.props.plugin.settings.openFolders = openFolders;
-		this.props.plugin.saveSettings();
+		this.plugin.settings.openFolders = openFolders;
+		this.plugin.saveSettings();
 	}
 
 	// Get The Pinned Files State and Save in Data as String Array
@@ -124,14 +124,14 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 		for (let file of this.state.pinnedFiles) {
 			pinnedFiles.push(file.path);
 		}
-		this.props.plugin.settings.pinnedFiles = pinnedFiles;
-		this.props.plugin.saveSettings();
+		this.plugin.settings.pinnedFiles = pinnedFiles;
+		this.plugin.saveSettings();
 	}
 
 	// Save Excluded Folders to Settings as String
 	saveExcludedFoldersToSettings() {
-		this.props.plugin.settings.excludedFolders = this.state.excludedFolders.join(', ');
-		this.props.plugin.saveSettings();
+		this.plugin.settings.excludedFolders = this.state.excludedFolders.join(', ');
+		this.plugin.saveSettings();
 	}
 
 	// Set New Excluded Folders List and Save to Settings
@@ -145,8 +145,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 		console.log('File Tree Component Mounted');
 		// Set the Folder Tree and Folder Count Map
 		this.setState({ folderTree: FileTreeUtils.createFolderTree(this.rootFolder) });
-		if (this.props.plugin.settings.folderCount)
-			this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.props.plugin) });
+		if (this.plugin.settings.folderCount)
+			this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.plugin) });
 		// Set/Remember Open Folders from Last Session
 		this.loadOpenFoldersFromSettings();
 		// Set/Remember Pinned Files
@@ -156,29 +156,16 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 		// Set Excluded Folders
 		this.loadExcludedFolders();
 		// Register Vault Events
-		this.props.plugin.registerEvent(
-			this.props.plugin.app.vault.on('rename', (file, oldPath) => this.handleVaultChanges(file, 'rename'))
+		this.plugin.registerEvent(
+			this.plugin.app.vault.on('rename', (file) => this.handleVaultChanges(file, 'rename'))
 		);
-		this.props.plugin.registerEvent(
-			this.props.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete'))
+		this.plugin.registerEvent(
+			this.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete'))
 		);
-		this.props.plugin.registerEvent(
-			this.props.plugin.app.vault.on('create', (file) => this.handleVaultChanges(file, 'create'))
-		);
-		// Workspace Quit to Save Last Status of Open Folders
-		this.props.plugin.registerEvent(
-			this.props.plugin.app.workspace.on('quit', () => {
-				this.saveOpenFoldersToSettings();
-				this.savePinnedFilesToSettings();
-			})
+		this.plugin.registerEvent(
+			this.plugin.app.vault.on('create', (file) => this.handleVaultChanges(file, 'create'))
 		);
 	}
-
-	// Before Compount Unmounted Save Last States
-	componentWillUnmount = () => {
-		this.saveOpenFoldersToSettings();
-		this.savePinnedFilesToSettings();
-	};
 
 	// Function for Event Handlers
 	handleVaultChanges = (file: TAbstractFile, changeType: string) => {
@@ -199,8 +186,8 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 			this.setState({ folderTree: FileTreeUtils.createFolderTree(this.rootFolder) });
 		}
 		// After Each Vault Change Folder Count Map to Be Updated
-		if (this.props.plugin.settings.folderCount)
-			this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.props.plugin) });
+		if (this.plugin.settings.folderCount)
+			this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.plugin) });
 	};
 
 	render() {
@@ -208,7 +195,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 			<React.Fragment>
 				{this.state.view === 'folder' ? (
 					<FolderComponent
-						plugin={this.props.plugin}
+						plugin={this.plugin}
 						folderTree={this.state.folderTree}
 						activeFolderPath={this.state.activeFolderPath}
 						setActiveFolderPath={this.setActiveFolderPath}
@@ -221,7 +208,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 					/>
 				) : (
 					<FileComponent
-						plugin={this.props.plugin}
+						plugin={this.plugin}
 						fileList={this.state.fileList}
 						setFileList={this.setFileList}
 						getFilesUnderPath={FileTreeUtils.getFilesUnderPath}
