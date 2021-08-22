@@ -28,9 +28,11 @@ interface FilesState {
 }
 
 export class FileComponent extends React.Component<FilesProps, FilesState> {
+	plugin = this.props.plugin;
+
 	// Convert Full Path to Final Folder Name
 	getFolderName = (folderPath: string) => {
-		if (folderPath === '/') return this.props.plugin.app.vault.getName();
+		if (folderPath === '/') return this.plugin.app.vault.getName();
 		let index = folderPath.lastIndexOf('/');
 		if (index !== -1) return folderPath.substring(index + 1);
 		return folderPath;
@@ -62,10 +64,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 	onDrop = (files: File[]) => {
 		files.map(async (file) => {
 			file.arrayBuffer().then((arrayBuffer) => {
-				this.props.plugin.app.vault.adapter.writeBinary(
-					this.props.activeFolderPath + '/' + file.name,
-					arrayBuffer
-				);
+				this.plugin.app.vault.adapter.writeBinary(this.props.activeFolderPath + '/' + file.name, arrayBuffer);
 			});
 		});
 	};
@@ -74,13 +73,13 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 
 	// Handle Click Event on File - Allows Open with Cmd/Ctrl
 	openFile = (file: TFile, e: React.MouseEvent) => {
-		this.props.plugin.app.workspace.openLinkText(file.path, '/', Keymap.isModifier(e, 'Mod') || 1 === e.button);
+		this.plugin.app.workspace.openLinkText(file.path, '/', Keymap.isModifier(e, 'Mod') || 1 === e.button);
 		this.setState({ activeFile: file });
 	};
 
 	// Handle Right Click Event on File - Custom Menu
 	triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
-		const fileMenu = new Menu(this.props.plugin.app);
+		const fileMenu = new Menu(this.plugin.app);
 
 		// Pin - Unpin Item
 		fileMenu.addItem((menuItem) => {
@@ -102,7 +101,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 			menuItem.setTitle('Rename');
 			menuItem.setIcon('pencil');
 			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(this.props.plugin.app, file, 'rename');
+				let vaultChangeModal = new VaultChangeModal(this.plugin.app, file, 'rename');
 				vaultChangeModal.open();
 			});
 		});
@@ -112,25 +111,25 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 			menuItem.setTitle('Delete');
 			menuItem.setIcon('trash');
 			menuItem.onClick((ev: MouseEvent) => {
-				this.props.plugin.app.vault.delete(file, true);
+				this.plugin.app.vault.delete(file, true);
 			});
 		});
 
 		// Move Item
 		// @ts-ignore
-		if (!this.props.plugin.app.internalPlugins.plugins['file-explorer']?._loaded) {
+		if (!this.plugin.app.internalPlugins.plugins['file-explorer']?._loaded) {
 			fileMenu.addItem((menuItem) => {
 				menuItem.setTitle('Move file to...');
 				menuItem.setIcon('paper-plane');
 				menuItem.onClick((ev: MouseEvent) => {
-					let folderSuggesterModal = new FolderMoveSuggesterModal(this.props.plugin.app, file);
+					let folderSuggesterModal = new FolderMoveSuggesterModal(this.plugin.app, file);
 					folderSuggesterModal.open();
 				});
 			});
 		}
 
 		// Trigger
-		this.props.plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
+		this.plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
 		fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
 		return false;
 	};
@@ -162,9 +161,9 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 
 	// Handle Plus Button - Opens Modal to Create a New File
 	createNewFile = async (e: React.MouseEvent, folderPath: string) => {
-		let targetFolder = this.props.plugin.app.vault.getAbstractFileByPath(folderPath);
+		let targetFolder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
 		if (!targetFolder) return;
-		let modal = new VaultChangeModal(this.props.plugin.app, targetFolder, 'create note');
+		let modal = new VaultChangeModal(this.plugin.app, targetFolder, 'create note');
 		modal.open();
 	};
 
@@ -179,7 +178,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 		this.setState({ searchBoxVisible: !this.state.searchBoxVisible }, () => {
 			if (this.state.searchBoxVisible) this.searchInput.current.focus();
 		});
-		this.props.setFileList(this.props.getFilesUnderPath(this.props.activeFolderPath, this.props.plugin));
+		this.props.setFileList(this.props.getFilesUnderPath(this.props.activeFolderPath, this.plugin));
 	};
 
 	// Search Function
@@ -218,7 +217,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 	};
 
 	getFilesWithName = (searchPhrase: string, searchFolder: string, getAllFiles?: boolean): TFile[] => {
-		var files: TFile[] = this.props.getFilesUnderPath(searchFolder, this.props.plugin, getAllFiles);
+		var files: TFile[] = this.props.getFilesUnderPath(searchFolder, this.plugin, getAllFiles);
 		var filteredFiles = files.filter((file) =>
 			file.name.toLowerCase().includes(searchPhrase.toLowerCase().trimStart())
 		);
@@ -227,9 +226,9 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 
 	getFilesWithTag = (searchTag: string): Set<TFile> => {
 		let filesWithTag: Set<TFile> = new Set();
-		let mdFiles = this.props.plugin.app.vault.getMarkdownFiles();
+		let mdFiles = this.plugin.app.vault.getMarkdownFiles();
 		for (let mdFile of mdFiles) {
-			let fileCache = this.props.plugin.app.metadataCache.getFileCache(mdFile);
+			let fileCache = this.plugin.app.metadataCache.getFileCache(mdFile);
 			if (fileCache.tags) {
 				for (let fileTag of fileCache.tags) {
 					if (fileTag.tag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
@@ -250,7 +249,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 							<FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => this.handleGoBack(e)} size="lg" />
 						</div>
 						<div className="oz-nav-buttons-right-block">
-							{this.props.plugin.settings.searchFunction && (
+							{this.plugin.settings.searchFunction && (
 								<div className="nav-action-button oz-nav-action-button">
 									<FontAwesomeIcon icon={faSearch} onClick={this.toggleSearchBox} size="lg" />
 								</div>

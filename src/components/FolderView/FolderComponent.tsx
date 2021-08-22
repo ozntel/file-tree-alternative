@@ -21,6 +21,7 @@ interface FolderProps {
 
 export class FolderComponent extends React.Component<FolderProps> {
 	treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 };
+	plugin = this.props.plugin;
 
 	handleFolderNameClick = (folderPath: string) => {
 		this.props.setActiveFolderPath(folderPath);
@@ -30,18 +31,18 @@ export class FolderComponent extends React.Component<FolderProps> {
 		return (
 			<React.Fragment>
 				<ConditionalRootFolderWrapper
-					condition={this.props.plugin.settings.showRootFolder}
+					condition={this.plugin.settings.showRootFolder}
 					wrapper={(children) => {
 						return (
 							<Tree
-								plugin={this.props.plugin}
-								content={this.props.plugin.app.vault.getName()}
+								plugin={this.plugin}
+								content={this.plugin.app.vault.getName()}
 								open
 								style={this.treeStyles}
 								onClick={() => this.handleFolderNameClick('/')}
 								setOpenFolders={this.props.setOpenFolders}
 								openFolders={this.props.openFolders}
-								folder={this.props.plugin.app.vault.getRoot()}
+								folder={this.plugin.app.vault.getRoot()}
 								folderFileCountMap={this.props.folderFileCountMap}>
 								{children}
 							</Tree>
@@ -49,7 +50,7 @@ export class FolderComponent extends React.Component<FolderProps> {
 					}}>
 					{this.props.folderTree && (
 						<NestedChildrenComponent
-							plugin={this.props.plugin}
+							plugin={this.plugin}
 							folderTree={this.props.folderTree}
 							activeFolderPath={this.props.activeFolderPath}
 							setActiveFolderPath={this.props.setActiveFolderPath}
@@ -83,6 +84,8 @@ interface NestedChildrenComponentProps {
 }
 
 class NestedChildrenComponent extends React.Component<NestedChildrenComponentProps> {
+	plugin = this.props.plugin;
+
 	handleFolderNameClick = (folderPath: string) => {
 		this.props.setActiveFolderPath(folderPath);
 	};
@@ -93,13 +96,13 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 		if (event === undefined) e = window.event as MouseEvent;
 
 		// Menu Items
-		const fileMenu = new Menu(this.props.plugin.app);
+		const fileMenu = new Menu(this.plugin.app);
 
 		fileMenu.addItem((menuItem) => {
 			menuItem.setTitle('New Folder');
 			menuItem.setIcon('folder');
 			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(this.props.plugin.app, folder, 'create folder');
+				let vaultChangeModal = new VaultChangeModal(this.plugin.app, folder, 'create folder');
 				vaultChangeModal.open();
 			});
 		});
@@ -108,7 +111,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 			menuItem.setTitle('Delete');
 			menuItem.setIcon('trash');
 			menuItem.onClick((ev: MouseEvent) => {
-				this.props.plugin.app.vault.delete(folder, true);
+				this.plugin.app.vault.delete(folder, true);
 			});
 		});
 
@@ -116,7 +119,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 			menuItem.setTitle('Rename');
 			menuItem.setIcon('pencil');
 			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(this.props.plugin.app, folder, 'rename');
+				let vaultChangeModal = new VaultChangeModal(this.plugin.app, folder, 'rename');
 				vaultChangeModal.open();
 			});
 		});
@@ -130,7 +133,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 		});
 
 		// Trigger
-		this.props.plugin.app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
+		this.plugin.app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
 		fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
 		return false;
 	};
@@ -155,7 +158,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 							<React.Fragment key={child.folder.path}>
 								{(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
 									<Tree
-										plugin={this.props.plugin}
+										plugin={this.plugin}
 										content={child.folder.name}
 										open={this.props.openFolders.contains(child.folder) ? true : false}
 										onClick={() => this.handleFolderNameClick(child.folder.path)}
@@ -165,7 +168,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 										folder={child.folder}
 										folderFileCountMap={this.props.folderFileCountMap}>
 										<NestedChildrenComponent
-											plugin={this.props.plugin}
+											plugin={this.plugin}
 											folderTree={child}
 											activeFolderPath={this.props.activeFolderPath}
 											setActiveFolderPath={this.props.setActiveFolderPath}
@@ -179,7 +182,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 									</Tree>
 								) : (
 									<Tree
-										plugin={this.props.plugin}
+										plugin={this.plugin}
 										content={child.folder.name}
 										onClick={() => this.handleFolderNameClick(child.folder.path)}
 										onContextMenu={(e: MouseEvent) => this.handleContextMenu(e, child.folder)}

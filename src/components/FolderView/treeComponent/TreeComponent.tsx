@@ -1,7 +1,7 @@
 import { TFolder } from 'obsidian';
 import React from 'react';
 import { animated, config, Spring } from 'react-spring';
-import FileTreeAlternativePlugin from 'src/main';
+import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
 import * as Icons from './icons';
 
