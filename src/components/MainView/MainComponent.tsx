@@ -4,7 +4,7 @@ import { FileComponent } from 'components/FileView/FileComponent';
 import { FolderComponent } from 'components/FolderView/FolderComponent';
 import { FileTreeView } from 'FileTreeView';
 import FileTreeAlternativePlugin from 'main';
-import { FileTreeUtils } from 'utils/Utils';
+import * as FileTreeUtils from 'utils/Utils';
 import { FolderTree } from 'utils/types';
 
 interface MainTreeComponentProps {
@@ -145,8 +145,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 		console.log('File Tree Component Mounted');
 		// Set the Folder Tree and Folder Count Map
 		this.setState({ folderTree: FileTreeUtils.createFolderTree(this.rootFolder) });
-		if (this.plugin.settings.folderCount)
-			this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.plugin) });
+		if (this.plugin.settings.folderCount) this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.plugin) });
 		// Set/Remember Open Folders from Last Session
 		this.loadOpenFoldersFromSettings();
 		// Set/Remember Pinned Files
@@ -156,15 +155,9 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 		// Set Excluded Folders
 		this.loadExcludedFolders();
 		// Register Vault Events
-		this.plugin.registerEvent(
-			this.plugin.app.vault.on('rename', (file) => this.handleVaultChanges(file, 'rename'))
-		);
-		this.plugin.registerEvent(
-			this.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete'))
-		);
-		this.plugin.registerEvent(
-			this.plugin.app.vault.on('create', (file) => this.handleVaultChanges(file, 'create'))
-		);
+		this.plugin.registerEvent(this.plugin.app.vault.on('rename', (file) => this.handleVaultChanges(file, 'rename')));
+		this.plugin.registerEvent(this.plugin.app.vault.on('delete', (file) => this.handleVaultChanges(file, 'delete')));
+		this.plugin.registerEvent(this.plugin.app.vault.on('create', (file) => this.handleVaultChanges(file, 'create')));
 	}
 
 	// Function for Event Handlers
@@ -186,8 +179,7 @@ export default class MainTreeComponent extends React.Component<MainTreeComponent
 			this.setState({ folderTree: FileTreeUtils.createFolderTree(this.rootFolder) });
 		}
 		// After Each Vault Change Folder Count Map to Be Updated
-		if (this.plugin.settings.folderCount)
-			this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.plugin) });
+		if (this.plugin.settings.folderCount) this.setState({ folderFileCountMap: FileTreeUtils.getFolderNoteCountMap(this.plugin) });
 	};
 
 	render() {
