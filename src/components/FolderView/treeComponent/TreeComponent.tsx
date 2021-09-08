@@ -64,7 +64,8 @@ export default function Tree(props: TreeProps) {
 			noClick={true}
 			onDragEnter={() => setHightlight(true)}
 			onDragLeave={() => setHightlight(false)}
-			onDropAccepted={() => setHightlight(false)}>
+			onDropAccepted={() => setHightlight(false)}
+			onDropRejected={() => setHightlight(false)}>
 			{({ getRootProps, getInputProps }) => (
 				<div style={{ ...props.style }} className="treeview">
 					<div
