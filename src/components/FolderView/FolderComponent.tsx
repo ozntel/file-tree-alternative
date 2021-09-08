@@ -81,26 +81,26 @@ interface NestedChildrenComponentProps {
 	folderFileCountMap: { [key: string]: number };
 }
 
-class NestedChildrenComponent extends React.Component<NestedChildrenComponentProps> {
-	plugin = this.props.plugin;
+function NestedChildrenComponent(props: NestedChildrenComponentProps) {
+	const plugin = props.plugin;
 
-	handleFolderNameClick = (folderPath: string) => {
-		this.props.setActiveFolderPath(folderPath);
+	const handleFolderNameClick = (folderPath: string) => {
+		props.setActiveFolderPath(folderPath);
 	};
 
-	handleContextMenu = (event: MouseEvent, folder: TFolder) => {
+	const handleContextMenu = (event: MouseEvent, folder: TFolder) => {
 		// Event Undefined Correction
 		let e = event;
 		if (event === undefined) e = window.event as MouseEvent;
 
 		// Menu Items
-		const fileMenu = new Menu(this.plugin.app);
+		const fileMenu = new Menu(plugin.app);
 
 		fileMenu.addItem((menuItem) => {
 			menuItem.setTitle('New Folder');
 			menuItem.setIcon('folder');
 			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(this.plugin.app, folder, 'create folder');
+				let vaultChangeModal = new VaultChangeModal(plugin.app, folder, 'create folder');
 				vaultChangeModal.open();
 			});
 		});
@@ -109,7 +109,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 			menuItem.setTitle('Delete');
 			menuItem.setIcon('trash');
 			menuItem.onClick((ev: MouseEvent) => {
-				this.plugin.app.vault.delete(folder, true);
+				plugin.app.vault.delete(folder, true);
 			});
 		});
 
@@ -117,7 +117,7 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 			menuItem.setTitle('Rename');
 			menuItem.setIcon('pencil');
 			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(this.plugin.app, folder, 'rename');
+				let vaultChangeModal = new VaultChangeModal(plugin.app, folder, 'rename');
 				vaultChangeModal.open();
 			});
 		});
@@ -126,74 +126,72 @@ class NestedChildrenComponent extends React.Component<NestedChildrenComponentPro
 			menuItem.setTitle('Add to Excluded Folders');
 			menuItem.setIcon('switch');
 			menuItem.onClick((ev: MouseEvent) => {
-				this.props.setExcludedFolders([...this.props.excludedFolders, folder.path]);
+				props.setExcludedFolders([...props.excludedFolders, folder.path]);
 			});
 		});
 
 		// Trigger
-		this.plugin.app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
+		plugin.app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
 		fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
 		return false;
 	};
 
-	customSort = (folderTree: FolderTree[]) => {
+	const customSort = (folderTree: FolderTree[]) => {
 		let newTree: FolderTree[];
-		if (this.props.excludedFolders.length > 0) {
-			newTree = folderTree.filter((tree) => !this.props.excludedFolders.contains(tree.folder.path));
+		if (props.excludedFolders.length > 0) {
+			newTree = folderTree.filter((tree) => !props.excludedFolders.contains(tree.folder.path));
 		}
 		newTree = newTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name, 'en', { numeric: true }));
 		return newTree;
 	};
 
-	render() {
-		if (!this.props.folderTree.children) return null;
+	if (!props.folderTree.children) return null;
 
-		return (
-			<React.Fragment>
-				{Array.isArray(this.props.folderTree.children) &&
-					this.customSort(this.props.folderTree.children).map((child) => {
-						return (
-							<React.Fragment key={child.folder.path}>
-								{(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
-									<Tree
-										plugin={this.plugin}
-										content={child.folder.name}
-										open={this.props.openFolders.contains(child.folder) ? true : false}
-										onClick={() => this.handleFolderNameClick(child.folder.path)}
-										onContextMenu={(e: MouseEvent) => this.handleContextMenu(e, child.folder)}
-										setOpenFolders={this.props.setOpenFolders}
-										openFolders={this.props.openFolders}
-										folder={child.folder}
-										folderFileCountMap={this.props.folderFileCountMap}>
-										<NestedChildrenComponent
-											plugin={this.plugin}
-											folderTree={child}
-											activeFolderPath={this.props.activeFolderPath}
-											setActiveFolderPath={this.props.setActiveFolderPath}
-											setView={this.props.setView}
-											openFolders={this.props.openFolders}
-											setOpenFolders={this.props.setOpenFolders}
-											excludedFolders={this.props.excludedFolders}
-											setExcludedFolders={this.props.setExcludedFolders}
-											folderFileCountMap={this.props.folderFileCountMap}
-										/>
-									</Tree>
-								) : (
-									<Tree
-										plugin={this.plugin}
-										content={child.folder.name}
-										onClick={() => this.handleFolderNameClick(child.folder.path)}
-										onContextMenu={(e: MouseEvent) => this.handleContextMenu(e, child.folder)}
-										setOpenFolders={this.props.setOpenFolders}
-										openFolders={this.props.openFolders}
-										folder={child.folder}
-										folderFileCountMap={this.props.folderFileCountMap}
+	return (
+		<React.Fragment>
+			{Array.isArray(props.folderTree.children) &&
+				customSort(props.folderTree.children).map((child) => {
+					return (
+						<React.Fragment key={child.folder.path}>
+							{(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
+								<Tree
+									plugin={plugin}
+									content={child.folder.name}
+									open={props.openFolders.contains(child.folder) ? true : false}
+									onClick={() => handleFolderNameClick(child.folder.path)}
+									onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
+									setOpenFolders={props.setOpenFolders}
+									openFolders={props.openFolders}
+									folder={child.folder}
+									folderFileCountMap={props.folderFileCountMap}>
+									<NestedChildrenComponent
+										plugin={plugin}
+										folderTree={child}
+										activeFolderPath={props.activeFolderPath}
+										setActiveFolderPath={props.setActiveFolderPath}
+										setView={props.setView}
+										openFolders={props.openFolders}
+										setOpenFolders={props.setOpenFolders}
+										excludedFolders={props.excludedFolders}
+										setExcludedFolders={props.setExcludedFolders}
+										folderFileCountMap={props.folderFileCountMap}
 									/>
-								)}
-							</React.Fragment>
-						);
-					})}
-			</React.Fragment>
-		);
-	}
+								</Tree>
+							) : (
+								<Tree
+									plugin={plugin}
+									content={child.folder.name}
+									onClick={() => handleFolderNameClick(child.folder.path)}
+									onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
+									setOpenFolders={props.setOpenFolders}
+									openFolders={props.openFolders}
+									folder={child.folder}
+									folderFileCountMap={props.folderFileCountMap}
+								/>
+							)}
+						</React.Fragment>
+					);
+				})}
+		</React.Fragment>
+	);
 }
