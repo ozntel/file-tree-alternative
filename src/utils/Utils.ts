@@ -1,4 +1,5 @@
-import { TFile, TFolder, App } from 'obsidian';
+// @ts-ignore
+import { TFile, TFolder, App, Keymap } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { FolderFileCountMap, FolderTree } from 'utils/types';
 
@@ -74,4 +75,8 @@ export const getFolderName = (folderPath: string, app: App) => {
 export const internalPluginLoaded = (pluginName: string, app: App) => {
 	// @ts-ignore
 	return app.internalPlugins.plugins[pluginName]?._loaded;
+};
+
+export const openInternalLink = (event: React.MouseEvent<Element, MouseEvent>, link: string, app: App) => {
+	app.workspace.openLinkText(link, '/', Keymap.isModifier(event, 'Mod') || 1 === event.button);
 };

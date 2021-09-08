@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
-// @ts-ignore
-import { TFile, Menu, Keymap } from 'obsidian';
+import { TFile, Menu } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
@@ -53,7 +52,7 @@ export function FileComponent(props: FilesProps) {
 
 	// Handle Click Event on File - Allows Open with Cmd/Ctrl
 	const openFile = (file: TFile, e: React.MouseEvent) => {
-		plugin.app.workspace.openLinkText(file.path, '/', Keymap.isModifier(e, 'Mod') || 1 === e.button);
+		Util.openInternalLink(e, file.path, plugin.app);
 		setActiveFile(file);
 	};
 
