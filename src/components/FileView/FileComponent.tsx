@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
 // @ts-ignore
 import { TFile, Menu, Keymap } from 'obsidian';
@@ -19,79 +19,65 @@ interface FilesProps {
 	excludedExtensions: string[];
 }
 
-interface FilesState {
-	activeFile: TFile;
-	highlight: boolean;
-	searchPhrase: string;
-	searchBoxVisible: boolean;
-	treeHeader: string;
-}
+export function FileComponent(props: FilesProps) {
+	let searchInput = React.useRef<HTMLInputElement>(null);
+	const plugin = props.plugin;
 
-export class FileComponent extends React.Component<FilesProps, FilesState> {
-	plugin = this.props.plugin;
-
-	// Convert Full Path to Final Folder Name
-	getFolderName = (folderPath: string) => {
-		if (folderPath === '/') return this.plugin.app.vault.getName();
+	const getFolderName = (folderPath: string) => {
+		if (folderPath === '/') return plugin.app.vault.getName();
 		let index = folderPath.lastIndexOf('/');
 		if (index !== -1) return folderPath.substring(index + 1);
 		return folderPath;
 	};
 
-	state = {
-		activeFile: null as TFile,
-		highlight: false,
-		searchPhrase: '',
-		searchBoxVisible: false,
-		treeHeader: this.getFolderName(this.props.activeFolderPath),
-	};
-
-	private searchInput: React.RefObject<HTMLInputElement>;
-
-	constructor(props: FilesProps) {
-		super(props);
-		this.searchInput = React.createRef();
-	}
+	const [activeFile, setActiveFile] = useState<TFile>(null as TFile);
+	const [highlight, setHighlight] = useState<boolean>(false);
+	const [searchPhrase, setSearchPhrase] = useState<string>('');
+	const [searchBoxVisible, setSearchBoxVisible] = useState<boolean>(false);
+	const [treeHeader, setTreeHeader] = useState<string>(getFolderName(props.activeFolderPath));
 
 	// Scroll Top Once The File List is Loaded
-	componentDidMount() {
-		document
-			.querySelector('div.workspace-leaf-content[data-type="file-tree-view"] > div.view-content')
-			.scrollTo(0, 0);
-	}
+	useEffect(() => {
+		document.querySelector('div.workspace-leaf-content[data-type="file-tree-view"] > div.view-content').scrollTo(0, 0);
+	});
+
+	// To focus on Search box if visible set
+	useEffect(() => {
+		if (searchBoxVisible) searchInput.current.focus();
+	}, [searchBoxVisible]);
 
 	// Function After an External File Dropped into Folder Name
-	onDrop = (files: File[]) => {
+	const onDrop = (files: File[]) => {
 		files.map(async (file) => {
 			file.arrayBuffer().then((arrayBuffer) => {
-				this.plugin.app.vault.adapter.writeBinary(this.props.activeFolderPath + '/' + file.name, arrayBuffer);
+				plugin.app.vault.adapter.writeBinary(props.activeFolderPath + '/' + file.name, arrayBuffer);
 			});
 		});
 	};
 
-	fullHeightStyle: React.CSSProperties = { width: '100%', height: '100%' };
+	const fullHeightStyle: React.CSSProperties = { width: '100%', height: '100%' };
 
 	// Handle Click Event on File - Allows Open with Cmd/Ctrl
-	openFile = (file: TFile, e: React.MouseEvent) => {
-		this.plugin.app.workspace.openLinkText(file.path, '/', Keymap.isModifier(e, 'Mod') || 1 === e.button);
-		this.setState({ activeFile: file });
+	const openFile = (file: TFile, e: React.MouseEvent) => {
+		plugin.app.workspace.openLinkText(file.path, '/', Keymap.isModifier(e, 'Mod') || 1 === e.button);
+		setActiveFile(file);
 	};
 
 	// Handle Right Click Event on File - Custom Menu
-	triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
-		const fileMenu = new Menu(this.plugin.app);
+	const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
+		const fileMenu = new Menu(plugin.app);
 
 		// Pin - Unpin Item
 		fileMenu.addItem((menuItem) => {
 			menuItem.setIcon('pin');
-			if (this.props.pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
+			if (props.pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
 			else menuItem.setTitle('Pin to Top');
 			menuItem.onClick((ev: MouseEvent) => {
-				if (this.props.pinnedFiles.contains(file)) {
-					let newPinnedFiles = this.props.pinnedFiles.filter((pinnedFile) => pinnedFile !== file);
-					this.props.setPinnedFiles(newPinnedFiles);
+				if (props.pinnedFiles.contains(file)) {
+					let newPinnedFiles = props.pinnedFiles.filter((pinnedFile) => pinnedFile !== file);
+					props.setPinnedFiles(newPinnedFiles);
 				} else {
-					this.props.setPinnedFiles([...this.props.pinnedFiles, file]);
+					props.setPinnedFiles([...props.pinnedFiles, file]);
 				}
 			});
 		});
@@ -101,7 +87,7 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 			menuItem.setTitle('Rename');
 			menuItem.setIcon('pencil');
 			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(this.plugin.app, file, 'rename');
+				let vaultChangeModal = new VaultChangeModal(plugin.app, file, 'rename');
 				vaultChangeModal.open();
 			});
 		});
@@ -111,31 +97,31 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 			menuItem.setTitle('Delete');
 			menuItem.setIcon('trash');
 			menuItem.onClick((ev: MouseEvent) => {
-				this.plugin.app.vault.delete(file, true);
+				plugin.app.vault.delete(file, true);
 			});
 		});
 
 		// Move Item
 		// @ts-ignore
-		if (!this.plugin.app.internalPlugins.plugins['file-explorer']?._loaded) {
+		if (!plugin.app.internalPlugins.plugins['file-explorer']?._loaded) {
 			fileMenu.addItem((menuItem) => {
 				menuItem.setTitle('Move file to...');
 				menuItem.setIcon('paper-plane');
 				menuItem.onClick((ev: MouseEvent) => {
-					let folderSuggesterModal = new FolderMoveSuggesterModal(this.plugin.app, file);
+					let folderSuggesterModal = new FolderMoveSuggesterModal(plugin.app, file);
 					folderSuggesterModal.open();
 				});
 			});
 		}
 
 		// Trigger
-		this.plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
+		plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
 		fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
 		return false;
 	};
 
 	// Files out of Md should be listed with extension badge - Md without extension
-	getFileNameAndExtension = (fullName: string) => {
+	const getFileNameAndExtension = (fullName: string) => {
 		var index = fullName.lastIndexOf('.');
 		return {
 			fileName: fullName.substring(0, index),
@@ -144,15 +130,15 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 	};
 
 	// Sort - Filter Files Depending on Preferences
-	customFiles = (fileList: TFile[]) => {
+	const customFiles = (fileList: TFile[]) => {
 		let sortedfileList: TFile[];
-		if (this.props.excludedExtensions.length > 0) {
-			sortedfileList = fileList.filter((file) => !this.props.excludedExtensions.contains(file.extension));
+		if (props.excludedExtensions.length > 0) {
+			sortedfileList = fileList.filter((file) => !props.excludedExtensions.contains(file.extension));
 		}
 		sortedfileList = sortedfileList.sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
-		if (this.props.pinnedFiles.length > 0) {
+		if (props.pinnedFiles.length > 0) {
 			sortedfileList = sortedfileList.reduce((acc, element) => {
-				if (this.props.pinnedFiles.contains(element)) return [element, ...acc];
+				if (props.pinnedFiles.contains(element)) return [element, ...acc];
 				return [...acc, element];
 			}, []);
 		}
@@ -160,75 +146,71 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 	};
 
 	// Handle Plus Button - Opens Modal to Create a New File
-	createNewFile = async (e: React.MouseEvent, folderPath: string) => {
-		let targetFolder = this.plugin.app.vault.getAbstractFileByPath(folderPath);
+	const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
+		let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
 		if (!targetFolder) return;
-		let modal = new VaultChangeModal(this.plugin.app, targetFolder, 'create note');
+		let modal = new VaultChangeModal(plugin.app, targetFolder, 'create note');
 		modal.open();
 	};
 
 	// Go Back Button - Sets Main Component View to Folder
-	handleGoBack = (e: React.MouseEvent) => {
-		this.props.setView('folder');
+	const handleGoBack = (e: React.MouseEvent) => {
+		props.setView('folder');
 	};
 
 	// Toggle Search Box Visibility State
-	toggleSearchBox = (e: React.MouseEvent) => {
-		this.setState({ searchPhrase: '' });
-		this.setState({ searchBoxVisible: !this.state.searchBoxVisible }, () => {
-			if (this.state.searchBoxVisible) this.searchInput.current.focus();
-		});
-		this.props.setFileList(this.props.getFilesUnderPath(this.props.activeFolderPath, this.plugin));
+	const toggleSearchBox = (e: React.MouseEvent) => {
+		setSearchPhrase('');
+		setSearchBoxVisible(!searchBoxVisible);
+		props.setFileList(props.getFilesUnderPath(props.activeFolderPath, plugin));
 	};
 
 	// Search Function
-	searchAllRegex = new RegExp('all:(.*)?');
-	searchTagRegex = new RegExp('tag:(.*)?');
-	handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const searchAllRegex = new RegExp('all:(.*)?');
+	const searchTagRegex = new RegExp('tag:(.*)?');
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
 		var searchPhrase = e.target.value;
-		this.setState({ searchPhrase });
-		var searchFolder = this.props.activeFolderPath;
+		setSearchPhrase(searchPhrase);
+		var searchFolder = props.activeFolderPath;
 
 		// Check Tag Regex in Search Phrase
-		let tagRegexMatch = searchPhrase.match(this.searchTagRegex);
+		let tagRegexMatch = searchPhrase.match(searchTagRegex);
 		if (tagRegexMatch) {
-			this.setState({ treeHeader: 'Files with Tag' });
+			setTreeHeader('Files with Tag');
 			if (tagRegexMatch[1] === undefined || tagRegexMatch[1].replace(/\s/g, '').length === 0) {
-				this.props.setFileList([]);
+				props.setFileList([]);
 				return;
 			}
-			this.props.setFileList([...this.getFilesWithTag(tagRegexMatch[1])]);
+			props.setFileList([...getFilesWithTag(tagRegexMatch[1])]);
 			return;
 		}
 
 		// Check All Regex in Search Phrase
-		let allRegexMatch = searchPhrase.match(this.searchAllRegex);
+		let allRegexMatch = searchPhrase.match(searchAllRegex);
 		if (allRegexMatch) {
 			searchPhrase = allRegexMatch[1] ? allRegexMatch[1] : '';
 			searchFolder = '/';
-			this.setState({ treeHeader: 'All Files' });
+			setTreeHeader('All Files');
 		} else {
-			this.setState({ treeHeader: this.getFolderName(this.props.activeFolderPath) });
+			setTreeHeader(getFolderName(props.activeFolderPath));
 		}
 
 		let getAllFiles = allRegexMatch ? true : false;
-		let filteredFiles = this.getFilesWithName(searchPhrase, searchFolder, getAllFiles);
-		this.props.setFileList(filteredFiles);
+		let filteredFiles = getFilesWithName(searchPhrase, searchFolder, getAllFiles);
+		props.setFileList(filteredFiles);
 	};
 
-	getFilesWithName = (searchPhrase: string, searchFolder: string, getAllFiles?: boolean): TFile[] => {
-		var files: TFile[] = this.props.getFilesUnderPath(searchFolder, this.plugin, getAllFiles);
-		var filteredFiles = files.filter((file) =>
-			file.name.toLowerCase().includes(searchPhrase.toLowerCase().trimStart())
-		);
+	const getFilesWithName = (searchPhrase: string, searchFolder: string, getAllFiles?: boolean): TFile[] => {
+		var files: TFile[] = props.getFilesUnderPath(searchFolder, plugin, getAllFiles);
+		var filteredFiles = files.filter((file) => file.name.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
 		return filteredFiles;
 	};
 
-	getFilesWithTag = (searchTag: string): Set<TFile> => {
+	const getFilesWithTag = (searchTag: string): Set<TFile> => {
 		let filesWithTag: Set<TFile> = new Set();
-		let mdFiles = this.plugin.app.vault.getMarkdownFiles();
+		let mdFiles = plugin.app.vault.getMarkdownFiles();
 		for (let mdFile of mdFiles) {
-			let fileCache = this.plugin.app.metadataCache.getFileCache(mdFile);
+			let fileCache = plugin.app.metadataCache.getFileCache(mdFile);
 			if (fileCache.tags) {
 				for (let fileTag of fileCache.tags) {
 					if (fileTag.tag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
@@ -240,97 +222,73 @@ export class FileComponent extends React.Component<FilesProps, FilesState> {
 		return filesWithTag;
 	};
 
-	render() {
-		return (
-			<React.Fragment>
-				<div className="oz-explorer-container" style={this.fullHeightStyle}>
-					<div className="oz-flex-container">
-						<div className="nav-action-button oz-nav-action-button">
-							<FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => this.handleGoBack(e)} size="lg" />
-						</div>
-						<div className="oz-nav-buttons-right-block">
-							{this.plugin.settings.searchFunction && (
-								<div className="nav-action-button oz-nav-action-button">
-									<FontAwesomeIcon icon={faSearch} onClick={this.toggleSearchBox} size="lg" />
-								</div>
-							)}
-							<div className="nav-action-button oz-nav-action-button">
-								<FontAwesomeIcon
-									icon={faPlusCircle}
-									onClick={(e) => this.createNewFile(e, this.props.activeFolderPath)}
-									size="lg"
-								/>
-							</div>
-						</div>
+	return (
+		<React.Fragment>
+			<div className="oz-explorer-container" style={fullHeightStyle}>
+				<div className="oz-flex-container">
+					<div className="nav-action-button oz-nav-action-button">
+						<FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
 					</div>
-
-					{this.state.searchBoxVisible && (
-						<div className="search-input-container oz-input-container">
-							<input
-								type="search"
-								placeholder="Search..."
-								ref={this.searchInput}
-								value={this.state.searchPhrase}
-								onChange={this.handleSearch}
-							/>
-						</div>
-					)}
-
-					<div className="oz-file-tree-header">{this.state.treeHeader}</div>
-
-					<Dropzone
-						onDrop={this.onDrop}
-						noClick={true}
-						onDragEnter={() => this.setState({ highlight: true })}
-						onDragLeave={() => this.setState({ highlight: false })}
-						onDropAccepted={() => this.setState({ highlight: false })}
-						onDropRejected={() => this.setState({ highlight: false })}>
-						{({ getRootProps, getInputProps }) => (
-							<div
-								{...getRootProps()}
-								className={this.state.highlight ? 'drag-entered' : ''}
-								style={this.fullHeightStyle}>
-								<input {...getInputProps()} />
-
-								<div className="oz-file-tree-files">
-									{this.customFiles(this.props.fileList).map((file) => {
-										return (
-											<div
-												className="nav-file oz-nav-file"
-												key={file.path}
-												onClick={(e) => this.openFile(file, e)}
-												onContextMenu={(e) => this.triggerContextMenu(file, e)}>
-												<div
-													className={
-														'nav-file-title oz-nav-file-title' +
-														(this.state.activeFile === file ? ' is-active' : '')
-													}
-													data-path={file.path}>
-													{this.getFileNameAndExtension(file.name).extension !== 'md' && (
-														<span className="nav-file-tag">
-															{this.getFileNameAndExtension(file.name).extension}
-														</span>
-													)}
-													<div className="nav-file-title-content">
-														{this.getFileNameAndExtension(file.name).fileName}
-														{this.props.pinnedFiles.contains(file) && (
-															<FontAwesomeIcon
-																icon={faThumbtack}
-																style={{ marginLeft: '3px', float: 'right' }}
-																size="xs"
-															/>
-														)}
-													</div>
-												</div>
-											</div>
-										);
-									})}
-								</div>
+					<div className="oz-nav-buttons-right-block">
+						{plugin.settings.searchFunction && (
+							<div className="nav-action-button oz-nav-action-button">
+								<FontAwesomeIcon icon={faSearch} onClick={toggleSearchBox} size="lg" />
 							</div>
 						)}
-					</Dropzone>
+						<div className="nav-action-button oz-nav-action-button">
+							<FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, props.activeFolderPath)} size="lg" />
+						</div>
+					</div>
 				</div>
-			</React.Fragment>
-		);
-	}
+
+				{searchBoxVisible && (
+					<div className="search-input-container oz-input-container">
+						<input type="search" placeholder="Search..." ref={searchInput} value={searchPhrase} onChange={handleSearch} />
+					</div>
+				)}
+
+				<div className="oz-file-tree-header">{treeHeader}</div>
+
+				<Dropzone
+					onDrop={onDrop}
+					noClick={true}
+					onDragEnter={() => setHighlight(true)}
+					onDragLeave={() => setHighlight(false)}
+					onDropAccepted={() => setHighlight(false)}
+					onDropRejected={() => setHighlight(false)}>
+					{({ getRootProps, getInputProps }) => (
+						<div {...getRootProps()} className={highlight ? 'drag-entered' : ''} style={fullHeightStyle}>
+							<input {...getInputProps()} />
+
+							<div className="oz-file-tree-files">
+								{customFiles(props.fileList).map((file) => {
+									return (
+										<div
+											className="nav-file oz-nav-file"
+											key={file.path}
+											onClick={(e) => openFile(file, e)}
+											onContextMenu={(e) => triggerContextMenu(file, e)}>
+											<div
+												className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')}
+												data-path={file.path}>
+												{getFileNameAndExtension(file.name).extension !== 'md' && (
+													<span className="nav-file-tag">{getFileNameAndExtension(file.name).extension}</span>
+												)}
+												<div className="nav-file-title-content">
+													{getFileNameAndExtension(file.name).fileName}
+													{props.pinnedFiles.contains(file) && (
+														<FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
+													)}
+												</div>
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						</div>
+					)}
+				</Dropzone>
+			</div>
+		</React.Fragment>
+	);
 }
