@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
+import * as Util from '../../utils/Utils';
 
 interface FilesProps {
 	plugin: FileTreeAlternativePlugin;
@@ -23,18 +24,11 @@ export function FileComponent(props: FilesProps) {
 	let searchInput = React.useRef<HTMLInputElement>(null);
 	const plugin = props.plugin;
 
-	const getFolderName = (folderPath: string) => {
-		if (folderPath === '/') return plugin.app.vault.getName();
-		let index = folderPath.lastIndexOf('/');
-		if (index !== -1) return folderPath.substring(index + 1);
-		return folderPath;
-	};
-
 	const [activeFile, setActiveFile] = useState<TFile>(null as TFile);
 	const [highlight, setHighlight] = useState<boolean>(false);
 	const [searchPhrase, setSearchPhrase] = useState<string>('');
 	const [searchBoxVisible, setSearchBoxVisible] = useState<boolean>(false);
-	const [treeHeader, setTreeHeader] = useState<string>(getFolderName(props.activeFolderPath));
+	const [treeHeader, setTreeHeader] = useState<string>(Util.getFolderName(props.activeFolderPath, plugin.app));
 
 	// Scroll Top Once The File List is Loaded
 	useEffect(() => {
@@ -102,8 +96,7 @@ export function FileComponent(props: FilesProps) {
 		});
 
 		// Move Item
-		// @ts-ignore
-		if (!plugin.app.internalPlugins.plugins['file-explorer']?._loaded) {
+		if (!Util.internalPluginLoaded('file-explorer', plugin.app)) {
 			fileMenu.addItem((menuItem) => {
 				menuItem.setTitle('Move file to...');
 				menuItem.setIcon('paper-plane');
@@ -118,15 +111,6 @@ export function FileComponent(props: FilesProps) {
 		plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
 		fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
 		return false;
-	};
-
-	// Files out of Md should be listed with extension badge - Md without extension
-	const getFileNameAndExtension = (fullName: string) => {
-		var index = fullName.lastIndexOf('.');
-		return {
-			fileName: fullName.substring(0, index),
-			extension: fullName.substring(index + 1),
-		};
 	};
 
 	// Sort - Filter Files Depending on Preferences
@@ -192,7 +176,7 @@ export function FileComponent(props: FilesProps) {
 			searchFolder = '/';
 			setTreeHeader('All Files');
 		} else {
-			setTreeHeader(getFolderName(props.activeFolderPath));
+			setTreeHeader(Util.getFolderName(props.activeFolderPath, plugin.app));
 		}
 
 		let getAllFiles = allRegexMatch ? true : false;
@@ -271,11 +255,11 @@ export function FileComponent(props: FilesProps) {
 											<div
 												className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')}
 												data-path={file.path}>
-												{getFileNameAndExtension(file.name).extension !== 'md' && (
-													<span className="nav-file-tag">{getFileNameAndExtension(file.name).extension}</span>
+												{Util.getFileNameAndExtension(file.name).extension !== 'md' && (
+													<span className="nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
 												)}
 												<div className="nav-file-title-content">
-													{getFileNameAndExtension(file.name).fileName}
+													{Util.getFileNameAndExtension(file.name).fileName}
 													{props.pinnedFiles.contains(file) && (
 														<FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
 													)}

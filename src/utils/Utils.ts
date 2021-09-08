@@ -53,3 +53,25 @@ export const getFolderNoteCountMap = (plugin: FileTreeAlternativePlugin) => {
 	});
 	return counts;
 };
+
+// Files out of Md should be listed with extension badge - Md without extension
+export const getFileNameAndExtension = (fullName: string) => {
+	var index = fullName.lastIndexOf('.');
+	return {
+		fileName: fullName.substring(0, index),
+		extension: fullName.substring(index + 1),
+	};
+};
+
+// Extracts the Folder Name from the Full Folder Path
+export const getFolderName = (folderPath: string, app: App) => {
+	if (folderPath === '/') return app.vault.getName();
+	let index = folderPath.lastIndexOf('/');
+	if (index !== -1) return folderPath.substring(index + 1);
+	return folderPath;
+};
+
+export const internalPluginLoaded = (pluginName: string, app: App) => {
+	// @ts-ignore
+	return app.internalPlugins.plugins[pluginName]?._loaded;
+};
