@@ -19,53 +19,51 @@ interface FolderProps {
 	folderFileCountMap: { [key: string]: number };
 }
 
-export class FolderComponent extends React.Component<FolderProps> {
-	treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 };
-	plugin = this.props.plugin;
+export function FolderComponent(props: FolderProps) {
+	const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 };
+	const plugin = props.plugin;
 
-	handleFolderNameClick = (folderPath: string) => {
-		this.props.setActiveFolderPath(folderPath);
+	const handleFolderNameClick = (folderPath: string) => {
+		props.setActiveFolderPath(folderPath);
 	};
 
-	render() {
-		return (
-			<React.Fragment>
-				<ConditionalRootFolderWrapper
-					condition={this.plugin.settings.showRootFolder}
-					wrapper={(children) => {
-						return (
-							<Tree
-								plugin={this.plugin}
-								content={this.plugin.app.vault.getName()}
-								open
-								style={this.treeStyles}
-								onClick={() => this.handleFolderNameClick('/')}
-								setOpenFolders={this.props.setOpenFolders}
-								openFolders={this.props.openFolders}
-								folder={this.plugin.app.vault.getRoot()}
-								folderFileCountMap={this.props.folderFileCountMap}>
-								{children}
-							</Tree>
-						);
-					}}>
-					{this.props.folderTree && (
-						<NestedChildrenComponent
-							plugin={this.plugin}
-							folderTree={this.props.folderTree}
-							activeFolderPath={this.props.activeFolderPath}
-							setActiveFolderPath={this.props.setActiveFolderPath}
-							setView={this.props.setView}
-							openFolders={this.props.openFolders}
-							setOpenFolders={this.props.setOpenFolders}
-							excludedFolders={this.props.excludedFolders}
-							setExcludedFolders={this.props.setExcludedFolders}
-							folderFileCountMap={this.props.folderFileCountMap}
-						/>
-					)}
-				</ConditionalRootFolderWrapper>
-			</React.Fragment>
-		);
-	}
+	return (
+		<React.Fragment>
+			<ConditionalRootFolderWrapper
+				condition={plugin.settings.showRootFolder}
+				wrapper={(children) => {
+					return (
+						<Tree
+							plugin={plugin}
+							content={plugin.app.vault.getName()}
+							open
+							style={treeStyles}
+							onClick={() => handleFolderNameClick('/')}
+							setOpenFolders={props.setOpenFolders}
+							openFolders={props.openFolders}
+							folder={plugin.app.vault.getRoot()}
+							folderFileCountMap={props.folderFileCountMap}>
+							{children}
+						</Tree>
+					);
+				}}>
+				{props.folderTree && (
+					<NestedChildrenComponent
+						plugin={plugin}
+						folderTree={props.folderTree}
+						activeFolderPath={props.activeFolderPath}
+						setActiveFolderPath={props.setActiveFolderPath}
+						setView={props.setView}
+						openFolders={props.openFolders}
+						setOpenFolders={props.setOpenFolders}
+						excludedFolders={props.excludedFolders}
+						setExcludedFolders={props.setExcludedFolders}
+						folderFileCountMap={props.folderFileCountMap}
+					/>
+				)}
+			</ConditionalRootFolderWrapper>
+		</React.Fragment>
+	);
 }
 
 /* ------ Nested Children Component ------ */

@@ -28,16 +28,18 @@ export default function Tree(props: TreeProps) {
 	const toggle = () => {
 		if (props.children) {
 			// Set State in Main Component for Keeping Folders Open
-			props.setOpenFolders([...props.openFolders, props.folder]);
-		} else {
-			const newOpenFolders = props.openFolders.filter((folder) => {
-				if (props.folder === folder) return false;
-				return true;
-			});
-			props.setOpenFolders(newOpenFolders);
+			if (!open) {
+				props.setOpenFolders([...props.openFolders, props.folder]);
+			} else {
+				const newOpenFolders = props.openFolders.filter((folder) => {
+					if (props.folder === folder) return false;
+					return true;
+				});
+				props.setOpenFolders(newOpenFolders);
+			}
+			// Set State Open for the Folder
+			setOpen(!open);
 		}
-		// Set State Open for the Folder
-		setOpen(!open);
 	};
 
 	// --> Function After an External File Dropped into Folder Name
