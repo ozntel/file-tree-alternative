@@ -137,9 +137,9 @@ function NestedChildrenComponent(props: NestedChildrenComponentProps) {
 	};
 
 	const customSort = (folderTree: FolderTree[]) => {
-		let newTree: FolderTree[];
+		let newTree: FolderTree[] = folderTree;
 		if (props.excludedFolders.length > 0) {
-			newTree = folderTree.filter((tree) => !props.excludedFolders.contains(tree.folder.path));
+			newTree = newTree.filter((tree) => !props.excludedFolders.contains(tree.folder.path));
 		}
 		newTree = newTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name, 'en', { numeric: true }));
 		return newTree;

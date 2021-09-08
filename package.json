@@ -28,5 +28,8 @@
 		"react-spring": "^5.9.2",
 		"tslib": "^2.2.0",
 		"typescript": "^4.2.4"
+	},
+	"dependencies": {
+		"recoil": "^0.4.1"
 	}
 }

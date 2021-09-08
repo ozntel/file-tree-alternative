@@ -1,11 +1,21 @@
 import { TAbstractFile, TFile, TFolder } from 'obsidian';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
 import { FolderComponent } from 'components/FolderView/FolderComponent';
 import { FileTreeView } from 'FileTreeView';
 import FileTreeAlternativePlugin from 'main';
 import * as FileTreeUtils from 'utils/Utils';
-import { FolderTree, FolderFileCountMap } from 'utils/types';
+import {
+	viewState,
+	activeFolderPathState,
+	excludedFoldersState,
+	folderTreeState,
+	folderFileCountMapState,
+	fileListState,
+	pinnedFilesState,
+	openFoldersState,
+} from '../../recoil/pluginState';
+import { useRecoilState } from 'recoil';
 
 interface MainTreeComponentProps {
 	fileTreeView: FileTreeView;
@@ -24,26 +34,36 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	plugin.registerEvent(plugin.app.vault.on('create', (file) => handleVaultChanges(file, 'create')));
 
 	// --> Plugin States
-	const [view, setView] = useState<string>('folder');
-	const [activeFolderPath, setActiveFolderPath] = useState<string>('');
-	const [fileList, setFileList] = useState<TFile[]>([]);
-	const [pinnedFiles, setPinnedFiles] = useState<TFile[]>(getPinnedFilesFromSettings());
-	const [openFolders, setOpenFolders] = useState<TFolder[]>(getOpenFoldersFromSettings());
-	const [folderTree, setFolderTree] = useState<FolderTree>(FileTreeUtils.createFolderTree(rootFolder));
-	const [excludedFolders, setExcludedFolders] = useState<string[]>(getExcludedFolders());
-	const [folderFileCountMap, setFolderFileCountMap] = useState<FolderFileCountMap>(
-		plugin.settings.folderCount ? FileTreeUtils.getFolderNoteCountMap(plugin) : {}
-	);
+	const [view, setView] = useRecoilState(viewState);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
+	const [fileList, setFileList] = useRecoilState(fileListState);
+	const [pinnedFiles, setPinnedFiles] = useRecoilState(pinnedFilesState);
+	const [openFolders, setOpenFolders] = useRecoilState(openFoldersState);
+	const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
+	const [excludedFolders, setExcludedFolders] = useRecoilState(excludedFoldersState);
+	const [folderFileCountMap, setFolderFileCountMap] = useRecoilState(folderFileCountMapState);
 
 	const setNewFileList = (folderPath?: string) => {
 		let filesPath = folderPath ? folderPath : activeFolderPath;
 		setFileList(FileTreeUtils.getFilesUnderPath(filesPath, plugin));
 	};
 
+	// Initial Load
+	useEffect(() => {
+		setExcludedFolders(getExcludedFolders());
+		setPinnedFiles(getPinnedFilesFromSettings());
+		setOpenFolders(getOpenFoldersFromSettings());
+		if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
+		setFolderTree(FileTreeUtils.createFolderTree(rootFolder));
+	}, []);
+
 	// State Change Handlers
 	useEffect(() => savePinnedFilesToSettings(), [pinnedFiles]);
 	useEffect(() => saveOpenFoldersToSettings(), [openFolders]);
 	useEffect(() => saveExcludedFoldersToSettings(), [excludedFolders]);
+	useEffect(() => {
+		if (view === 'folder') setActiveFolderPath('');
+	}, [view]);
 
 	// If activeFolderPath is set, it means it should go to 'file' view
 	useEffect(() => {

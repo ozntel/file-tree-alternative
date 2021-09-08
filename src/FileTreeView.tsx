@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import FileTreeAlternativePlugin from './main';
 import MainTreeComponent from './components/MainView/MainComponent';
+import { RecoilRoot } from 'recoil';
 
 export const VIEW_TYPE = 'file-tree-view';
 export const VIEW_DISPLAY_TEXT = 'File Tree';
@@ -46,7 +47,9 @@ export class FileTreeView extends ItemView {
 		ReactDOM.unmountComponentAtNode(this.contentEl);
 		ReactDOM.render(
 			<div className="file-tree-plugin-view">
-				<MainTreeComponent fileTreeView={this} plugin={this.plugin} />
+				<RecoilRoot>
+					<MainTreeComponent fileTreeView={this} plugin={this.plugin} />
+				</RecoilRoot>
 			</div>,
 			this.contentEl
 		);
