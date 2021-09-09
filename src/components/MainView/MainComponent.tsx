@@ -63,9 +63,6 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	useEffect(() => savePinnedFilesToSettings(), [pinnedFiles]);
 	useEffect(() => saveOpenFoldersToSettings(), [openFolders]);
 	useEffect(() => saveExcludedFoldersToSettings(), [excludedFolders]);
-	useEffect(() => {
-		if (view === 'folder') setActiveFolderPath('');
-	}, [view]);
 
 	// If activeFolderPath is set, it means it should go to 'file' view
 	useEffect(() => {

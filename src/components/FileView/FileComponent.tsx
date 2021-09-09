@@ -21,7 +21,7 @@ export function FileComponent(props: FilesProps) {
 	const [view, setView] = useRecoilState(viewState);
 	const [fileList, setFileList] = useRecoilState(fileListState);
 	const [pinnedFiles, setPinnedFiles] = useRecoilState(pinnedFilesState);
-	const [activeFolderPath] = useRecoilState(activeFolderPathState);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
 	const [excludedExtensions] = useRecoilState(excludedExtensionsState);
 
 	// Local States
@@ -141,6 +141,7 @@ export function FileComponent(props: FilesProps) {
 	// Go Back Button - Sets Main Component View to Folder
 	const handleGoBack = (e: React.MouseEvent) => {
 		setView('folder');
+		setActiveFolderPath('');
 	};
 
 	// Toggle Search Box Visibility State
