@@ -159,16 +159,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	return (
 		<React.Fragment>
 			{view === 'folder' ? (
-				<FolderComponent
-					plugin={plugin}
-					folderTree={folderTree}
-					setView={setView}
-					openFolders={openFolders}
-					setOpenFolders={setOpenFolders}
-					excludedFolders={excludedFolders}
-					setExcludedFolders={setExcludedFolders}
-					folderFileCountMap={folderFileCountMap}
-				/>
+				<FolderComponent plugin={plugin} folderTree={folderTree} openFolders={openFolders} setOpenFolders={setOpenFolders} />
 			) : (
 				<FileComponent plugin={plugin} />
 			)}
