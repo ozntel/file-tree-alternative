@@ -6,13 +6,11 @@ import { VaultChangeModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import ConditionalRootFolderWrapper from 'components/FolderView/ConditionalWrapper';
 import { useRecoilState } from 'recoil';
-import { openFoldersState } from 'recoil/pluginState';
+import { activeFolderPathState, openFoldersState } from 'recoil/pluginState';
 
 interface FolderProps {
 	plugin: FileTreeAlternativePlugin;
 	folderTree: FolderTree;
-	activeFolderPath: string;
-	setActiveFolderPath: Function;
 	setView: Function;
 	openFolders: TFolder[];
 	setOpenFolders: Function;
@@ -25,8 +23,10 @@ export function FolderComponent(props: FolderProps) {
 	const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 };
 	const plugin = props.plugin;
 
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
+
 	const handleFolderNameClick = (folderPath: string) => {
-		props.setActiveFolderPath(folderPath);
+		setActiveFolderPath(folderPath);
 	};
 
 	return (
@@ -50,8 +50,6 @@ export function FolderComponent(props: FolderProps) {
 					<NestedChildrenComponent
 						plugin={plugin}
 						folderTree={props.folderTree}
-						activeFolderPath={props.activeFolderPath}
-						setActiveFolderPath={props.setActiveFolderPath}
 						setView={props.setView}
 						excludedFolders={props.excludedFolders}
 						setExcludedFolders={props.setExcludedFolders}
@@ -68,8 +66,6 @@ export function FolderComponent(props: FolderProps) {
 interface NestedChildrenComponentProps {
 	plugin: FileTreeAlternativePlugin;
 	folderTree: FolderTree;
-	activeFolderPath: string;
-	setActiveFolderPath: Function;
 	setView: Function;
 	excludedFolders: string[];
 	setExcludedFolders: Function;
@@ -81,9 +77,10 @@ function NestedChildrenComponent(props: NestedChildrenComponentProps) {
 
 	// Global States
 	const [openFolders] = useRecoilState(openFoldersState);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
 
 	const handleFolderNameClick = (folderPath: string) => {
-		props.setActiveFolderPath(folderPath);
+		setActiveFolderPath(folderPath);
 	};
 
 	const handleContextMenu = (event: MouseEvent, folder: TFolder) => {
@@ -162,8 +159,6 @@ function NestedChildrenComponent(props: NestedChildrenComponentProps) {
 									<NestedChildrenComponent
 										plugin={plugin}
 										folderTree={child}
-										activeFolderPath={props.activeFolderPath}
-										setActiveFolderPath={props.setActiveFolderPath}
 										setView={props.setView}
 										excludedFolders={props.excludedFolders}
 										setExcludedFolders={props.setExcludedFolders}

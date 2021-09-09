@@ -162,8 +162,6 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 				<FolderComponent
 					plugin={plugin}
 					folderTree={folderTree}
-					activeFolderPath={activeFolderPath}
-					setActiveFolderPath={setActiveFolderPath}
 					setView={setView}
 					openFolders={openFolders}
 					setOpenFolders={setOpenFolders}
