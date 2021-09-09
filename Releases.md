@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.3.4
+
+-   Evernote Like View Feature
+
 ## Version 1.3.3
 
 -   Pinned Files and Open Folders states to be saved in Settings after each state change
