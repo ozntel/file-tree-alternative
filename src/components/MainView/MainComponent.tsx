@@ -156,9 +156,5 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 		if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
 	}
 
-	return (
-		<React.Fragment>
-			{view === 'folder' ? <FolderComponent plugin={plugin} folderTree={folderTree} /> : <FileComponent plugin={plugin} />}
-		</React.Fragment>
-	);
+	return <React.Fragment>{view === 'folder' ? <FolderComponent plugin={plugin} /> : <FileComponent plugin={plugin} />}</React.Fragment>;
 }

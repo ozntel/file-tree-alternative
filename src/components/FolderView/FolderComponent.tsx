@@ -6,11 +6,10 @@ import { VaultChangeModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import ConditionalRootFolderWrapper from 'components/FolderView/ConditionalWrapper';
 import { useRecoilState } from 'recoil';
-import { activeFolderPathState, excludedFoldersState, openFoldersState } from 'recoil/pluginState';
+import { activeFolderPathState, excludedFoldersState, folderTreeState, openFoldersState } from 'recoil/pluginState';
 
 interface FolderProps {
 	plugin: FileTreeAlternativePlugin;
-	folderTree: FolderTree;
 }
 
 export function FolderComponent(props: FolderProps) {
@@ -19,6 +18,7 @@ export function FolderComponent(props: FolderProps) {
 
 	// Global States
 	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
+	const [mainFolderTree] = useRecoilState(folderTreeState);
 
 	const handleFolderNameClick = (folderPath: string) => {
 		setActiveFolderPath(folderPath);
@@ -41,7 +41,7 @@ export function FolderComponent(props: FolderProps) {
 						</Tree>
 					);
 				}}>
-				{props.folderTree && <NestedChildrenComponent plugin={plugin} folderTree={props.folderTree} />}
+				{mainFolderTree && <NestedChildrenComponent plugin={plugin} folderTree={mainFolderTree} />}
 			</ConditionalRootFolderWrapper>
 		</React.Fragment>
 	);
