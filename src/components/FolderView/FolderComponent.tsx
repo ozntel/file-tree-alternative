@@ -11,14 +11,13 @@ import { activeFolderPathState, excludedFoldersState, openFoldersState } from 'r
 interface FolderProps {
 	plugin: FileTreeAlternativePlugin;
 	folderTree: FolderTree;
-	openFolders: TFolder[];
-	setOpenFolders: Function;
 }
 
 export function FolderComponent(props: FolderProps) {
 	const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 };
 	const plugin = props.plugin;
 
+	// Global States
 	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
 
 	const handleFolderNameClick = (folderPath: string) => {
