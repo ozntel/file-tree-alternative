@@ -12,6 +12,7 @@ export interface FileTreeAlternativePluginSettings {
 	folderCountOption: string;
 	openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
 	pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
+	singleView: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -25,6 +26,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
 	folderCountOption: 'notes',
 	openFolders: [],
 	pinnedFiles: [],
+	singleView: true,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -38,6 +40,30 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 	display(): void {
 		let { containerEl } = this;
 		containerEl.empty();
+
+		const coffeeDiv = containerEl.createDiv('coffee');
+		coffeeDiv.addClass('oz-coffee-div');
+		const coffeeLink = coffeeDiv.createEl('a', { href: 'https://ko-fi.com/L3L356V6Q' });
+		const coffeeImg = coffeeLink.createEl('img', {
+			attr: {
+				src: 'https://cdn.ko-fi.com/cdn/kofi2.png?v=3',
+			},
+		});
+		coffeeImg.height = 40;
+
+		containerEl.createEl('h2', { text: 'View Settings' });
+
+		new Setting(containerEl)
+			.setName('Single View')
+			.setDesc('Turn on if you want to see the folders and files in a single view without switching.')
+			.addToggle((toggle) =>
+				toggle.setValue(this.plugin.settings.singleView).onChange((value) => {
+					this.plugin.settings.singleView = value;
+					this.plugin.saveSettings();
+					this.plugin.refreshTreeLeafs();
+				})
+			);
+
 		containerEl.createEl('h2', { text: 'General' });
 
 		new Setting(containerEl)
@@ -53,9 +79,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Show Root Folder')
-			.setDesc(
-				`Turn on if you want your Root Folder "${this.plugin.app.vault.getName()}" to be visible in the file tree`
-			)
+			.setDesc(`Turn on if you want your Root Folder "${this.plugin.app.vault.getName()}" to be visible in the file tree`)
 			.addToggle((toggle) =>
 				toggle.setValue(this.plugin.settings.showRootFolder).onChange((value) => {
 					this.plugin.settings.showRootFolder = value;
@@ -66,9 +90,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Include Files From Subfolders to the File List')
-			.setDesc(
-				`Turn on this option if you want to see the list of files from all subfolders in addition to the selected folder`
-			)
+			.setDesc(`Turn on this option if you want to see the list of files from all subfolders in addition to the selected folder`)
 			.addToggle((toggle) =>
 				toggle.setValue(this.plugin.settings.showFilesFromSubFolders).onChange((value) => {
 					this.plugin.settings.showFilesFromSubFolders = value;

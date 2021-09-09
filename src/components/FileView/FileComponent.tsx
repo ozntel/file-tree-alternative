@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
 import { TFile, Menu } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import * as Util from 'utils/Utils';
@@ -31,10 +31,8 @@ export function FileComponent(props: FilesProps) {
 	const [searchBoxVisible, setSearchBoxVisible] = useState<boolean>(false);
 	const [treeHeader, setTreeHeader] = useState<string>(Util.getFolderName(activeFolderPath, plugin.app));
 
-	// Scroll Top Once The File List is Loaded
-	useEffect(() => {
-		document.querySelector('div.workspace-leaf-content[data-type="file-tree-view"] > div.view-content').scrollTo(0, 0);
-	});
+	// Folder Name Update once Active Folder Path Change
+	useEffect(() => setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app)), [activeFolderPath]);
 
 	// To focus on Search box if visible set
 	useEffect(() => {
@@ -210,10 +208,14 @@ export function FileComponent(props: FilesProps) {
 
 	return (
 		<React.Fragment>
-			<div className="oz-explorer-container" style={fullHeightStyle}>
+			<div className="oz-explorer-container">
 				<div className="oz-flex-container">
 					<div className="nav-action-button oz-nav-action-button">
-						<FontAwesomeIcon icon={faArrowCircleLeft} onClick={(e) => handleGoBack(e)} size="lg" />
+						<FontAwesomeIcon
+							icon={plugin.settings.singleView ? faTimesCircle : faArrowCircleLeft}
+							onClick={(e) => handleGoBack(e)}
+							size="lg"
+						/>
 					</div>
 					<div className="oz-nav-buttons-right-block">
 						{plugin.settings.searchFunction && (

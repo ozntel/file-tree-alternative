@@ -1,5 +1,5 @@
 import { TAbstractFile, TFile, TFolder } from 'obsidian';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileTreeView } from 'FileTreeView';
@@ -156,5 +156,30 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 		if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
 	}
 
-	return <React.Fragment>{view === 'folder' ? <MainFolder plugin={plugin} /> : <FileComponent plugin={plugin} />}</React.Fragment>;
+	return (
+		<React.Fragment>
+			{view === 'folder' ? (
+				<MainFolder plugin={plugin} />
+			) : plugin.settings.singleView ? (
+				<SingleView plugin={plugin} />
+			) : (
+				<FileComponent plugin={plugin} />
+			)}
+		</React.Fragment>
+	);
 }
+
+const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
+	const [mainFolderHeight, setMainFolderHeight] = useState<string>('50%');
+
+	return (
+		<div className="file-tree-container">
+			<div className="file-tree-half" style={{ height: mainFolderHeight, minHeight: mainFolderHeight }}>
+				<MainFolder plugin={props.plugin} />
+			</div>
+			<div className="file-tree-half">
+				<FileComponent plugin={props.plugin} />
+			</div>
+		</div>
+	);
+};

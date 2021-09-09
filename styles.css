@@ -123,3 +123,21 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 .oz-nav-action-button .fa-lg {
 	font-size: 1.15em;
 }
+
+.file-tree-container {
+	display: flex;
+	flex-direction: column;
+	height: 90vh;
+}
+
+.file-tree-half {
+	display: block;
+	width: 100%;
+	overflow-y: auto;
+	max-height: 80%;
+}
+
+.oz-coffee-div {
+	text-align: center;
+	margin-top: 20px;
+}
