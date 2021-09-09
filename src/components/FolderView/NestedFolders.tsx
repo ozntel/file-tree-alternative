@@ -20,9 +20,7 @@ export function NestedFolders(props: NestedFoldersProps) {
 	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
 	const [excludedFolders, setExcludedFolders] = useRecoilState(excludedFoldersState);
 
-	const handleFolderNameClick = (folderPath: string) => {
-		setActiveFolderPath(folderPath);
-	};
+	const handleFolderNameClick = (folderPath: string) => setActiveFolderPath(folderPath);
 
 	const handleContextMenu = (event: MouseEvent, folder: TFolder) => {
 		// Event Undefined Correction
@@ -72,7 +70,7 @@ export function NestedFolders(props: NestedFoldersProps) {
 		return false;
 	};
 
-	const customSort = (folderTree: FolderTree[]) => {
+	const getSortedFolderTree = (folderTree: FolderTree[]) => {
 		let newTree: FolderTree[] = folderTree;
 		if (excludedFolders.length > 0) {
 			newTree = newTree.filter((tree) => !excludedFolders.contains(tree.folder.path));
@@ -86,7 +84,7 @@ export function NestedFolders(props: NestedFoldersProps) {
 	return (
 		<React.Fragment>
 			{Array.isArray(props.folderTree.children) &&
-				customSort(props.folderTree.children).map((child) => {
+				getSortedFolderTree(props.folderTree.children).map((child) => {
 					return (
 						<React.Fragment key={child.folder.path}>
 							{(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
