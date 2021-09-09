@@ -5,6 +5,8 @@ import { FolderTree } from 'utils/types';
 import { VaultChangeModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import ConditionalRootFolderWrapper from 'components/FolderView/ConditionalWrapper';
+import { useRecoilState } from 'recoil';
+import { openFoldersState } from 'recoil/pluginState';
 
 interface FolderProps {
 	plugin: FileTreeAlternativePlugin;
@@ -39,10 +41,7 @@ export function FolderComponent(props: FolderProps) {
 							open
 							style={treeStyles}
 							onClick={() => handleFolderNameClick('/')}
-							setOpenFolders={props.setOpenFolders}
-							openFolders={props.openFolders}
-							folder={plugin.app.vault.getRoot()}
-							folderFileCountMap={props.folderFileCountMap}>
+							folder={plugin.app.vault.getRoot()}>
 							{children}
 						</Tree>
 					);
@@ -54,8 +53,6 @@ export function FolderComponent(props: FolderProps) {
 						activeFolderPath={props.activeFolderPath}
 						setActiveFolderPath={props.setActiveFolderPath}
 						setView={props.setView}
-						openFolders={props.openFolders}
-						setOpenFolders={props.setOpenFolders}
 						excludedFolders={props.excludedFolders}
 						setExcludedFolders={props.setExcludedFolders}
 						folderFileCountMap={props.folderFileCountMap}
@@ -74,8 +71,6 @@ interface NestedChildrenComponentProps {
 	activeFolderPath: string;
 	setActiveFolderPath: Function;
 	setView: Function;
-	openFolders: TFolder[];
-	setOpenFolders: Function;
 	excludedFolders: string[];
 	setExcludedFolders: Function;
 	folderFileCountMap: { [key: string]: number };
@@ -83,6 +78,9 @@ interface NestedChildrenComponentProps {
 
 function NestedChildrenComponent(props: NestedChildrenComponentProps) {
 	const plugin = props.plugin;
+
+	// Global States
+	const [openFolders] = useRecoilState(openFoldersState);
 
 	const handleFolderNameClick = (folderPath: string) => {
 		props.setActiveFolderPath(folderPath);
@@ -157,21 +155,16 @@ function NestedChildrenComponent(props: NestedChildrenComponentProps) {
 								<Tree
 									plugin={plugin}
 									content={child.folder.name}
-									open={props.openFolders.contains(child.folder) ? true : false}
+									open={openFolders.contains(child.folder) ? true : false}
 									onClick={() => handleFolderNameClick(child.folder.path)}
 									onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
-									setOpenFolders={props.setOpenFolders}
-									openFolders={props.openFolders}
-									folder={child.folder}
-									folderFileCountMap={props.folderFileCountMap}>
+									folder={child.folder}>
 									<NestedChildrenComponent
 										plugin={plugin}
 										folderTree={child}
 										activeFolderPath={props.activeFolderPath}
 										setActiveFolderPath={props.setActiveFolderPath}
 										setView={props.setView}
-										openFolders={props.openFolders}
-										setOpenFolders={props.setOpenFolders}
 										excludedFolders={props.excludedFolders}
 										setExcludedFolders={props.setExcludedFolders}
 										folderFileCountMap={props.folderFileCountMap}
@@ -183,10 +176,7 @@ function NestedChildrenComponent(props: NestedChildrenComponentProps) {
 									content={child.folder.name}
 									onClick={() => handleFolderNameClick(child.folder.path)}
 									onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
-									setOpenFolders={props.setOpenFolders}
-									openFolders={props.openFolders}
 									folder={child.folder}
-									folderFileCountMap={props.folderFileCountMap}
 								/>
 							)}
 						</React.Fragment>

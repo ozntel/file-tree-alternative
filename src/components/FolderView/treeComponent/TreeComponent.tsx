@@ -4,6 +4,8 @@ import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
 import * as Icons from './icons';
+import { folderFileCountMapState, openFoldersState } from '../../../recoil/pluginState';
+import { useRecoilState } from 'recoil';
 
 type TreeProps = {
 	open?: boolean;
@@ -13,14 +15,16 @@ type TreeProps = {
 	type?: any;
 	style?: any;
 	children?: any;
-	setOpenFolders: Function;
-	openFolders: TFolder[];
 	folder: TFolder;
-	folderFileCountMap: { [key: string]: number };
 	plugin: FileTreeAlternativePlugin;
 };
 
 export default function Tree(props: TreeProps) {
+	// Global States
+	const [openFolders, setOpenFolders] = useRecoilState(openFoldersState);
+	const [folderFileCountMap] = useRecoilState(folderFileCountMapState);
+
+	// Local States
 	const [open, setOpen] = useState<boolean>(props.open);
 	const [highlight, setHightlight] = useState<boolean>(false);
 
@@ -29,13 +33,13 @@ export default function Tree(props: TreeProps) {
 		if (props.children) {
 			// Set State in Main Component for Keeping Folders Open
 			if (!open) {
-				props.setOpenFolders([...props.openFolders, props.folder]);
+				setOpenFolders([...openFolders, props.folder]);
 			} else {
-				const newOpenFolders = props.openFolders.filter((folder) => {
+				const newOpenFolders = openFolders.filter((folder) => {
 					if (props.folder === folder) return false;
 					return true;
 				});
-				props.setOpenFolders(newOpenFolders);
+				setOpenFolders(newOpenFolders);
 			}
 			// Set State Open for the Folder
 			setOpen(!open);
@@ -85,9 +89,9 @@ export default function Tree(props: TreeProps) {
 									{props.type}{' '}
 								</div>
 								<div className="oz-folder-name">{props.content}</div>
-								{!open && props.folderFileCountMap[props.folder.path] && (
+								{!open && folderFileCountMap[props.folder.path] && (
 									<div className="oz-folder-count">
-										<span className="nav-file-tag">{props.folderFileCountMap[props.folder.path]}</span>
+										<span className="nav-file-tag">{folderFileCountMap[props.folder.path]}</span>
 									</div>
 								)}
 							</div>
