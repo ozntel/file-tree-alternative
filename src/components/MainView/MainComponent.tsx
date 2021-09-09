@@ -14,6 +14,7 @@ import {
 	fileListState,
 	pinnedFilesState,
 	openFoldersState,
+	excludedExtensionsState,
 } from '../../recoil/pluginState';
 import { useRecoilState } from 'recoil';
 
@@ -26,7 +27,6 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	// --> Main Variables
 	const plugin: FileTreeAlternativePlugin = props.plugin;
 	const rootFolder: TFolder = plugin.app.vault.getRoot();
-	const excludedExtensions: string[] = getExcludedExtensions();
 
 	// --> Register Event Handlers
 	plugin.registerEvent(plugin.app.vault.on('rename', (file) => handleVaultChanges(file, 'rename')));
@@ -42,6 +42,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
 	const [excludedFolders, setExcludedFolders] = useRecoilState(excludedFoldersState);
 	const [folderFileCountMap, setFolderFileCountMap] = useRecoilState(folderFileCountMapState);
+	const [excludedExtensions, setExcludedExtensions] = useRecoilState(excludedExtensionsState);
 
 	const setNewFileList = (folderPath?: string) => {
 		let filesPath = folderPath ? folderPath : activeFolderPath;
@@ -51,6 +52,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	// Initial Load
 	useEffect(() => {
 		setExcludedFolders(getExcludedFolders());
+		setExcludedExtensions(getExcludedExtensions());
 		setPinnedFiles(getPinnedFilesFromSettings());
 		setOpenFolders(getOpenFoldersFromSettings());
 		if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
@@ -173,17 +175,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 					folderFileCountMap={folderFileCountMap}
 				/>
 			) : (
-				<FileComponent
-					plugin={plugin}
-					fileList={fileList}
-					setFileList={setFileList}
-					getFilesUnderPath={FileTreeUtils.getFilesUnderPath}
-					activeFolderPath={activeFolderPath}
-					setView={setView}
-					pinnedFiles={pinnedFiles}
-					setPinnedFiles={setPinnedFiles}
-					excludedExtensions={excludedExtensions}
-				/>
+				<FileComponent plugin={plugin} />
 			)}
 		</React.Fragment>
 	);

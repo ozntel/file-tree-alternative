@@ -17,6 +17,11 @@ export const excludedFoldersState = atom({
 	default: [] as string[],
 });
 
+export const excludedExtensionsState = atom({
+	key: 'fileTreeExcludedExtensions',
+	default: [] as string[],
+});
+
 export const folderFileCountMapState = atom({
 	key: 'fileTreeFolderFileCountMapState',
 	default: {} as FolderFileCountMap,
