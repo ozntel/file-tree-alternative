@@ -1,7 +1,7 @@
 import { TAbstractFile, TFile, TFolder } from 'obsidian';
 import React, { useEffect } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
-import { FolderComponent } from 'components/FolderView/FolderComponent';
+import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileTreeView } from 'FileTreeView';
 import FileTreeAlternativePlugin from 'main';
 import * as FileTreeUtils from 'utils/Utils';
@@ -35,7 +35,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
 	// --> Plugin States
 	const [view, setView] = useRecoilState(viewState);
-	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
+	const [activeFolderPath] = useRecoilState(activeFolderPathState);
 	const [fileList, setFileList] = useRecoilState(fileListState);
 	const [pinnedFiles, setPinnedFiles] = useRecoilState(pinnedFilesState);
 	const [openFolders, setOpenFolders] = useRecoilState(openFoldersState);
@@ -156,5 +156,5 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 		if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
 	}
 
-	return <React.Fragment>{view === 'folder' ? <FolderComponent plugin={plugin} /> : <FileComponent plugin={plugin} />}</React.Fragment>;
+	return <React.Fragment>{view === 'folder' ? <MainFolder plugin={plugin} /> : <FileComponent plugin={plugin} />}</React.Fragment>;
 }

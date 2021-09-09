@@ -1,60 +1,18 @@
 import React from 'react';
 import { Menu, TFolder } from 'obsidian';
-import Tree from 'components/FolderView/treeComponent/TreeComponent';
 import { FolderTree } from 'utils/types';
 import { VaultChangeModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
-import ConditionalRootFolderWrapper from 'components/FolderView/ConditionalWrapper';
+import Tree from 'components/FolderView/treeComponent/TreeComponent';
 import { useRecoilState } from 'recoil';
-import { activeFolderPathState, excludedFoldersState, folderTreeState, openFoldersState } from 'recoil/pluginState';
+import { activeFolderPathState, excludedFoldersState, openFoldersState } from 'recoil/pluginState';
 
-interface FolderProps {
-	plugin: FileTreeAlternativePlugin;
-}
-
-export function FolderComponent(props: FolderProps) {
-	const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 };
-	const plugin = props.plugin;
-
-	// Global States
-	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
-	const [mainFolderTree] = useRecoilState(folderTreeState);
-
-	const handleFolderNameClick = (folderPath: string) => {
-		setActiveFolderPath(folderPath);
-	};
-
-	return (
-		<React.Fragment>
-			<ConditionalRootFolderWrapper
-				condition={plugin.settings.showRootFolder}
-				wrapper={(children) => {
-					return (
-						<Tree
-							plugin={plugin}
-							content={plugin.app.vault.getName()}
-							open
-							style={treeStyles}
-							onClick={() => handleFolderNameClick('/')}
-							folder={plugin.app.vault.getRoot()}>
-							{children}
-						</Tree>
-					);
-				}}>
-				{mainFolderTree && <NestedChildrenComponent plugin={plugin} folderTree={mainFolderTree} />}
-			</ConditionalRootFolderWrapper>
-		</React.Fragment>
-	);
-}
-
-/* ------ Nested Children Component ------ */
-
-interface NestedChildrenComponentProps {
+interface NestedFoldersProps {
 	plugin: FileTreeAlternativePlugin;
 	folderTree: FolderTree;
 }
 
-function NestedChildrenComponent(props: NestedChildrenComponentProps) {
+export function NestedFolders(props: NestedFoldersProps) {
 	const plugin = props.plugin;
 
 	// Global States
@@ -139,7 +97,7 @@ function NestedChildrenComponent(props: NestedChildrenComponentProps) {
 									onClick={() => handleFolderNameClick(child.folder.path)}
 									onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
 									folder={child.folder}>
-									<NestedChildrenComponent plugin={plugin} folderTree={child} />
+									<NestedFolders plugin={plugin} folderTree={child} />
 								</Tree>
 							) : (
 								<Tree

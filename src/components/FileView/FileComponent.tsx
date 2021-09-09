@@ -5,8 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
-import * as Util from '../../utils/Utils';
-import { viewState, activeFolderPathState, fileListState, pinnedFilesState, excludedExtensionsState } from '../../recoil/pluginState';
+import * as Util from 'utils/Utils';
+import { viewState, activeFolderPathState, fileListState, pinnedFilesState, excludedExtensionsState } from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 
 interface FilesProps {

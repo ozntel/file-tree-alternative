@@ -15,5 +15,5 @@
 		"allowSyntheticDefaultImports": true,
 		"lib": ["dom", "es5", "scripthost", "es2015"]
 	},
-	"include": ["**/*.ts", "src/FileTreeView.tsx"]
+	"include": ["**/*.ts", "**/*.tsx", "src/FileTreeView.tsx"]
 }
