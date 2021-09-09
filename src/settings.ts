@@ -12,7 +12,7 @@ export interface FileTreeAlternativePluginSettings {
 	folderCountOption: string;
 	openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
 	pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
-	singleView: boolean;
+	evernoteView: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -26,7 +26,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
 	folderCountOption: 'notes',
 	openFolders: [],
 	pinnedFiles: [],
-	singleView: true,
+	evernoteView: true,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -54,11 +54,13 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 		containerEl.createEl('h2', { text: 'View Settings' });
 
 		new Setting(containerEl)
-			.setName('Single View')
-			.setDesc('Turn on if you want to see the folders and files in a single view without switching.')
+			.setName('Evernote View')
+			.setDesc(
+				'Turn on if you want to see the folders and files in a single view without switching between views. Similar experience to Evernote.'
+			)
 			.addToggle((toggle) =>
-				toggle.setValue(this.plugin.settings.singleView).onChange((value) => {
-					this.plugin.settings.singleView = value;
+				toggle.setValue(this.plugin.settings.evernoteView).onChange((value) => {
+					this.plugin.settings.evernoteView = value;
 					this.plugin.saveSettings();
 					this.plugin.refreshTreeLeafs();
 				})

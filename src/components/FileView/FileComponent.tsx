@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
 import { TFile, Menu } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import * as Icons from 'utils/icons';
 import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import * as Util from 'utils/Utils';
@@ -212,7 +212,7 @@ export function FileComponent(props: FilesProps) {
 				<div className="oz-flex-container">
 					<div className="nav-action-button oz-nav-action-button">
 						<FontAwesomeIcon
-							icon={plugin.settings.singleView ? faTimesCircle : faArrowCircleLeft}
+							icon={plugin.settings.evernoteView ? Icons.faTimesCircle : Icons.faArrowCircleLeft}
 							onClick={(e) => handleGoBack(e)}
 							size="lg"
 						/>
@@ -220,11 +220,11 @@ export function FileComponent(props: FilesProps) {
 					<div className="oz-nav-buttons-right-block">
 						{plugin.settings.searchFunction && (
 							<div className="nav-action-button oz-nav-action-button">
-								<FontAwesomeIcon icon={faSearch} onClick={toggleSearchBox} size="lg" />
+								<FontAwesomeIcon icon={Icons.faSearch} onClick={toggleSearchBox} size="lg" />
 							</div>
 						)}
 						<div className="nav-action-button oz-nav-action-button">
-							<FontAwesomeIcon icon={faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
+							<FontAwesomeIcon icon={Icons.faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
 						</div>
 					</div>
 				</div>
@@ -265,7 +265,11 @@ export function FileComponent(props: FilesProps) {
 												<div className="nav-file-title-content">
 													{Util.getFileNameAndExtension(file.name).fileName}
 													{pinnedFiles.contains(file) && (
-														<FontAwesomeIcon icon={faThumbtack} style={{ marginLeft: '3px', float: 'right' }} size="xs" />
+														<FontAwesomeIcon
+															icon={Icons.faThumbtack}
+															style={{ marginLeft: '3px', float: 'right' }}
+															size="xs"
+														/>
 													)}
 												</div>
 											</div>

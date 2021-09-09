@@ -160,7 +160,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 		<React.Fragment>
 			{view === 'folder' ? (
 				<MainFolder plugin={plugin} />
-			) : plugin.settings.singleView ? (
+			) : plugin.settings.evernoteView ? (
 				<SingleView plugin={plugin} />
 			) : (
 				<FileComponent plugin={plugin} />

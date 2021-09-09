@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
-import * as Icons from './icons';
+import * as Icons from 'utils/icons';
 import { folderFileCountMapState, openFoldersState } from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 

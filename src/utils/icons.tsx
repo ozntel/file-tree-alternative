@@ -1,5 +1,11 @@
 import React from 'react';
 
+import { faPlusCircle } from '@fortawesome/free-solid-svg-icons/faPlusCircle';
+import { faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons/faArrowCircleLeft';
+import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
+import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
+
 const MinusSquareO = (props: any) => (
 	<svg {...props} viewBox="64 -65 897 897">
 		<g>
@@ -49,4 +55,4 @@ const CloseSquareO = (props: any) => (
 	</svg>
 );
 
-export { PlusSquareO, MinusSquareO, CloseSquareO, EyeO };
+export { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch, faTimesCircle, PlusSquareO, MinusSquareO, CloseSquareO, EyeO };
