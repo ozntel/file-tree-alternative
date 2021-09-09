@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.3.5
+
+-   Default settings update
+
 ## Version 1.3.4
 
 -   Evernote Like View Feature
