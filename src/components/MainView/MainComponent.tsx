@@ -170,15 +170,13 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 }
 
 const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
-	const [mainFolderHeight, setMainFolderHeight] = useState<string>('50%');
-
 	return (
 		<div className="file-tree-container">
-			<div className="file-tree-half" style={{ height: mainFolderHeight, minHeight: mainFolderHeight }}>
+			<div className="oz-file-tree-panes oz-folder-pane">
 				<MainFolder plugin={props.plugin} />
 			</div>
 			<div id="file-tree-divider"></div>
-			<div className="file-tree-half">
+			<div className="oz-file-tree-panes oz-file-list-pane">
 				<FileComponent plugin={props.plugin} />
 			</div>
 		</div>

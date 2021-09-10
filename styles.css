@@ -130,11 +130,19 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 	height: 90vh;
 }
 
-.file-tree-half {
+.oz-file-tree-panes {
 	display: block;
 	width: 100%;
 	overflow-y: auto;
-	max-height: 80%;
+}
+
+.oz-folder-pane {
+	height: 50%;
+	resize: vertical;
+}
+
+.oz-file-list-pane {
+	flex: 1;
 }
 
 .oz-coffee-div {
