@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.3.6
+
+-   Divider for single view
+
 ## Version 1.3.5
 
 -   Default settings update
