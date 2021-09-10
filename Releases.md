@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.3.7
+
+-   Resizable Panes
+
 ## Version 1.3.6
 
 -   Divider for single view
