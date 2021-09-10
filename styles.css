@@ -141,3 +141,8 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 	text-align: center;
 	margin-top: 20px;
 }
+
+#file-tree-divider {
+	height: 1.5px;
+	background-color: var(--text-muted);
+}

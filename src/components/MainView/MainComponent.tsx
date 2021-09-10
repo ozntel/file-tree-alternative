@@ -177,6 +177,7 @@ const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
 			<div className="file-tree-half" style={{ height: mainFolderHeight, minHeight: mainFolderHeight }}>
 				<MainFolder plugin={props.plugin} />
 			</div>
+			<div id="file-tree-divider"></div>
 			<div className="file-tree-half">
 				<FileComponent plugin={props.plugin} />
 			</div>
