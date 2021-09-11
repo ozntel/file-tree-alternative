@@ -23,7 +23,7 @@ export function MainFolder(props: FolderProps) {
 	};
 
 	return (
-		<div>
+		<div className="oz-folders-tree-wrapper">
 			<ConditionalRootFolderWrapper
 				condition={plugin.settings.showRootFolder}
 				wrapper={(children) => {

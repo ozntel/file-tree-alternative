@@ -102,9 +102,24 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 	width: 100%;
 }
 
-.oz-folder-count {
+.oz-folder-count.no-root {
 	float: right;
-	padding-right: 26px;
+	padding-right: 25px;
+}
+
+.oz-folder-count.with-root {
+	float: right;
+	padding-right: 32px;
+}
+
+.oz-folders-tree-wrapper {
+	overflow: hidden;
+	padding-bottom: 5px;
+}
+
+.oz-folder-element {
+	line-height: 1.35em;
+	padding: 0px 0px 0px 0px;
 }
 
 .oz-input-container > input {

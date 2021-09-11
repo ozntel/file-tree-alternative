@@ -90,7 +90,7 @@ export default function Tree(props: TreeProps) {
 								</div>
 								<div className="oz-folder-name">{props.content}</div>
 								{!open && folderFileCountMap[props.folder.path] && (
-									<div className="oz-folder-count">
+									<div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
 										<span className="nav-file-tag">{folderFileCountMap[props.folder.path]}</span>
 									</div>
 								)}
