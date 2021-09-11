@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.3.8
+
+-   Dropzone Height Correction for File Lists
+-   Folder View Correction
+
 ## Version 1.3.7
 
 -   Resizable Panes
