@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.3.9
+
+-   Correction of broken link for folders within the last update
+
 ## Version 1.3.8
 
 -   Dropzone Height Correction for File Lists
