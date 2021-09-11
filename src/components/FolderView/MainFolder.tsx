@@ -23,7 +23,7 @@ export function MainFolder(props: FolderProps) {
 	};
 
 	return (
-		<React.Fragment>
+		<div className="treeview">
 			<ConditionalRootFolderWrapper
 				condition={plugin.settings.showRootFolder}
 				wrapper={(children) => {
@@ -41,6 +41,6 @@ export function MainFolder(props: FolderProps) {
 				}}>
 				{mainFolderTree && <NestedFolders plugin={plugin} folderTree={mainFolderTree} />}
 			</ConditionalRootFolderWrapper>
-		</React.Fragment>
+		</div>
 	);
 }
