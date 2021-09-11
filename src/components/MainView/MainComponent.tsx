@@ -172,11 +172,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
 	return (
 		<div className="file-tree-container">
-			<div className="oz-file-tree-panes oz-folder-pane">
+			<div className="oz-folder-pane">
 				<MainFolder plugin={props.plugin} />
 			</div>
 			<div id="file-tree-divider"></div>
-			<div className="oz-file-tree-panes oz-file-list-pane">
+			<div className="oz-file-list-pane">
 				<FileComponent plugin={props.plugin} />
 			</div>
 		</div>

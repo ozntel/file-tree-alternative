@@ -219,33 +219,39 @@ export function FileComponent(props: FilesProps) {
 
 						<div className="oz-explorer-container">
 							{/* Header */}
-							<div className="oz-flex-container">
-								<div className="nav-action-button oz-nav-action-button">
-									<FontAwesomeIcon
-										icon={plugin.settings.evernoteView ? Icons.faTimesCircle : Icons.faArrowCircleLeft}
-										onClick={(e) => handleGoBack(e)}
-										size="lg"
-									/>
-								</div>
-								<div className="oz-nav-buttons-right-block">
-									{plugin.settings.searchFunction && (
-										<div className="nav-action-button oz-nav-action-button">
-											<FontAwesomeIcon icon={Icons.faSearch} onClick={toggleSearchBox} size="lg" />
-										</div>
-									)}
+							<div className="oz-file-tree-header-wrapper">
+								<div className="oz-flex-container">
 									<div className="nav-action-button oz-nav-action-button">
-										<FontAwesomeIcon icon={Icons.faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
+										<FontAwesomeIcon
+											icon={plugin.settings.evernoteView ? Icons.faTimesCircle : Icons.faArrowCircleLeft}
+											onClick={(e) => handleGoBack(e)}
+											size="lg"
+										/>
+									</div>
+									<div className="oz-nav-buttons-right-block">
+										{plugin.settings.searchFunction && (
+											<div className="nav-action-button oz-nav-action-button">
+												<FontAwesomeIcon icon={Icons.faSearch} onClick={toggleSearchBox} size="lg" />
+											</div>
+										)}
+										<div className="nav-action-button oz-nav-action-button">
+											<FontAwesomeIcon
+												icon={Icons.faPlusCircle}
+												onClick={(e) => createNewFile(e, activeFolderPath)}
+												size="lg"
+											/>
+										</div>
 									</div>
 								</div>
+
+								{searchBoxVisible && (
+									<div className="search-input-container oz-input-container">
+										<input type="search" placeholder="Search..." ref={searchInput} value={searchPhrase} onChange={handleSearch} />
+									</div>
+								)}
+
+								<div className="oz-file-tree-header">{treeHeader}</div>
 							</div>
-
-							{searchBoxVisible && (
-								<div className="search-input-container oz-input-container">
-									<input type="search" placeholder="Search..." ref={searchInput} value={searchPhrase} onChange={handleSearch} />
-								</div>
-							)}
-
-							<div className="oz-file-tree-header">{treeHeader}</div>
 							{/* End: Header */}
 
 							{/* File List */}
