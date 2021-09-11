@@ -48,8 +48,6 @@ export function FileComponent(props: FilesProps) {
 		});
 	};
 
-	const fullHeightStyle: React.CSSProperties = { width: '100%', height: '100%' };
-
 	// Handle Click Event on File - Allows Open with Cmd/Ctrl
 	const openFile = (file: TFile, e: React.MouseEvent) => {
 		Util.openInternalLink(e, file.path, plugin.app);
@@ -208,46 +206,49 @@ export function FileComponent(props: FilesProps) {
 
 	return (
 		<React.Fragment>
-			<div className="oz-explorer-container">
-				<div className="oz-flex-container">
-					<div className="nav-action-button oz-nav-action-button">
-						<FontAwesomeIcon
-							icon={plugin.settings.evernoteView ? Icons.faTimesCircle : Icons.faArrowCircleLeft}
-							onClick={(e) => handleGoBack(e)}
-							size="lg"
-						/>
-					</div>
-					<div className="oz-nav-buttons-right-block">
-						{plugin.settings.searchFunction && (
-							<div className="nav-action-button oz-nav-action-button">
-								<FontAwesomeIcon icon={Icons.faSearch} onClick={toggleSearchBox} size="lg" />
+			<Dropzone
+				onDrop={onDrop}
+				noClick={true}
+				onDragEnter={() => setHighlight(true)}
+				onDragLeave={() => setHighlight(false)}
+				onDropAccepted={() => setHighlight(false)}
+				onDropRejected={() => setHighlight(false)}>
+				{({ getRootProps, getInputProps }) => (
+					<div {...getRootProps()} className={highlight ? 'drag-entered' : ''} style={{ width: '100%', height: '100%' }}>
+						<input {...getInputProps()} />
+
+						<div className="oz-explorer-container">
+							{/* Header */}
+							<div className="oz-flex-container">
+								<div className="nav-action-button oz-nav-action-button">
+									<FontAwesomeIcon
+										icon={plugin.settings.evernoteView ? Icons.faTimesCircle : Icons.faArrowCircleLeft}
+										onClick={(e) => handleGoBack(e)}
+										size="lg"
+									/>
+								</div>
+								<div className="oz-nav-buttons-right-block">
+									{plugin.settings.searchFunction && (
+										<div className="nav-action-button oz-nav-action-button">
+											<FontAwesomeIcon icon={Icons.faSearch} onClick={toggleSearchBox} size="lg" />
+										</div>
+									)}
+									<div className="nav-action-button oz-nav-action-button">
+										<FontAwesomeIcon icon={Icons.faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
+									</div>
+								</div>
 							</div>
-						)}
-						<div className="nav-action-button oz-nav-action-button">
-							<FontAwesomeIcon icon={Icons.faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
-						</div>
-					</div>
-				</div>
 
-				{searchBoxVisible && (
-					<div className="search-input-container oz-input-container">
-						<input type="search" placeholder="Search..." ref={searchInput} value={searchPhrase} onChange={handleSearch} />
-					</div>
-				)}
+							{searchBoxVisible && (
+								<div className="search-input-container oz-input-container">
+									<input type="search" placeholder="Search..." ref={searchInput} value={searchPhrase} onChange={handleSearch} />
+								</div>
+							)}
 
-				<div className="oz-file-tree-header">{treeHeader}</div>
+							<div className="oz-file-tree-header">{treeHeader}</div>
+							{/* End: Header */}
 
-				<Dropzone
-					onDrop={onDrop}
-					noClick={true}
-					onDragEnter={() => setHighlight(true)}
-					onDragLeave={() => setHighlight(false)}
-					onDropAccepted={() => setHighlight(false)}
-					onDropRejected={() => setHighlight(false)}>
-					{({ getRootProps, getInputProps }) => (
-						<div {...getRootProps()} className={highlight ? 'drag-entered' : ''} style={fullHeightStyle}>
-							<input {...getInputProps()} />
-
+							{/* File List */}
 							<div className="oz-file-tree-files">
 								{customFiles(fileList).map((file) => {
 									return (
@@ -277,10 +278,11 @@ export function FileComponent(props: FilesProps) {
 									);
 								})}
 							</div>
+							{/* End: File List */}
 						</div>
-					)}
-				</Dropzone>
-			</div>
+					</div>
+				)}
+			</Dropzone>
 		</React.Fragment>
 	);
 }
