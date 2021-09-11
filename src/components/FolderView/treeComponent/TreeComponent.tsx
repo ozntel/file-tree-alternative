@@ -71,7 +71,7 @@ export default function Tree(props: TreeProps) {
 			onDropAccepted={() => setHightlight(false)}
 			onDropRejected={() => setHightlight(false)}>
 			{({ getRootProps, getInputProps }) => (
-				<div style={{ ...props.style }}>
+				<div style={{ ...props.style }} className="treeview">
 					<div
 						{...getRootProps({ className: 'dropzone' })}
 						className={'oz-folder-element' + (highlight ? ' drag-entered' : '')}

@@ -23,7 +23,7 @@ export function MainFolder(props: FolderProps) {
 	};
 
 	return (
-		<div className="treeview">
+		<div>
 			<ConditionalRootFolderWrapper
 				condition={plugin.settings.showRootFolder}
 				wrapper={(children) => {
