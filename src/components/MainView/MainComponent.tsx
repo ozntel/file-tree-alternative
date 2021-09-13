@@ -29,13 +29,13 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	const rootFolder: TFolder = plugin.app.vault.getRoot();
 
 	// --> Register Event Handlers
-	plugin.registerEvent(plugin.app.vault.on('rename', (file) => handleVaultChanges(file, 'rename')));
+	plugin.registerEvent(plugin.app.vault.on('rename', (file, oldPath) => handleVaultChanges(file, 'rename', oldPath)));
 	plugin.registerEvent(plugin.app.vault.on('delete', (file) => handleVaultChanges(file, 'delete')));
 	plugin.registerEvent(plugin.app.vault.on('create', (file) => handleVaultChanges(file, 'create')));
 
 	// --> Plugin States
 	const [view, setView] = useRecoilState(viewState);
-	const [activeFolderPath] = useRecoilState(activeFolderPathState);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
 	const [fileList, setFileList] = useRecoilState(fileListState);
 	const [pinnedFiles, setPinnedFiles] = useRecoilState(pinnedFilesState);
 	const [openFolders, setOpenFolders] = useRecoilState(openFoldersState);
@@ -139,7 +139,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	}
 
 	// Function for Event Handlers
-	function handleVaultChanges(file: TAbstractFile, changeType: string) {
+	function handleVaultChanges(file: TAbstractFile, changeType: string, oldPathBeforeRename?: string) {
 		if (file instanceof TFile) {
 			if (view === 'file') {
 				if (changeType === 'rename' || changeType === 'delete') {
@@ -151,6 +151,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 			}
 		} else if (file instanceof TFolder) {
 			setFolderTree(FileTreeUtils.createFolderTree(rootFolder));
+			// if active folder is renamed, activefolderpath needs to be refreshed
+			if (changeType === 'rename' && oldPathBeforeRename && activeFolderPath === oldPathBeforeRename) {
+				setActiveFolderPath(file.path);
+			}
 		}
 		// After Each Vault Change Folder Count Map to Be Updated
 		if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
