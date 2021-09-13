@@ -6,6 +6,7 @@ import FileTreeAlternativePlugin from 'main';
 import Tree from 'components/FolderView/treeComponent/TreeComponent';
 import { useRecoilState } from 'recoil';
 import * as recoilState from 'recoil/pluginState';
+import { handleFolderContextMenu } from './FolderMenu';
 
 interface NestedFoldersProps {
 	plugin: FileTreeAlternativePlugin;
@@ -21,54 +22,6 @@ export function NestedFolders(props: NestedFoldersProps) {
 	const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
 
 	const handleFolderNameClick = (folderPath: string) => setActiveFolderPath(folderPath);
-
-	const handleContextMenu = (event: MouseEvent, folder: TFolder) => {
-		// Event Undefined Correction
-		let e = event;
-		if (event === undefined) e = window.event as MouseEvent;
-
-		// Menu Items
-		const fileMenu = new Menu(plugin.app);
-
-		fileMenu.addItem((menuItem) => {
-			menuItem.setTitle('New Folder');
-			menuItem.setIcon('folder');
-			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(plugin.app, folder, 'create folder');
-				vaultChangeModal.open();
-			});
-		});
-
-		fileMenu.addItem((menuItem) => {
-			menuItem.setTitle('Delete');
-			menuItem.setIcon('trash');
-			menuItem.onClick((ev: MouseEvent) => {
-				plugin.app.vault.delete(folder, true);
-			});
-		});
-
-		fileMenu.addItem((menuItem) => {
-			menuItem.setTitle('Rename');
-			menuItem.setIcon('pencil');
-			menuItem.onClick((ev: MouseEvent) => {
-				let vaultChangeModal = new VaultChangeModal(plugin.app, folder, 'rename');
-				vaultChangeModal.open();
-			});
-		});
-
-		fileMenu.addItem((menuItem) => {
-			menuItem.setTitle('Add to Excluded Folders');
-			menuItem.setIcon('switch');
-			menuItem.onClick((ev: MouseEvent) => {
-				setExcludedFolders([...excludedFolders, folder.path]);
-			});
-		});
-
-		// Trigger
-		plugin.app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
-		fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
-		return false;
-	};
 
 	const getSortedFolderTree = (folderTree: FolderTree[]) => {
 		let newTree: FolderTree[] = folderTree;
@@ -93,7 +46,9 @@ export function NestedFolders(props: NestedFoldersProps) {
 									content={child.folder.name}
 									open={openFolders.contains(child.folder) ? true : false}
 									onClick={() => handleFolderNameClick(child.folder.path)}
-									onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
+									onContextMenu={(e: MouseEvent) =>
+										handleFolderContextMenu(e, child.folder, plugin.app, excludedFolders, setExcludedFolders)
+									}
 									folder={child.folder}>
 									<NestedFolders plugin={plugin} folderTree={child} />
 								</Tree>
@@ -102,7 +57,9 @@ export function NestedFolders(props: NestedFoldersProps) {
 									plugin={plugin}
 									content={child.folder.name}
 									onClick={() => handleFolderNameClick(child.folder.path)}
-									onContextMenu={(e: MouseEvent) => handleContextMenu(e, child.folder)}
+									onContextMenu={(e: MouseEvent) =>
+										handleFolderContextMenu(e, child.folder, plugin.app, excludedFolders, setExcludedFolders)
+									}
 									folder={child.folder}
 								/>
 							)}
