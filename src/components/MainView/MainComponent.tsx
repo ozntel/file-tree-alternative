@@ -1,5 +1,5 @@
 import { TAbstractFile, TFile, TFolder } from 'obsidian';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileTreeView } from 'FileTreeView';

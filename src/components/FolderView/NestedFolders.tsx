@@ -1,7 +1,6 @@
 import React from 'react';
-import { Menu, TFolder } from 'obsidian';
+import { TFolder } from 'obsidian';
 import { FolderTree } from 'utils/types';
-import { VaultChangeModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import Tree from 'components/FolderView/treeComponent/TreeComponent';
 import { useRecoilState } from 'recoil';
