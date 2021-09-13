@@ -48,3 +48,26 @@ export function handleFolderContextMenu(event: MouseEvent, folder: TFolder, app:
 	fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
 	return false;
 }
+
+export function handleRootFolderContextMenu(event: MouseEvent, app: App) {
+	// Event Undefined Correction
+	let e = event;
+	if (event === undefined) e = window.event as MouseEvent;
+
+	// Menu Items
+	const fileMenu = new Menu(app);
+
+	fileMenu.addItem((menuItem) => {
+		menuItem.setTitle('New Folder');
+		menuItem.setIcon('folder');
+		menuItem.onClick((ev: MouseEvent) => {
+			let vaultChangeModal = new VaultChangeModal(app, app.vault.getRoot(), 'create folder');
+			vaultChangeModal.open();
+		});
+	});
+
+	// Trigger
+	app.workspace.trigger('root-folder-menu', fileMenu, app.vault.getRoot());
+	fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+	return false;
+}

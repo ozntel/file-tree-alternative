@@ -5,6 +5,7 @@ import ConditionalRootFolderWrapper from 'components/FolderView/ConditionalWrapp
 import { useRecoilState } from 'recoil';
 import * as recoilState from 'recoil/pluginState';
 import { NestedFolders } from 'components/FolderView/NestedFolders';
+import { handleRootFolderContextMenu } from './FolderMenu';
 
 interface FolderProps {
 	plugin: FileTreeAlternativePlugin;
@@ -34,7 +35,8 @@ export function MainFolder(props: FolderProps) {
 							open
 							style={treeStyles}
 							onClick={() => handleFolderNameClick('/')}
-							folder={plugin.app.vault.getRoot()}>
+							folder={plugin.app.vault.getRoot()}
+							onContextMenu={(e: MouseEvent) => handleRootFolderContextMenu(e, plugin.app)}>
 							{children}
 						</Tree>
 					);
