@@ -3,7 +3,7 @@ import Tree from 'components/FolderView/treeComponent/TreeComponent';
 import FileTreeAlternativePlugin from 'main';
 import ConditionalRootFolderWrapper from 'components/FolderView/ConditionalWrapper';
 import { useRecoilState } from 'recoil';
-import { activeFolderPathState, folderTreeState } from 'recoil/pluginState';
+import * as recoilState from 'recoil/pluginState';
 import { NestedFolders } from 'components/FolderView/NestedFolders';
 
 interface FolderProps {
@@ -15,8 +15,8 @@ export function MainFolder(props: FolderProps) {
 	const plugin = props.plugin;
 
 	// Global States
-	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
-	const [mainFolderTree] = useRecoilState(folderTreeState);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
+	const [mainFolderTree] = useRecoilState(recoilState.folderTree);
 
 	const handleFolderNameClick = (folderPath: string) => {
 		setActiveFolderPath(folderPath);

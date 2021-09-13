@@ -5,7 +5,7 @@ import { VaultChangeModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import Tree from 'components/FolderView/treeComponent/TreeComponent';
 import { useRecoilState } from 'recoil';
-import { activeFolderPathState, excludedFoldersState, openFoldersState } from 'recoil/pluginState';
+import * as recoilState from 'recoil/pluginState';
 
 interface NestedFoldersProps {
 	plugin: FileTreeAlternativePlugin;
@@ -16,9 +16,9 @@ export function NestedFolders(props: NestedFoldersProps) {
 	const plugin = props.plugin;
 
 	// Global States
-	const [openFolders] = useRecoilState(openFoldersState);
-	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
-	const [excludedFolders, setExcludedFolders] = useRecoilState(excludedFoldersState);
+	const [openFolders] = useRecoilState(recoilState.openFolders);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
+	const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
 
 	const handleFolderNameClick = (folderPath: string) => setActiveFolderPath(folderPath);
 

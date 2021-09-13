@@ -4,7 +4,7 @@ import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
 import * as Icons from 'utils/icons';
-import { folderFileCountMapState, openFoldersState } from 'recoil/pluginState';
+import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 
 type TreeProps = {
@@ -21,8 +21,8 @@ type TreeProps = {
 
 export default function Tree(props: TreeProps) {
 	// Global States
-	const [openFolders, setOpenFolders] = useRecoilState(openFoldersState);
-	const [folderFileCountMap] = useRecoilState(folderFileCountMapState);
+	const [openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
+	const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
 
 	// Local States
 	const [open, setOpen] = useState<boolean>(props.open);

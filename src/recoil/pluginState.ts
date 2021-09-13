@@ -2,50 +2,50 @@ import { TFile, TFolder } from 'obsidian';
 import { atom } from 'recoil';
 import { FolderTree, FolderFileCountMap } from 'utils/types';
 
-export const viewState = atom({
+export const view = atom({
 	key: 'fileTreeViewState',
 	default: 'folder',
 });
 
-export const activeFolderPathState = atom({
+export const activeFolderPath = atom({
 	key: 'fileTreeActiveFolderPathState',
 	default: '',
 });
 
-export const excludedFoldersState = atom({
+export const excludedFolders = atom({
 	key: 'fileTreeExcludedFoldersState',
 	default: [] as string[],
 });
 
-export const excludedExtensionsState = atom({
+export const excludedExtensions = atom({
 	key: 'fileTreeExcludedExtensions',
 	default: [] as string[],
 });
 
-export const folderFileCountMapState = atom({
+export const folderFileCountMap = atom({
 	key: 'fileTreeFolderFileCountMapState',
 	default: {} as FolderFileCountMap,
 });
 
-export const folderTreeState = atom({
+export const folderTree = atom({
 	key: 'fileTreeFolderTreeState',
 	default: null as FolderTree,
 	dangerouslyAllowMutability: true,
 });
 
-export const fileListState = atom({
+export const fileList = atom({
 	key: 'fileTreeFileListState',
 	default: [] as TFile[],
 	dangerouslyAllowMutability: true,
 });
 
-export const pinnedFilesState = atom({
+export const pinnedFiles = atom({
 	key: 'fileTreePinnedFilesState',
 	default: [] as TFile[],
 	dangerouslyAllowMutability: true,
 });
 
-export const openFoldersState = atom({
+export const openFolders = atom({
 	key: 'fileTreeOpenFoldersState',
 	default: [] as TFolder[],
 	dangerouslyAllowMutability: true,

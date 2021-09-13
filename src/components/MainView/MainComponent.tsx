@@ -5,17 +5,7 @@ import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileTreeView } from 'FileTreeView';
 import FileTreeAlternativePlugin from 'main';
 import * as FileTreeUtils from 'utils/Utils';
-import {
-	viewState,
-	activeFolderPathState,
-	excludedFoldersState,
-	folderTreeState,
-	folderFileCountMapState,
-	fileListState,
-	pinnedFilesState,
-	openFoldersState,
-	excludedExtensionsState,
-} from '../../recoil/pluginState';
+import * as recoilState from '../../recoil/pluginState';
 import { useRecoilState } from 'recoil';
 
 interface MainTreeComponentProps {
@@ -34,15 +24,15 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	plugin.registerEvent(plugin.app.vault.on('create', (file) => handleVaultChanges(file, 'create')));
 
 	// --> Plugin States
-	const [view, setView] = useRecoilState(viewState);
-	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
-	const [fileList, setFileList] = useRecoilState(fileListState);
-	const [pinnedFiles, setPinnedFiles] = useRecoilState(pinnedFilesState);
-	const [openFolders, setOpenFolders] = useRecoilState(openFoldersState);
-	const [folderTree, setFolderTree] = useRecoilState(folderTreeState);
-	const [excludedFolders, setExcludedFolders] = useRecoilState(excludedFoldersState);
-	const [folderFileCountMap, setFolderFileCountMap] = useRecoilState(folderFileCountMapState);
-	const [excludedExtensions, setExcludedExtensions] = useRecoilState(excludedExtensionsState);
+	const [view, setView] = useRecoilState(recoilState.view);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
+	const [fileList, setFileList] = useRecoilState(recoilState.fileList);
+	const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
+	const [openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
+	const [folderTree, setFolderTree] = useRecoilState(recoilState.folderTree);
+	const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
+	const [folderFileCountMap, setFolderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
+	const [excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
 
 	const setNewFileList = (folderPath?: string) => {
 		let filesPath = folderPath ? folderPath : activeFolderPath;

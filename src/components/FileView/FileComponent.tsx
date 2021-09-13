@@ -6,7 +6,7 @@ import * as Icons from 'utils/icons';
 import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import * as Util from 'utils/Utils';
-import { viewState, activeFolderPathState, fileListState, pinnedFilesState, excludedExtensionsState } from 'recoil/pluginState';
+import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 
 interface FilesProps {
@@ -18,11 +18,11 @@ export function FileComponent(props: FilesProps) {
 	const plugin = props.plugin;
 
 	// States Coming From Main Component
-	const [view, setView] = useRecoilState(viewState);
-	const [fileList, setFileList] = useRecoilState(fileListState);
-	const [pinnedFiles, setPinnedFiles] = useRecoilState(pinnedFilesState);
-	const [activeFolderPath, setActiveFolderPath] = useRecoilState(activeFolderPathState);
-	const [excludedExtensions] = useRecoilState(excludedExtensionsState);
+	const [view, setView] = useRecoilState(recoilState.view);
+	const [fileList, setFileList] = useRecoilState(recoilState.fileList);
+	const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
+	const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
+	const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
 
 	// Local States
 	const [activeFile, setActiveFile] = useState<TFile>(null as TFile);
