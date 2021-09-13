@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.4.1
+
+-   Style Changes, Smaller Workspace Tab Solution
+-   Root Folder Context Menu for creating a new sub-folder
+
 ## Version 1.4.0
 
 -   Active Folder Rename will correcly reflected in Single View
