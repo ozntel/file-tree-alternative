@@ -169,6 +169,7 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 }
 
 #file-tree-divider {
-	height: 1.5px;
+	height: 2.5px;
 	background-color: var(--text-muted);
+	cursor: row-resize;
 }
