@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.4.0
+
+-   Active Folder Rename will correcly reflected in Single View
+
 ## Version 1.3.9
 
 -   Correction of broken link for folders within the last update
