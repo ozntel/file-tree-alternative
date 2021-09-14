@@ -173,3 +173,8 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 	background-color: var(--text-muted);
 	cursor: row-resize;
 }
+
+.is-folder-active {
+	color: var(--text-on-accent);
+	font-weight: bold;
+}

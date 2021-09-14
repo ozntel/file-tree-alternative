@@ -23,10 +23,13 @@ export default function Tree(props: TreeProps) {
 	// Global States
 	const [openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
 	const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
+	const [activeFolderPath] = useRecoilState(recoilState.activeFolderPath);
 
 	// Local States
 	const [open, setOpen] = useState<boolean>(props.open);
 	const [highlight, setHightlight] = useState<boolean>(false);
+
+	const isFolderActive = props.folder.path === activeFolderPath;
 
 	// --> Icon to be toggled between min(-) and plus(+) Each click sets openFolders Main Component state to save in settings
 	const toggle = () => {
@@ -88,7 +91,7 @@ export default function Tree(props: TreeProps) {
 									{' '}
 									{props.type}{' '}
 								</div>
-								<div className="oz-folder-name">{props.content}</div>
+								<div className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}`}>{props.content}</div>
 								{!open && folderFileCountMap[props.folder.path] && (
 									<div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
 										<span className="nav-file-tag">{folderFileCountMap[props.folder.path]}</span>
