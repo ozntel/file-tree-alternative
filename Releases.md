@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.4.3
+
+-   Active Folder is highlighted in Folder Tree
+
 ## Version 1.4.2
 
 -   Single view can be now easily resized, divider works to resize the panes
