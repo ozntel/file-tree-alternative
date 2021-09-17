@@ -1,5 +1,6 @@
 import { TFolder, Menu, App } from 'obsidian';
-import { VaultChangeModal } from 'modals';
+import { VaultChangeModal, MoveSuggestionModal } from 'modals';
+import * as Util from 'utils/Utils';
 
 export function handleFolderContextMenu(event: MouseEvent, folder: TFolder, app: App, excludedFolders: string[], setExcludedFolders: Function) {
 	// Event Undefined Correction
@@ -7,9 +8,9 @@ export function handleFolderContextMenu(event: MouseEvent, folder: TFolder, app:
 	if (event === undefined) e = window.event as MouseEvent;
 
 	// Menu Items
-	const fileMenu = new Menu(app);
+	const folderMenu = new Menu(app);
 
-	fileMenu.addItem((menuItem) => {
+	folderMenu.addItem((menuItem) => {
 		menuItem.setTitle('New Folder');
 		menuItem.setIcon('folder');
 		menuItem.onClick((ev: MouseEvent) => {
@@ -18,7 +19,7 @@ export function handleFolderContextMenu(event: MouseEvent, folder: TFolder, app:
 		});
 	});
 
-	fileMenu.addItem((menuItem) => {
+	folderMenu.addItem((menuItem) => {
 		menuItem.setTitle('Delete');
 		menuItem.setIcon('trash');
 		menuItem.onClick((ev: MouseEvent) => {
@@ -26,7 +27,7 @@ export function handleFolderContextMenu(event: MouseEvent, folder: TFolder, app:
 		});
 	});
 
-	fileMenu.addItem((menuItem) => {
+	folderMenu.addItem((menuItem) => {
 		menuItem.setTitle('Rename');
 		menuItem.setIcon('pencil');
 		menuItem.onClick((ev: MouseEvent) => {
@@ -35,7 +36,19 @@ export function handleFolderContextMenu(event: MouseEvent, folder: TFolder, app:
 		});
 	});
 
-	fileMenu.addItem((menuItem) => {
+	// Move Item
+	if (!Util.internalPluginLoaded('file-explorer', app)) {
+		folderMenu.addItem((menuItem) => {
+			menuItem.setTitle('Move folder to...');
+			menuItem.setIcon('paper-plane');
+			menuItem.onClick((ev: MouseEvent) => {
+				let folderMoveModal = new MoveSuggestionModal(app, folder);
+				folderMoveModal.open();
+			});
+		});
+	}
+
+	folderMenu.addItem((menuItem) => {
 		menuItem.setTitle('Add to Excluded Folders');
 		menuItem.setIcon('switch');
 		menuItem.onClick((ev: MouseEvent) => {
@@ -44,8 +57,8 @@ export function handleFolderContextMenu(event: MouseEvent, folder: TFolder, app:
 	});
 
 	// Trigger
-	app.workspace.trigger('file-menu', fileMenu, folder, 'file-explorer');
-	fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+	app.workspace.trigger('file-menu', folderMenu, folder, 'file-explorer');
+	folderMenu.showAtPosition({ x: e.pageX, y: e.pageY });
 	return false;
 }
 

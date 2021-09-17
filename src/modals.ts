@@ -1,4 +1,4 @@
-import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal, MarkdownEditView } from 'obsidian';
+import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal } from 'obsidian';
 
 export class VaultChangeModal extends Modal {
 	file: TFolder | TFile | TAbstractFile;
@@ -94,13 +94,13 @@ export class VaultChangeModal extends Modal {
 	}
 }
 
-export class FolderMoveSuggesterModal extends FuzzySuggestModal<TFolder> {
+export class MoveSuggestionModal extends FuzzySuggestModal<TFolder> {
 	app: App;
-	fileToMove: TFile;
+	fileOrFolderToMove: TFile | TFolder;
 
-	constructor(app: App, fileToMove: TFile) {
+	constructor(app: App, fileOrFolderToMove: TFile | TFolder) {
 		super(app);
-		this.fileToMove = fileToMove;
+		this.fileOrFolderToMove = fileOrFolderToMove;
 	}
 
 	getItemText(item: TFolder): string {
@@ -108,26 +108,27 @@ export class FolderMoveSuggesterModal extends FuzzySuggestModal<TFolder> {
 	}
 
 	getItems(): TFolder[] {
-		return this.getFolders();
-	}
-
-	getFolders(): TFolder[] {
-		let folders: TFolder[] = [];
-		let rootFolder = this.app.vault.getRoot();
-		function recursiveFx(folder: TFolder) {
-			for (let child of folder.children) {
-				if (child instanceof TFolder) {
-					let childFolder: TFolder = child as TFolder;
-					folders.push(childFolder);
-					if (childFolder.children) recursiveFx(childFolder);
-				}
-			}
-		}
-		recursiveFx(rootFolder);
-		return folders;
+		return getAllFoldersInVault(this.app);
 	}
 
 	onChooseItem(item: TFolder, evt: MouseEvent | KeyboardEvent) {
-		this.app.vault.rename(this.fileToMove, item.path + '/' + this.fileToMove.name);
+		this.app.vault.rename(this.fileOrFolderToMove, item.path + '/' + this.fileOrFolderToMove.name);
 	}
+}
+
+function getAllFoldersInVault(app: App): TFolder[] {
+	let folders: TFolder[] = [];
+	let rootFolder = app.vault.getRoot();
+	folders.push(rootFolder);
+	function recursiveFx(folder: TFolder) {
+		for (let child of folder.children) {
+			if (child instanceof TFolder) {
+				let childFolder: TFolder = child as TFolder;
+				folders.push(childFolder);
+				if (childFolder.children) recursiveFx(childFolder);
+			}
+		}
+	}
+	recursiveFx(rootFolder);
+	return folders;
 }

@@ -3,7 +3,7 @@ import Dropzone from 'react-dropzone';
 import { TFile, Menu } from 'obsidian';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as Icons from 'utils/icons';
-import { VaultChangeModal, FolderMoveSuggesterModal } from 'modals';
+import { VaultChangeModal, MoveSuggestionModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
@@ -98,8 +98,8 @@ export function FileComponent(props: FilesProps) {
 				menuItem.setTitle('Move file to...');
 				menuItem.setIcon('paper-plane');
 				menuItem.onClick((ev: MouseEvent) => {
-					let folderSuggesterModal = new FolderMoveSuggesterModal(plugin.app, file);
-					folderSuggesterModal.open();
+					let fileMoveSuggester = new MoveSuggestionModal(plugin.app, file);
+					fileMoveSuggester.open();
 				});
 			});
 		}
