@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.4.4
+
+-   Folder Move Context Menu if Core File Explorer disabled
+
 ## Version 1.4.3
 
 -   Active Folder is highlighted in Folder Tree
