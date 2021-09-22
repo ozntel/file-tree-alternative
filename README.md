@@ -4,8 +4,24 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/ozntel/file-tree-alternative/total?style=for-the-badge)
 
 This Obsidian Plugin allows users to have a different file explorer experience.
-Please watch the sample record to see the details.
+
+You can select `Evernote` Option, which creates a separate view for folders and file lists, or simply switch between the folder and file.
+
+Watch the sample record to see how it works.
+
 You can find all release details under the [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
+
+## See Sample Record
+
+<a href="https://youtu.be/fbz8IZtXuUE" target=“_blank”>
+    <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 600px;" /> 
+</a>
+
+## Sample Images
+
+<img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/files-pinned.png" style="width: 600px;" />
+
+<img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/folders-view.png" style="width: 600px;" />
 
 ### Features:
 
@@ -25,50 +41,6 @@ You can find all release details under the [Release Updates](https://github.com/
 -   You can turn on/off `root folder` within the file tree.
 
     **Note**: The last state of `expanded folders` and `pinned files` are saved in `data.json`. Please ensure that you don't delete them manually from `plugin settings` since it will delete all your configuration.
-
-## See Sample Records
-
-### Update v1.1.5
-
-<a href="https://youtu.be/i3Ly06IurCA" target=“_blank”>
-    <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/update-1.1.5.png" style="width: 600px;" /> 
-</a>
-
-### Update v1.1.4
-
-<a href="https://youtu.be/ICjvXpbSmuU" target=“_blank”>
-    <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/file-tree-alternative-youtube.png" style="width: 600px;" /> 
-</a>
-
-### Update v1.1.0
-
-<a href="https://youtu.be/25crdxtyENA" target=“_blank”>
-    <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 600px;" /> 
-</a>
-
-## Sample Images
-
-<img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/files-pinned.png" style="width: 600px;" />
-
-<img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/folders-view.png" style="width: 600px;" />
-
-## Old Version (Evernote Style)
-
-Due to fact that there was a limitation to manipulate the default `file explorer` of Obsidian, I needed to move away from the Evernote style approach.
-
-**If you still want to use this version, you need to handle the installation manually from `v1.0.1`:**
-
-[File Tree Alternative Plugin v.1.0.1](https://github.com/ozntel/file-tree-alternative/releases/tag/1.0.1)
-
-**You can see how this version works under the recorded video below:**
-
-[Youtube: File Tree Alternative Plugin Demonstration](https://youtu.be/ahwt4vXQLt0)
-
-Please note that I don't support this version anymore in case you encounter any issue.
-
-**To see the Obsidian discussion, please visit the link below:**
-
-[Obsidian Forum: Split view of the File Pane Feature Request](https://forum.obsidian.md/t/split-view-of-the-file-pane/19555/4?u=ozan)
 
 ## Contact
 

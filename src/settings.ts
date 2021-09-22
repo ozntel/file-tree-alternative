@@ -26,7 +26,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
 	folderCountOption: 'notes',
 	openFolders: [],
 	pinnedFiles: [],
-	evernoteView: false,
+	evernoteView: true,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
