@@ -48,7 +48,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
 	refreshIconRibbon = () => {
 		this.ribbonIconEl?.remove();
 		if (this.settings.ribbonIcon) {
-			this.ribbonIconEl = this.addRibbonIcon(ICON, 'Alternative File Tree Plugin', async () => {
+			this.ribbonIconEl = this.addRibbonIcon(ICON, 'File Tree Alternative Plugin', async () => {
 				await this.openFileTreeLeaf();
 			});
 		}
