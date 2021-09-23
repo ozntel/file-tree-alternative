@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.4.5
+
+-   Ribbon Icon Hover Name Correction
+-   Folder Name Color and Active Accent Corrections
+
 ## Version 1.4.4
 
 -   Folder Move Context Menu if Core File Explorer disabled
