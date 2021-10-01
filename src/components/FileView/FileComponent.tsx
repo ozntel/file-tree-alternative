@@ -116,7 +116,14 @@ export function FileComponent(props: FilesProps) {
 		if (excludedExtensions.length > 0) {
 			sortedfileList = fileList.filter((file) => !excludedExtensions.contains(file.extension));
 		}
-		sortedfileList = sortedfileList.sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
+		// Sort File by Name or Last Content Update
+		sortedfileList = sortedfileList.sort((a, b) => {
+			if (plugin.settings.sortFilesBy === 'name') {
+				return a.name.localeCompare(b.name, 'en', { numeric: true });
+			} else if (plugin.settings.sortFilesBy === 'last-update') {
+				return b.stat.mtime - a.stat.mtime;
+			}
+		});
 		if (pinnedFiles.length > 0) {
 			sortedfileList = sortedfileList.reduce((acc, element) => {
 				if (pinnedFiles.contains(element)) return [element, ...acc];

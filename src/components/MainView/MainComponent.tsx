@@ -20,6 +20,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	const rootFolder: TFolder = plugin.app.vault.getRoot();
 
 	// --> Register Event Handlers
+	plugin.registerEvent(plugin.app.vault.on('modify', (file) => handleVaultChanges(file, 'modify')));
 	plugin.registerEvent(plugin.app.vault.on('rename', (file, oldPath) => handleVaultChanges(file, 'rename', oldPath)));
 	plugin.registerEvent(plugin.app.vault.on('delete', (file) => handleVaultChanges(file, 'delete')));
 	plugin.registerEvent(plugin.app.vault.on('create', (file) => handleVaultChanges(file, 'create')));
@@ -133,8 +134,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 	function handleVaultChanges(file: TAbstractFile, changeType: string, oldPathBeforeRename?: string) {
 		if (file instanceof TFile) {
 			if (view === 'file') {
-				if (changeType === 'rename' || changeType === 'delete') {
-					// If the file renamed and deleted is in the current view, it will be updated
+				if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
+					// If the file is modified but sorting is not last-update to not component update unnecessarily, return
+					if (changeType === 'modify' && plugin.settings.sortFilesBy !== 'last-update') return;
+					// If the file renamed or deleted or modified is in the current view, it will be updated
 					if (fileList.some((stateFile) => stateFile.path === file.path)) setNewFileList();
 				} else if (changeType === 'create') {
 					if (file.path.match(new RegExp(activeFolderPath + '.*'))) setNewFileList();

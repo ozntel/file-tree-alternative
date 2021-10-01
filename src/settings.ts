@@ -13,6 +13,7 @@ export interface FileTreeAlternativePluginSettings {
 	openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
 	pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
 	evernoteView: boolean;
+	sortFilesBy: 'name' | 'last-update';
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -27,6 +28,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
 	openFolders: [],
 	pinnedFiles: [],
 	evernoteView: true,
+	sortFilesBy: 'name',
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -65,6 +67,20 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 					this.plugin.refreshTreeLeafs();
 				})
 			);
+
+		new Setting(containerEl)
+			.setName('Sort Files By')
+			.setDesc('Select your preference how the files should be sorted in the file list')
+			.addDropdown((cb) => {
+				cb.addOption('name', 'Name');
+				cb.addOption('last-update', 'Last Update');
+				cb.setValue(this.plugin.settings.sortFilesBy);
+				cb.onChange((option: 'name' | 'last-update') => {
+					this.plugin.settings.sortFilesBy = option;
+					this.plugin.saveSettings();
+					this.plugin.refreshTreeLeafs();
+				});
+			});
 
 		containerEl.createEl('h2', { text: 'General' });
 
