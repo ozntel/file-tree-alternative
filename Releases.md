@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.4.6
+
+-   Sort files by `Last Update`
+
 ## Version 1.4.5
 
 -   Ribbon Icon Hover Name Correction
