@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import FileTreeAlternativePlugin from 'main';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileComponent } from 'components/FileView/FileComponent';
@@ -10,6 +10,15 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
 
 	let folderPaneRef = useRef<HTMLDivElement>();
 	let dividerRef = useRef<HTMLDivElement>();
+
+	let heightSetting = props.plugin.settings.customHeight;
+
+	useEffect(() => {
+		if (folderPaneHeight) {
+			props.plugin.settings.customHeight = folderPaneHeight;
+			props.plugin.saveSettings();
+		}
+	}, [folderPaneHeight]);
 
 	function touchMouseStart(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
 		e.preventDefault();
@@ -35,7 +44,10 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
 	return (
 		// Register Move & End Events for All File Tree Leaf
 		<div className="file-tree-container" onMouseMove={(e) => touchMouseMove(e)} onMouseUp={(e) => touchMouseEnd(e)}>
-			<div className="oz-folder-pane" ref={folderPaneRef} style={{ height: folderPaneHeight ? `${folderPaneHeight}px` : '50%' }}>
+			<div
+				className="oz-folder-pane"
+				ref={folderPaneRef}
+				style={{ height: folderPaneHeight ? `${folderPaneHeight}px` : heightSetting !== 0 ? `${heightSetting}px` : '50%' }}>
 				<MainFolder plugin={props.plugin} />
 			</div>
 

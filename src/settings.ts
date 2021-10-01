@@ -12,6 +12,7 @@ export interface FileTreeAlternativePluginSettings {
 	folderCountOption: string;
 	openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
 	pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
+	customHeight: number;
 	evernoteView: boolean;
 	sortFilesBy: 'name' | 'last-update';
 }
@@ -27,6 +28,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
 	folderCountOption: 'notes',
 	openFolders: [],
 	pinnedFiles: [],
+	customHeight: 0,
 	evernoteView: true,
 	sortFilesBy: 'name',
 };
