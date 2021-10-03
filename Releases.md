@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.4.7
+
+-   The plugin remembers the last position of the `divider` between `files` and `folders`
+
 ## Version 1.4.6
 
 -   Sort files by `Last Update`
