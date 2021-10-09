@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.4.8
+
+-   The plugin allows to preview the files on hover within the file list
+
 ## Version 1.4.7
 
 -   The plugin remembers the last position of the `divider` between `files` and `folders`
