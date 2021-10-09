@@ -211,6 +211,12 @@ export function FileComponent(props: FilesProps) {
         return filesWithTag;
     };
 
+    const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
+        if (plugin.settings.filePreviewOnHover) {
+            plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
+        }
+    };
+
     return (
         <React.Fragment>
             <Dropzone
@@ -265,7 +271,8 @@ export function FileComponent(props: FilesProps) {
                                             className="nav-file oz-nav-file"
                                             key={file.path}
                                             onClick={(e) => openFile(file, e)}
-                                            onContextMenu={(e) => triggerContextMenu(file, e)}>
+                                            onContextMenu={(e) => triggerContextMenu(file, e)}
+                                            onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
                                             <div
                                                 className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')}
                                                 data-path={file.path}>

@@ -14,6 +14,7 @@ export interface FileTreeAlternativePluginSettings {
     pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
     customHeight: number;
     evernoteView: boolean;
+    filePreviewOnHover: boolean;
     sortFilesBy: 'name' | 'last-update';
 }
 
@@ -30,6 +31,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     pinnedFiles: [],
     customHeight: 0,
     evernoteView: true,
+    filePreviewOnHover: false,
     sortFilesBy: 'name',
 };
 
@@ -81,6 +83,16 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.refreshTreeLeafs();
                 });
             });
+
+        new Setting(containerEl)
+            .setName('Preview File on Hover')
+            .setDesc('Turn on if you want to preview the files once you hover on them within the file list.')
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.filePreviewOnHover).onChange((value) => {
+                    this.plugin.settings.filePreviewOnHover = value;
+                    this.plugin.saveSettings();
+                })
+            );
 
         containerEl.createEl('h2', { text: 'General' });
 
