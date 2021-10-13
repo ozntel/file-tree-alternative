@@ -24,7 +24,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     showRootFolder: true,
     showFilesFromSubFolders: true,
     searchFunction: true,
-    showFilesFromSubFoldersButton: false,
+    showFilesFromSubFoldersButton: true,
     excludedExtensions: '',
     excludedFolders: '',
     folderCount: true,
