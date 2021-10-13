@@ -19,13 +19,13 @@ export default class FileTreeAlternativePlugin extends Plugin {
         });
 
         // Event Listeners
-        this.app.workspace.onLayoutReady(async () => await this.openFileTreeLeaf());
+        this.app.workspace.onLayoutReady(async () => await this.openFileTreeLeaf(true));
 
         // Add Command to Open File Tree Leaf
         this.addCommand({
             id: 'open-file-tree-leaf',
             name: 'Open File Tree Leaf',
-            callback: async () => await this.openFileTreeLeaf(),
+            callback: async () => await this.openFileTreeLeaf(true),
         });
 
         // Ribbon Icon For Opening
@@ -49,16 +49,16 @@ export default class FileTreeAlternativePlugin extends Plugin {
         this.ribbonIconEl?.remove();
         if (this.settings.ribbonIcon) {
             this.ribbonIconEl = this.addRibbonIcon(ICON, 'File Tree Alternative Plugin', async () => {
-                await this.openFileTreeLeaf();
+                await this.openFileTreeLeaf(true);
             });
         }
     };
 
-    openFileTreeLeaf = async () => {
+    openFileTreeLeaf = async (showAfterAttach: boolean) => {
         if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
             let leaf = this.app.workspace.getLeftLeaf(false);
             await leaf.setViewState({ type: VIEW_TYPE });
-            this.app.workspace.revealLeaf(leaf);
+            if (showAfterAttach) this.app.workspace.revealLeaf(leaf);
         }
     };
 
@@ -72,6 +72,6 @@ export default class FileTreeAlternativePlugin extends Plugin {
 
     refreshTreeLeafs = () => {
         this.detachFileTreeLeafs();
-        this.openFileTreeLeaf();
+        this.openFileTreeLeaf(false);
     };
 }

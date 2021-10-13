@@ -127,6 +127,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.showFilesFromSubFolders).onChange((value) => {
                     this.plugin.settings.showFilesFromSubFolders = value;
                     this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
                 })
             );
 
@@ -148,6 +149,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.searchFunction).onChange((value) => {
                     this.plugin.settings.searchFunction = value;
                     this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
                 })
             );
 
@@ -174,8 +176,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 dropdown.onChange((option) => {
                     this.plugin.settings.folderCountOption = option;
                     this.plugin.saveSettings();
-                    this.plugin.detachFileTreeLeafs();
-                    this.plugin.openFileTreeLeaf();
+                    this.plugin.refreshTreeLeafs();
                 });
             });
 
