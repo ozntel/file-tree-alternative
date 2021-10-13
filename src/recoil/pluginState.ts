@@ -50,3 +50,8 @@ export const openFolders = atom({
     default: [] as TFolder[],
     dangerouslyAllowMutability: true,
 });
+
+export const showSubFolders = atom({
+    key: 'showSubFoldersInVault',
+    default: false,
+});

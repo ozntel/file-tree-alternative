@@ -23,6 +23,7 @@ export function FileComponent(props: FilesProps) {
     const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
+    const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
 
     // Local States
     const [activeFile, setActiveFile] = useState<TFile>(null as TFile);
@@ -33,6 +34,11 @@ export function FileComponent(props: FilesProps) {
 
     // Folder Name Update once Active Folder Path Change
     useEffect(() => setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app)), [activeFolderPath]);
+
+    // File List Update once showSubFolders change
+    useEffect(() => {
+        setFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
+    }, [showSubFolders]);
 
     // To focus on Search box if visible set
     useEffect(() => {
@@ -217,6 +223,12 @@ export function FileComponent(props: FilesProps) {
         }
     };
 
+    const toggleShowSubFolders = async () => {
+        plugin.settings.showFilesFromSubFolders = !showSubFolders;
+        await plugin.saveSettings();
+        setShowSubFolders(!showSubFolders);
+    };
+
     return (
         <React.Fragment>
             <Dropzone
@@ -242,6 +254,15 @@ export function FileComponent(props: FilesProps) {
                                         />
                                     </div>
                                     <div className="oz-nav-buttons-right-block">
+                                        {plugin.settings.showFilesFromSubFoldersButton && (
+                                            <div className="nav-action-button oz-nav-action-button">
+                                                {showSubFolders ? (
+                                                    <FontAwesomeIcon icon={Icons.faEyeSlash} onClick={toggleShowSubFolders} size="lg" />
+                                                ) : (
+                                                    <FontAwesomeIcon icon={Icons.faEye} onClick={toggleShowSubFolders} size="lg" />
+                                                )}
+                                            </div>
+                                        )}
                                         {plugin.settings.searchFunction && (
                                             <div className="nav-action-button oz-nav-action-button">
                                                 <FontAwesomeIcon icon={Icons.faSearch} onClick={toggleSearchBox} size="lg" />

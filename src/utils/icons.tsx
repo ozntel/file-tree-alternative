@@ -5,6 +5,8 @@ import { faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons/faArrowCirc
 import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
+import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 
 const MinusSquareO = (props: any) => (
     <svg {...props} viewBox="64 -65 897 897">
@@ -55,4 +57,4 @@ const CloseSquareO = (props: any) => (
     </svg>
 );
 
-export { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch, faTimesCircle, PlusSquareO, MinusSquareO, CloseSquareO, EyeO };
+export { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch, faTimesCircle, faEyeSlash, faEye, PlusSquareO, MinusSquareO, CloseSquareO, EyeO };

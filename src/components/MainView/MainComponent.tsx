@@ -35,6 +35,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
     const [folderFileCountMap, setFolderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
     const [excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
+    const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
 
     const setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : activeFolderPath;
@@ -47,6 +48,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         setExcludedExtensions(getExcludedExtensions());
         setPinnedFiles(getPinnedFilesFromSettings());
         setOpenFolders(getOpenFoldersFromSettings());
+        setShowSubFolders(plugin.settings.showFilesFromSubFolders);
         if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
         setFolderTree(FileTreeUtils.createFolderTree(rootFolder));
     }, []);

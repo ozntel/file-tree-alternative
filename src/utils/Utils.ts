@@ -1,4 +1,3 @@
-// @ts-ignore
 import { TFile, TFolder, App, Keymap } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { FolderFileCountMap, FolderTree } from 'utils/types';
@@ -78,5 +77,5 @@ export const internalPluginLoaded = (pluginName: string, app: App) => {
 };
 
 export const openInternalLink = (event: React.MouseEvent<Element, MouseEvent>, link: string, app: App) => {
-    app.workspace.openLinkText(link, '/', Keymap.isModifier(event, 'Mod') || 1 === event.button);
+    app.workspace.openLinkText(link, '/', Keymap.isModifier(event as unknown as MouseEvent, 'Mod') || 1 === event.button);
 };

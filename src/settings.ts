@@ -6,6 +6,7 @@ export interface FileTreeAlternativePluginSettings {
     showRootFolder: boolean;
     showFilesFromSubFolders: boolean;
     searchFunction: boolean;
+    showFilesFromSubFoldersButton: boolean;
     excludedExtensions: string;
     excludedFolders: string;
     folderCount: boolean;
@@ -23,6 +24,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     showRootFolder: true,
     showFilesFromSubFolders: true,
     searchFunction: true,
+    showFilesFromSubFoldersButton: false,
     excludedExtensions: '',
     excludedFolders: '',
     folderCount: true,
@@ -125,6 +127,17 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.showFilesFromSubFolders).onChange((value) => {
                     this.plugin.settings.showFilesFromSubFolders = value;
                     this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Toggle Button for Include Files from Subfolders')
+            .setDesc(`Turn on this option if you want to have an additional button on the top of the file list to toggle "Include Files From Subfolders"`)
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.showFilesFromSubFoldersButton).onChange((value) => {
+                    this.plugin.settings.showFilesFromSubFoldersButton = value;
+                    this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
                 })
             );
 
