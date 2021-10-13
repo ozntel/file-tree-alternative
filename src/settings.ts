@@ -17,6 +17,7 @@ export interface FileTreeAlternativePluginSettings {
     evernoteView: boolean;
     filePreviewOnHover: boolean;
     sortFilesBy: 'name' | 'last-update';
+    activeFolderPath: string;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -35,6 +36,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     evernoteView: true,
     filePreviewOnHover: false,
     sortFilesBy: 'name',
+    activeFolderPath: '',
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {

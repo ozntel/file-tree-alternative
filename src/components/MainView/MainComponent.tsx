@@ -42,6 +42,18 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         setFileList(FileTreeUtils.getFilesUnderPath(filesPath, plugin));
     };
 
+    const setInitialActiveFolderPath = () => {
+        if (plugin.settings.evernoteView) {
+            let previousActiveFolder = plugin.settings.activeFolderPath;
+            if (previousActiveFolder !== '') {
+                let folder = plugin.app.vault.getAbstractFileByPath(previousActiveFolder);
+                if (folder && folder instanceof TFolder) {
+                    setActiveFolderPath(folder.path);
+                }
+            }
+        }
+    };
+
     // Initial Load
     useEffect(() => {
         setExcludedFolders(getExcludedFolders());
@@ -49,6 +61,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         setPinnedFiles(getPinnedFilesFromSettings());
         setOpenFolders(getOpenFoldersFromSettings());
         setShowSubFolders(plugin.settings.showFilesFromSubFolders);
+        setInitialActiveFolderPath();
         if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
         setFolderTree(FileTreeUtils.createFolderTree(rootFolder));
     }, []);
@@ -63,6 +76,8 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         if (activeFolderPath !== '') {
             setNewFileList(activeFolderPath);
             setView('file');
+            plugin.settings.activeFolderPath = activeFolderPath;
+            plugin.saveSettings();
         }
     }, [activeFolderPath]);
 
