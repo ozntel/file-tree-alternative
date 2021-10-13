@@ -1,5 +1,13 @@
 # Release Updates
 
+## Version 1.5.0
+
+-   Leaf refresh after each settings change to make all changes effective
+
+## Version 1.4.9
+
+-   Additional button for toggling Files under Sub-Folders
+
 ## Version 1.4.8
 
 -   The plugin allows to preview the files on hover within the file list
