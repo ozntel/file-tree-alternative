@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.5.1
+
+-   Consistent Active Folder after relaunch of Obsidian or plugin
+
 ## Version 1.5.0
 
 -   Leaf refresh after each settings change to make all changes effective
