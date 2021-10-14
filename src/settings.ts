@@ -17,7 +17,8 @@ export interface FileTreeAlternativePluginSettings {
     evernoteView: boolean;
     filePreviewOnHover: boolean;
     sortFilesBy: 'name' | 'last-update';
-    activeFolderPath: string;
+    fixedHeaderInFileList: boolean;
+    activeFolderPath: string; // Keeping the state of Active Folder Path - Not open for edit Manually
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -30,13 +31,14 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     excludedFolders: '',
     folderCount: true,
     folderCountOption: 'notes',
-    openFolders: [],
-    pinnedFiles: [],
+    openFolders: [], // Keeping the state of Open Folders - Not open for edit Manually
+    pinnedFiles: [], // Keeping the state of Pinned Files - Not open for edit Manually
     customHeight: 0,
     evernoteView: true,
     filePreviewOnHover: false,
     sortFilesBy: 'name',
-    activeFolderPath: '',
+    fixedHeaderInFileList: false,
+    activeFolderPath: '', // Keeping the state of Active Folder Path - Not open for edit Manually
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -51,6 +53,8 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         let { containerEl } = this;
         containerEl.empty();
 
+        /* ------------- Buy Me a Coffee ------------- */
+
         const coffeeDiv = containerEl.createDiv('coffee');
         coffeeDiv.addClass('oz-coffee-div');
         const coffeeLink = coffeeDiv.createEl('a', { href: 'https://ko-fi.com/L3L356V6Q' });
@@ -61,7 +65,9 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         });
         coffeeImg.height = 40;
 
-        containerEl.createEl('h2', { text: 'View Settings' });
+        /* ------------- General Settings ------------- */
+
+        containerEl.createEl('h2', { text: 'General' });
 
         new Setting(containerEl)
             .setName('Evernote View')
@@ -75,32 +81,6 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName('Sort Files By')
-            .setDesc('Select your preference how the files should be sorted in the file list')
-            .addDropdown((cb) => {
-                cb.addOption('name', 'Name');
-                cb.addOption('last-update', 'Last Update');
-                cb.setValue(this.plugin.settings.sortFilesBy);
-                cb.onChange((option: 'name' | 'last-update') => {
-                    this.plugin.settings.sortFilesBy = option;
-                    this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
-                });
-            });
-
-        new Setting(containerEl)
-            .setName('Preview File on Hover')
-            .setDesc('Turn on if you want to preview the files once you hover on them within the file list.')
-            .addToggle((toggle) =>
-                toggle.setValue(this.plugin.settings.filePreviewOnHover).onChange((value) => {
-                    this.plugin.settings.filePreviewOnHover = value;
-                    this.plugin.saveSettings();
-                })
-            );
-
-        containerEl.createEl('h2', { text: 'General' });
-
-        new Setting(containerEl)
             .setName('Ribbon Icon')
             .setDesc('Turn on if you want Ribbon Icon for activating the File Tree.')
             .addToggle((toggle) =>
@@ -110,6 +90,10 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.refreshIconRibbon();
                 })
             );
+
+        /* ------------- Folder Pane Settings ------------- */
+
+        containerEl.createEl('h2', { text: 'Folder Pane Settings' });
 
         new Setting(containerEl)
             .setName('Show Root Folder')
@@ -121,6 +105,34 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.refreshTreeLeafs();
                 })
             );
+
+        new Setting(containerEl)
+            .setName('Folder Count')
+            .setDesc('Turn on if you want see the number of notes/files under file tree.')
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.folderCount).onChange((value) => {
+                    this.plugin.settings.folderCount = value;
+                    this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Folder Count Details')
+            .setDesc('Select which files you want to be included into count')
+            .addDropdown((dropdown) => {
+                dropdown.addOption('notes', 'Notes');
+                dropdown.addOption('files', 'All Files');
+                dropdown.setValue(this.plugin.settings.folderCountOption);
+                dropdown.onChange((option) => {
+                    this.plugin.settings.folderCountOption = option;
+                    this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
+                });
+            });
+
+        /* ------------- File Pane Settings ------------- */
+        containerEl.createEl('h2', { text: 'File Pane Settings' });
 
         new Setting(containerEl)
             .setName('Include Files From Subfolders to the File List')
@@ -155,32 +167,42 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 })
             );
 
-        containerEl.createEl('h2', { text: 'Folder Count Settings' });
+        new Setting(containerEl)
+            .setName('Sort Files By')
+            .setDesc('Select your preference how the files should be sorted in the file list')
+            .addDropdown((cb) => {
+                cb.addOption('name', 'Name');
+                cb.addOption('last-update', 'Last Update');
+                cb.setValue(this.plugin.settings.sortFilesBy);
+                cb.onChange((option: 'name' | 'last-update') => {
+                    this.plugin.settings.sortFilesBy = option;
+                    this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
+                });
+            });
 
         new Setting(containerEl)
-            .setName('Folder Count')
-            .setDesc('Turn on if you want see the number of notes/files under file tree.')
+            .setName('Preview File on Hover')
+            .setDesc('Turn on if you want to preview the files once you hover on them within the file list.')
             .addToggle((toggle) =>
-                toggle.setValue(this.plugin.settings.folderCount).onChange((value) => {
-                    this.plugin.settings.folderCount = value;
+                toggle.setValue(this.plugin.settings.filePreviewOnHover).onChange((value) => {
+                    this.plugin.settings.filePreviewOnHover = value;
+                    this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Fixed Buttons and Header in File Pane')
+            .setDesc('Turn on if you want buttons and header to be not scrolled within the file list.')
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.fixedHeaderInFileList).onChange((value) => {
+                    this.plugin.settings.fixedHeaderInFileList = value;
                     this.plugin.saveSettings();
                     this.plugin.refreshTreeLeafs();
                 })
             );
 
-        new Setting(containerEl)
-            .setName('Folder Count Details')
-            .setDesc('Select which files you want to be included into count')
-            .addDropdown((dropdown) => {
-                dropdown.addOption('notes', 'Notes');
-                dropdown.addOption('files', 'All Files');
-                dropdown.setValue(this.plugin.settings.folderCountOption);
-                dropdown.onChange((option) => {
-                    this.plugin.settings.folderCountOption = option;
-                    this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
-                });
-            });
+        /* ------------- Exclusion Settings ------------- */
 
         containerEl.createEl('h2', { text: 'Exclude Settings' });
 

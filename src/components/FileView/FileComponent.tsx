@@ -244,7 +244,7 @@ export function FileComponent(props: FilesProps) {
 
                         <div className="oz-explorer-container">
                             {/* Header */}
-                            <div className="oz-file-tree-header-wrapper">
+                            <div className={`oz-file-tree-header-wrapper${plugin.settings.fixedHeaderInFileList ? ' file-tree-header-fixed' : ''}`}>
                                 <div className="oz-flex-container">
                                     <div className="nav-action-button oz-nav-action-button">
                                         <FontAwesomeIcon
@@ -285,7 +285,7 @@ export function FileComponent(props: FilesProps) {
                             {/* End: Header */}
 
                             {/* File List */}
-                            <div className="oz-file-tree-files">
+                            <div className={`oz-file-tree-files${plugin.settings.fixedHeaderInFileList ? ' file-tree-files-fixed' : ''}`}>
                                 {customFiles(fileList).map((file) => {
                                     return (
                                         <div

@@ -34,6 +34,7 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    height: 26px;
 }
 
 .oz-explorer-container {
@@ -178,4 +179,20 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 .is-folder-active {
     color: var(--text-accent);
     font-weight: bold;
+}
+
+.file-tree-header-fixed {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    margin-top: -49.1px;
+    padding-left: 4px;
+    padding-right: 4px;
+    background-color: var(--background-secondary);
+}
+
+.file-tree-files-fixed {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
 }
