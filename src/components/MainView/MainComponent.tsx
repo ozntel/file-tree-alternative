@@ -76,9 +76,9 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         if (activeFolderPath !== '') {
             setNewFileList(activeFolderPath);
             setView('file');
-            plugin.settings.activeFolderPath = activeFolderPath;
-            plugin.saveSettings();
         }
+        plugin.settings.activeFolderPath = activeFolderPath;
+        plugin.saveSettings();
     }, [activeFolderPath]);
 
     // Load Excluded Extensions as State
