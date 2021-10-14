@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.5.2
+
+-   Settings reorganization
+-   Fixed Header and Buttons in the File Pane
+
 ## Version 1.5.1
 
 -   Consistent Active Folder after relaunch of Obsidian or plugin
