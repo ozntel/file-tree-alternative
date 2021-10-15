@@ -239,7 +239,7 @@ export function FileComponent(props: FilesProps) {
                 onDropAccepted={() => setHighlight(false)}
                 onDropRejected={() => setHighlight(false)}>
                 {({ getRootProps, getInputProps }) => (
-                    <div {...getRootProps()} className={highlight ? 'drag-entered' : ''} style={{ width: '100%', height: '100%' }}>
+                    <div {...getRootProps()} className={highlight ? 'drag-entered' : ''} style={{ width: '100%', height: '100%', position: 'relative' }}>
                         <input {...getInputProps()} />
 
                         <div className="oz-explorer-container">

@@ -185,14 +185,13 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     position: fixed;
     width: 100%;
     left: 0;
-    margin-top: -49.1px;
     padding-left: 4px;
     padding-right: 4px;
     background-color: var(--background-secondary);
 }
 
 .file-tree-files-fixed {
-    margin-top: 50px;
+    padding-top: 50px !important;
     display: flex;
     flex-direction: column;
 }
