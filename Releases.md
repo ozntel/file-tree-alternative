@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.5.3
+
+-   Style Correction for Fixed Header and Buttons in the File Pane
+
 ## Version 1.5.2
 
 -   Settings reorganization
