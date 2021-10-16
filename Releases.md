@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.5.4
+
+-   Focus in and out to a specific folder in folder pane
+
 ## Version 1.5.3
 
 -   Style Correction for Fixed Header and Buttons in the File Pane
