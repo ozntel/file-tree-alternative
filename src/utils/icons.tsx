@@ -57,4 +57,23 @@ const CloseSquareO = (props: any) => (
     </svg>
 );
 
-export { faPlusCircle, faArrowCircleLeft, faThumbtack, faSearch, faTimesCircle, faEyeSlash, faEye, PlusSquareO, MinusSquareO, CloseSquareO, EyeO };
+const ZoomOutIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
+const ZoomOutDoubleIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 50 50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M 21 3 C 11.621094 3 4 10.621094 4 20 C 4 29.378906 11.621094 37 21 37 C 24.710938 37 28.140625 35.804688 30.9375 33.78125 L 44.09375 46.90625 L 46.90625 44.09375 L 33.90625 31.0625 C 36.460938 28.085938 38 24.222656 38 20 C 38 10.621094 30.378906 3 21 3 Z M 21 5 C 29.296875 5 36 11.703125 36 20 C 36 28.296875 29.296875 35 21 35 C 12.703125 35 6 28.296875 6 20 C 6 11.703125 12.703125 5 21 5 Z M 13 12 L 13 18 L 15.28125 15.71875 L 19.5625 20 L 15.28125 24.28125 L 13 22 L 13 28 L 19 28 L 16.71875 25.71875 L 21 21.4375 L 25.28125 25.71875 L 23 28 L 29 28 L 29 22 L 26.71875 24.28125 L 22.4375 20 L 26.71875 15.71875 L 29 18 L 29 12 L 23 12 L 25.28125 14.28125 L 21 18.5625 L 16.71875 14.28125 L 19 12 Z"/></svg>`;
+const ZoomInIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
+
+export {
+    faPlusCircle,
+    faArrowCircleLeft,
+    faThumbtack,
+    faSearch,
+    faTimesCircle,
+    faEyeSlash,
+    faEye,
+    PlusSquareO,
+    MinusSquareO,
+    CloseSquareO,
+    EyeO,
+    ZoomOutIcon,
+    ZoomInIcon,
+    ZoomOutDoubleIcon,
+};

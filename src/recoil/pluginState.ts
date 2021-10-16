@@ -55,3 +55,9 @@ export const showSubFolders = atom({
     key: 'showSubFoldersInVault',
     default: false,
 });
+
+export const focusedFolder = atom({
+    key: 'fileTreeFocusedFolder',
+    default: null as TFolder,
+    dangerouslyAllowMutability: true,
+});

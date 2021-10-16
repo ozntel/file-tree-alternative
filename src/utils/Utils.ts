@@ -23,6 +23,7 @@ export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugi
 export const createFolderTree = (startFolder: TFolder): FolderTree => {
     let fileTree: { folder: TFolder; children: any } = { folder: startFolder, children: [] };
     function recursive(folder: TFolder, object: { folder: TFolder; children: any }) {
+        if (!(folder && folder.children)) return;
         for (let child of folder.children) {
             if (child instanceof TFolder) {
                 let childFolder: TFolder = child as TFolder;
@@ -52,6 +53,15 @@ export const getFolderNoteCountMap = (plugin: FileTreeAlternativePlugin) => {
         }
     });
     return counts;
+};
+
+// Check if folder has child folder
+export const hasChildFolder = (folder: TFolder): boolean => {
+    let children = folder.children;
+    for (let child of children) {
+        if (child instanceof TFolder) return true;
+    }
+    return false;
 };
 
 // Files out of Md should be listed with extension badge - Md without extension

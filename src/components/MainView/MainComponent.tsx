@@ -17,7 +17,6 @@ interface MainTreeComponentProps {
 export default function MainTreeComponent(props: MainTreeComponentProps) {
     // --> Main Variables
     const plugin: FileTreeAlternativePlugin = props.plugin;
-    const rootFolder: TFolder = plugin.app.vault.getRoot();
 
     // --> Register Event Handlers
     plugin.registerEvent(plugin.app.vault.on('modify', (file) => handleVaultChanges(file, 'modify')));
@@ -31,11 +30,12 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     const [fileList, setFileList] = useRecoilState(recoilState.fileList);
     const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
-    const [folderTree, setFolderTree] = useRecoilState(recoilState.folderTree);
+    const [_folderTree, setFolderTree] = useRecoilState(recoilState.folderTree);
     const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
-    const [folderFileCountMap, setFolderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
-    const [excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
-    const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
+    const [_folderFileCountMap, setFolderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
+    const [_excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
+    const [_showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
+    const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
 
     const setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : activeFolderPath;
@@ -56,6 +56,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // Initial Load
     useEffect(() => {
+        setFocusedFolder(plugin.app.vault.getRoot());
         setExcludedFolders(getExcludedFolders());
         setExcludedExtensions(getExcludedExtensions());
         setPinnedFiles(getPinnedFilesFromSettings());
@@ -63,8 +64,14 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         setShowSubFolders(plugin.settings.showFilesFromSubFolders);
         setInitialActiveFolderPath();
         if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
-        setFolderTree(FileTreeUtils.createFolderTree(rootFolder));
     }, []);
+
+    // Each Focused Folder Change triggers new folder tree build
+    useEffect(() => {
+        if (focusedFolder) {
+            setFolderTree(FileTreeUtils.createFolderTree(focusedFolder));
+        }
+    }, [focusedFolder]);
 
     // State Change Handlers
     useEffect(() => savePinnedFilesToSettings(), [pinnedFiles]);
@@ -161,7 +168,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                 }
             }
         } else if (file instanceof TFolder) {
-            setFolderTree(FileTreeUtils.createFolderTree(rootFolder));
+            setFolderTree(FileTreeUtils.createFolderTree(focusedFolder));
             // if active folder is renamed, activefolderpath needs to be refreshed
             if (changeType === 'rename' && oldPathBeforeRename && activeFolderPath === oldPathBeforeRename) {
                 setActiveFolderPath(file.path);
