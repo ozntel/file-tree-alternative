@@ -90,6 +90,23 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     vertical-align: middle;
     display: inline-block;
     color: var(--text-normal);
+    font-size: 13px;
+}
+
+div.oz-folder-name.is-root-folder {
+    font-size: 16px;
+}
+
+.is-mobile .oz-folder-name.is-root-folder {
+    font-size: 18px;
+}
+
+.is-mobile .oz-folder-name {
+    font-size: 15.5px;
+}
+
+.is-mobile div.oz-nav-file-title .nav-file-title-content {
+    font-size: 15px;
 }
 
 .oz-icon-div {
@@ -113,7 +130,9 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 
 .oz-folders-tree-wrapper {
     overflow: hidden;
+    overflow-y: auto;
     padding-bottom: 5px;
+    padding-left: 8px;
     height: 100%;
 }
 
@@ -152,10 +171,6 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     overflow-y: auto;
     height: 50%;
     resize: vertical;
-}
-
-.oz-folders-tree-wrapper {
-    overflow-y: auto;
 }
 
 .oz-file-list-pane {

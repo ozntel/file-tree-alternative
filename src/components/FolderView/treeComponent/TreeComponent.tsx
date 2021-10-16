@@ -15,6 +15,7 @@ type TreeProps = {
     type?: any;
     style?: any;
     children?: any;
+    isRootFolder?: boolean;
     folder: TFolder;
     plugin: FileTreeAlternativePlugin;
 };
@@ -91,7 +92,10 @@ export default function Tree(props: TreeProps) {
                                     {' '}
                                     {props.type}{' '}
                                 </div>
-                                <div className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}`}>{props.content}</div>
+                                <div
+                                    className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}${props.isRootFolder ? ' is-root-folder' : ''}`}>
+                                    {props.content}
+                                </div>
                                 {!open && folderFileCountMap[props.folder.path] && (
                                     <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
                                         <span className="nav-file-tag">{folderFileCountMap[props.folder.path]}</span>

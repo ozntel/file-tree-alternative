@@ -12,7 +12,7 @@ interface FolderProps {
 }
 
 export function MainFolder(props: FolderProps) {
-    const treeStyles = { color: '--var(--text-muted)', fill: '#c16ff7', width: '100%', left: 10, top: 10 };
+    const treeStyles = { color: 'var(--text-muted)', fill: '#c16ff7', width: '100%' };
     const plugin = props.plugin;
 
     // Global States
@@ -33,6 +33,7 @@ export function MainFolder(props: FolderProps) {
                             plugin={plugin}
                             content={plugin.app.vault.getName()}
                             open
+                            isRootFolder
                             style={treeStyles}
                             onClick={() => handleFolderNameClick('/')}
                             folder={plugin.app.vault.getRoot()}
