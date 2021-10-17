@@ -8,6 +8,7 @@ import FileTreeAlternativePlugin from 'main';
 import * as FileTreeUtils from 'utils/Utils';
 import * as recoilState from '../../recoil/pluginState';
 import { useRecoilState } from 'recoil';
+import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 interface MainTreeComponentProps {
     fileTreeView: FileTreeView;
@@ -16,7 +17,10 @@ interface MainTreeComponentProps {
 
 export default function MainTreeComponent(props: MainTreeComponentProps) {
     // --> Main Variables
-    const plugin: FileTreeAlternativePlugin = props.plugin;
+    const { plugin } = props;
+
+    // --> Local Storage Handler
+    let lsh = new LocalStorageHandler({});
 
     // --> Register Event Handlers
     plugin.registerEvent(plugin.app.vault.on('modify', (file) => handleVaultChanges(file, 'modify')));
@@ -44,8 +48,8 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     const setInitialActiveFolderPath = () => {
         if (plugin.settings.evernoteView) {
-            let previousActiveFolder = plugin.settings.activeFolderPath;
-            if (previousActiveFolder !== '') {
+            let previousActiveFolder = lsh.getFromLocalStorage({ key: plugin.keys.activeFolderPathKey, checkCacheHours: false });
+            if (previousActiveFolder) {
                 let folder = plugin.app.vault.getAbstractFileByPath(previousActiveFolder);
                 if (folder && folder instanceof TFolder) {
                     setActiveFolderPath(folder.path);
@@ -84,8 +88,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             setNewFileList(activeFolderPath);
             setView('file');
         }
-        plugin.settings.activeFolderPath = activeFolderPath;
-        plugin.saveSettings();
+        lsh.setLocalStorage({ key: plugin.keys.activeFolderPathKey, value: activeFolderPath });
     }, [activeFolderPath]);
 
     // Load Excluded Extensions as State
@@ -111,9 +114,13 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // Load The String List and Set Open Folders State
     function getOpenFoldersFromSettings(): TFolder[] {
         let openFolders: TFolder[] = [];
-        for (let folder of plugin.settings.openFolders) {
-            let openFolder = plugin.app.vault.getAbstractFileByPath(folder);
-            if (openFolder) openFolders.push(openFolder as TFolder);
+        let localStorageOpenFolders = lsh.getFromLocalStorage({ key: plugin.keys.openFoldersKey, checkCacheHours: false });
+        if (localStorageOpenFolders) {
+            localStorageOpenFolders = JSON.parse(localStorageOpenFolders);
+            for (let folder of localStorageOpenFolders) {
+                let openFolder = plugin.app.vault.getAbstractFileByPath(folder);
+                if (openFolder) openFolders.push(openFolder as TFolder);
+            }
         }
         return openFolders;
     }
@@ -121,9 +128,13 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // Load The String List anad Set Pinned Files State
     function getPinnedFilesFromSettings(): TFile[] {
         let pinnedFiles: TFile[] = [];
-        for (let file of plugin.settings.pinnedFiles) {
-            let pinnedFile = plugin.app.vault.getAbstractFileByPath(file);
-            if (pinnedFile) pinnedFiles.push(pinnedFile as TFile);
+        let localStoragePinnedFiles = lsh.getFromLocalStorage({ key: plugin.keys.pinnedFilesKey, checkCacheHours: false });
+        if (localStoragePinnedFiles) {
+            localStoragePinnedFiles = JSON.parse(localStoragePinnedFiles);
+            for (let file of localStoragePinnedFiles) {
+                let pinnedFile = plugin.app.vault.getAbstractFileByPath(file);
+                if (pinnedFile) pinnedFiles.push(pinnedFile as TFile);
+            }
         }
         return pinnedFiles;
     }
@@ -134,8 +145,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         for (let folder of openFolders) {
             openFoldersToSave.push(folder.path);
         }
-        plugin.settings.openFolders = openFoldersToSave;
-        plugin.saveSettings();
+        lsh.setLocalStorage({ key: plugin.keys.openFoldersKey, value: JSON.stringify(openFoldersToSave) });
     }
 
     // Get The Pinned Files State and Save in Data as String Array
@@ -144,8 +154,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         for (let file of pinnedFiles) {
             pinnedFilesToSave.push(file.path);
         }
-        plugin.settings.pinnedFiles = pinnedFilesToSave;
-        plugin.saveSettings();
+        lsh.setLocalStorage({ key: plugin.keys.pinnedFilesKey, value: JSON.stringify(pinnedFilesToSave) });
     }
 
     // Save Excluded Folders to Settings as String

@@ -2,8 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import FileTreeAlternativePlugin from 'main';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileComponent } from 'components/FileView/FileComponent';
+import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
+    let { plugin } = props;
+
     const [dividerOnMove, setDividerOnMove] = useState<boolean>(false);
     const [folderPaneHeight, setFolderPaneHeight] = useState<number>(null);
     const [clientY, setClientY] = useState<number>(null);
@@ -11,12 +14,12 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
     let folderPaneRef = useRef<HTMLDivElement>();
     let dividerRef = useRef<HTMLDivElement>();
 
-    let heightSetting = props.plugin.settings.customHeight;
+    let lsh = new LocalStorageHandler({});
+    let heightSetting = lsh.getFromLocalStorage({ key: plugin.keys.customHeightKey, checkCacheHours: false });
 
     useEffect(() => {
         if (folderPaneHeight) {
-            props.plugin.settings.customHeight = folderPaneHeight;
-            props.plugin.saveSettings();
+            lsh.setLocalStorage({ key: plugin.keys.customHeightKey, value: folderPaneHeight.toString() });
         }
     }, [folderPaneHeight]);
 
@@ -47,8 +50,8 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
             <div
                 className="oz-folder-pane"
                 ref={folderPaneRef}
-                style={{ height: folderPaneHeight ? `${folderPaneHeight}px` : heightSetting !== 0 ? `${heightSetting}px` : '50%' }}>
-                <MainFolder plugin={props.plugin} />
+                style={{ height: folderPaneHeight ? `${folderPaneHeight}px` : heightSetting && heightSetting !== '' ? `${heightSetting}px` : '50%' }}>
+                <MainFolder plugin={plugin} />
             </div>
 
             {/* Mouse Down Event only For Divider */}
@@ -60,7 +63,7 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
                 style={{ backgroundColor: dividerOnMove ? 'var(--interactive-accent)' : '' }}></div>
 
             <div className="oz-file-list-pane">
-                <FileComponent plugin={props.plugin} />
+                <FileComponent plugin={plugin} />
             </div>
         </div>
     );

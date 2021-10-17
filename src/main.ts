@@ -7,6 +7,13 @@ export default class FileTreeAlternativePlugin extends Plugin {
     settings: FileTreeAlternativePluginSettings;
     ribbonIconEl: HTMLElement | undefined = undefined;
 
+    keys = {
+        activeFolderPathKey: 'fileTreePlugin-ActiveFolderPath',
+        pinnedFilesKey: 'fileTreePlugin-PinnedFiles',
+        openFoldersKey: 'fileTreePlugin-OpenFolders',
+        customHeightKey: 'fileTreePlugin-CustomHeight',
+    };
+
     async onload() {
         console.log('Loading Alternative File Tree Plugin');
 

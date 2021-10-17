@@ -1,5 +1,6 @@
 import FileTreeAlternativePlugin from './main';
 import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
+import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
@@ -11,14 +12,10 @@ export interface FileTreeAlternativePluginSettings {
     excludedFolders: string;
     folderCount: boolean;
     folderCountOption: string;
-    openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
-    pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
-    customHeight: number; // Keeping the state of the divider position - Not open for edit Manually
     evernoteView: boolean;
     filePreviewOnHover: boolean;
     sortFilesBy: 'name' | 'last-update';
     fixedHeaderInFileList: boolean;
-    activeFolderPath: string; // Keeping the state of Active Folder Path - Not open for edit Manually
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -31,14 +28,10 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     excludedFolders: '',
     folderCount: true,
     folderCountOption: 'notes',
-    openFolders: [], // Keeping the state of Open Folders - Not open for edit Manually
-    pinnedFiles: [], // Keeping the state of Pinned Files - Not open for edit Manually
-    customHeight: 0, // Keeping the state of the divider position - Not open for edit Manually
     evernoteView: true,
     filePreviewOnHover: false,
     sortFilesBy: 'name',
     fixedHeaderInFileList: false,
-    activeFolderPath: '', // Keeping the state of Active Folder Path - Not open for edit Manually
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -52,6 +45,8 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
     display(): void {
         let { containerEl } = this;
         containerEl.empty();
+
+        let lsh = new LocalStorageHandler({});
 
         /* ------------- Buy Me a Coffee ------------- */
 
@@ -246,10 +241,9 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     .setTooltip('Click here to clear the cache data')
                     .setButtonText('Click for Clearing the Cache')
                     .onClick(async () => {
-                        this.plugin.settings.openFolders = [];
-                        this.plugin.settings.activeFolderPath = '';
-                        this.plugin.settings.customHeight = 0;
-                        this.plugin.saveSettings();
+                        lsh.removeFromLocalStorage({ key: this.plugin.keys.customHeightKey });
+                        lsh.removeFromLocalStorage({ key: this.plugin.keys.openFoldersKey });
+                        lsh.removeFromLocalStorage({ key: this.plugin.keys.activeFolderPathKey });
                         this.plugin.refreshTreeLeafs();
                         new Notice('The plugin cache is cleared...');
                     });
@@ -263,8 +257,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     .setTooltip('Click here to clear the pinned files')
                     .setButtonText('Click for Clearing the Pinned files')
                     .onClick(async () => {
-                        this.plugin.settings.pinnedFiles = [];
-                        this.plugin.saveSettings();
+                        lsh.removeFromLocalStorage({ key: this.plugin.keys.pinnedFilesKey });
                         this.plugin.refreshTreeLeafs();
                         new Notice('The pinned files are cleared...');
                     });
