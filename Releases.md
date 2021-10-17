@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.5.6
+
+-   Fixed Header and Buttons - Search Enabled Padding Solution
+-   Local Storage Improvement
+
 ## Version 1.5.5
 
 -   Consistent data is moved from Plugin Settings to Local Storage
