@@ -285,7 +285,14 @@ export function FileComponent(props: FilesProps) {
                             {/* End: Header */}
 
                             {/* File List */}
-                            <div className={`oz-file-tree-files${plugin.settings.fixedHeaderInFileList ? ' file-tree-files-fixed' : ''}`}>
+                            <div
+                                className={`oz-file-tree-files${
+                                    plugin.settings.fixedHeaderInFileList
+                                        ? searchBoxVisible
+                                            ? ' file-tree-files-fixed-with-search'
+                                            : ' file-tree-files-fixed'
+                                        : ''
+                                }`}>
                                 {customFiles(fileList).map((file) => {
                                     return (
                                         <div

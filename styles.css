@@ -15,6 +15,7 @@
 .oz-input-container {
     margin-bottom: 3px !important;
     margin-top: 3px !important;
+    height: 30px;
 }
 
 .oz-nav-buttons-right-block {
@@ -207,6 +208,12 @@ div.oz-folder-name.is-root-folder {
 
 .file-tree-files-fixed {
     padding-top: 50px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.file-tree-files-fixed-with-search {
+    padding-top: 80px !important;
     display: flex;
     flex-direction: column;
 }
