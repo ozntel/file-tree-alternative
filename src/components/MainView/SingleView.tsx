@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import FileTreeAlternativePlugin from 'main';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileComponent } from 'components/FileView/FileComponent';
-import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
     let { plugin } = props;
@@ -14,12 +13,11 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
     let folderPaneRef = useRef<HTMLDivElement>();
     let dividerRef = useRef<HTMLDivElement>();
 
-    let lsh = new LocalStorageHandler({});
-    let heightSetting = lsh.getFromLocalStorage({ key: plugin.keys.customHeightKey, checkCacheHours: false });
+    let heightSetting = localStorage.getItem(plugin.keys.customHeightKey);
 
     useEffect(() => {
         if (folderPaneHeight) {
-            lsh.setLocalStorage({ key: plugin.keys.customHeightKey, value: folderPaneHeight.toString() });
+            localStorage.setItem(plugin.keys.customHeightKey, folderPaneHeight.toString());
         }
     }, [folderPaneHeight]);
 
