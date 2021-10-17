@@ -1,5 +1,5 @@
 import FileTreeAlternativePlugin from './main';
-import { PluginSettingTab, Setting, App } from 'obsidian';
+import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
@@ -13,7 +13,7 @@ export interface FileTreeAlternativePluginSettings {
     folderCountOption: string;
     openFolders: string[]; // Keeping the state of Open Folders - Not open for edit Manually
     pinnedFiles: string[]; // Keeping the state of Pinned Files - Not open for edit Manually
-    customHeight: number;
+    customHeight: number; // Keeping the state of the divider position - Not open for edit Manually
     evernoteView: boolean;
     filePreviewOnHover: boolean;
     sortFilesBy: 'name' | 'last-update';
@@ -33,7 +33,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     folderCountOption: 'notes',
     openFolders: [], // Keeping the state of Open Folders - Not open for edit Manually
     pinnedFiles: [], // Keeping the state of Pinned Files - Not open for edit Manually
-    customHeight: 0,
+    customHeight: 0, // Keeping the state of the divider position - Not open for edit Manually
     evernoteView: true,
     filePreviewOnHover: false,
     sortFilesBy: 'name',
@@ -231,5 +231,43 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.saveSettings();
                 })
             );
+
+        /* ------------- Clear Data ------------- */
+        containerEl.createEl('h2', { text: 'Clear Data' });
+
+        new Setting(containerEl)
+            .setName('Clear All Cache Data')
+            .setDesc(
+                `This button will clear the following cache data: "Last position of the divider" & "List of expanded folders in the folder pane", 
+                & "Last active folder path". It will not touch your settings above and list of pinned files. It is recommended to do this clearing once in a while.`
+            )
+            .addButton((button) => {
+                let b = button
+                    .setTooltip('Click here to clear the cache data')
+                    .setButtonText('Click for Clearing the Cache')
+                    .onClick(async () => {
+                        this.plugin.settings.openFolders = [];
+                        this.plugin.settings.activeFolderPath = '';
+                        this.plugin.settings.customHeight = 0;
+                        this.plugin.saveSettings();
+                        this.plugin.refreshTreeLeafs();
+                        new Notice('The plugin cache is cleared...');
+                    });
+            });
+
+        new Setting(containerEl)
+            .setName('Clear Pinned Files')
+            .setDesc(`This button will clear the pinned files in the file list pane.`)
+            .addButton((button) => {
+                let b = button
+                    .setTooltip('Click here to clear the pinned files')
+                    .setButtonText('Click for Clearing the Pinned files')
+                    .onClick(async () => {
+                        this.plugin.settings.pinnedFiles = [];
+                        this.plugin.saveSettings();
+                        this.plugin.refreshTreeLeafs();
+                        new Notice('The pinned files are cleared...');
+                    });
+            });
     }
 }
