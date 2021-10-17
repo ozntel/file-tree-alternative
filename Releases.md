@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.5.5
+
+-   Consistent data is moved from Plugin Settings to Local Storage
+
 ## Version 1.5.4
 
 -   Focus in and out to a specific folder in folder pane
