@@ -38,6 +38,10 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     height: 26px;
 }
 
+.is-mobile .oz-flex-container {
+    height: 31px;
+}
+
 .oz-explorer-container {
     padding-left: 3px !important;
     padding-right: 3px !important;
@@ -212,8 +216,16 @@ div.oz-folder-name.is-root-folder {
     flex-direction: column;
 }
 
+.is-mobile .file-tree-files-fixed {
+    padding-top: 55px !important;
+}
+
 .file-tree-files-fixed-with-search {
     padding-top: 80px !important;
     display: flex;
     flex-direction: column;
+}
+
+.is-mobile .file-tree-files-fixed-with-search {
+    padding-top: 85px !important;
 }

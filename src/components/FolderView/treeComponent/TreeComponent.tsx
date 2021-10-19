@@ -64,7 +64,11 @@ export default function Tree(props: TreeProps) {
     const folderContextMenuEvent = () => props.onContextMenu();
 
     // --> Icon
-    const Icon = props.children ? (open ? Icons['MinusSquareO'] : Icons['PlusSquareO']) : Icons['CloseSquareO'];
+    const openFolderIcon = 'MinusSquareO';
+    const inactiveOpenFolderIcon = 'CloseSquareO';
+    const closedFolderIcon = 'PlusSquareO';
+
+    const Icon = props.children ? (open ? Icons[openFolderIcon] : Icons[closedFolderIcon]) : Icons[inactiveOpenFolderIcon];
 
     return (
         <Dropzone
