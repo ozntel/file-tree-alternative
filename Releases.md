@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.5.7
+
+-   Custom Folder Icons
+-   Fixed Header and buttons mobile style issue solution
+
 ## Version 1.5.6
 
 -   Fixed Header and Buttons - Search Enabled Padding Solution
