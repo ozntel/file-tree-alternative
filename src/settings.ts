@@ -100,7 +100,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addDropdown((dropdown) => {
                 dropdown
                     .addOption('default', 'Default')
-                    .addOption('box-folder', 'Box Icons Folder')
+                    .addOption('box-folder', 'Box Icons')
                     .addOption('icomoon', 'IcoMoon Icons')
                     .addOption('typicon', 'Typicons')
                     .addOption('circle-gg', 'Circle GG')
