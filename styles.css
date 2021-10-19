@@ -229,3 +229,7 @@ div.oz-folder-name.is-root-folder {
 .is-mobile .file-tree-files-fixed-with-search {
     padding-top: 85px !important;
 }
+
+svg.oz-folder-toggle path {
+    fill: var(--interactive-accent);
+}

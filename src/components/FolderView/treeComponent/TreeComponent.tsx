@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
-import * as Icons from 'utils/icons';
+import { getFolderIcon } from 'utils/icons';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 
@@ -64,11 +64,9 @@ export default function Tree(props: TreeProps) {
     const folderContextMenuEvent = () => props.onContextMenu();
 
     // --> Icon
-    const openFolderIcon = 'MinusSquareO';
-    const inactiveOpenFolderIcon = 'CloseSquareO';
-    const closedFolderIcon = 'PlusSquareO';
 
-    const Icon = props.children ? (open ? Icons[openFolderIcon] : Icons[closedFolderIcon]) : Icons[inactiveOpenFolderIcon];
+    // const Icon = props.children ? (open ? Icons[openFolderIcon] : Icons[closedFolderIcon]) : Icons[inactiveOpenFolderIcon];
+    const Icon = getFolderIcon(props.plugin, props.children, open);
 
     return (
         <Dropzone

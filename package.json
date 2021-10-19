@@ -30,6 +30,7 @@
         "react": "npm:@preact/compat",
         "react-dom": "npm:@preact/compat",
         "react-dropzone": "^11.3.2",
+        "react-icons": "^4.3.1",
         "react-spring": "^5.9.2",
         "recoil": "^0.4.1"
     }

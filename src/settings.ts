@@ -2,6 +2,8 @@ import FileTreeAlternativePlugin from './main';
 import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
+type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
+
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
     showRootFolder: boolean;
@@ -10,6 +12,7 @@ export interface FileTreeAlternativePluginSettings {
     showFilesFromSubFoldersButton: boolean;
     excludedExtensions: string;
     excludedFolders: string;
+    folderIcon: FolderIcon;
     folderCount: boolean;
     folderCountOption: string;
     evernoteView: boolean;
@@ -26,6 +29,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     showFilesFromSubFoldersButton: true,
     excludedExtensions: '',
     excludedFolders: '',
+    folderIcon: 'default',
     folderCount: true,
     folderCountOption: 'notes',
     evernoteView: true,
@@ -89,6 +93,25 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         /* ------------- Folder Pane Settings ------------- */
 
         containerEl.createEl('h2', { text: 'Folder Pane Settings' });
+
+        new Setting(containerEl)
+            .setName('Folder Icons')
+            .setDesc('Change the default folder icons your preferred option')
+            .addDropdown((dropdown) => {
+                dropdown
+                    .addOption('default', 'Default')
+                    .addOption('box-folder', 'Box Icons Folder')
+                    .addOption('icomoon', 'IcoMoon Icons')
+                    .addOption('typicon', 'Typicons')
+                    .addOption('circle-gg', 'Circle GG')
+                    .setValue(this.plugin.settings.folderIcon)
+                    .onChange((value: FolderIcon) => {
+                        console.log(value);
+                        this.plugin.settings.folderIcon = value;
+                        this.plugin.saveSettings();
+                        this.plugin.refreshTreeLeafs();
+                    });
+            });
 
         new Setting(containerEl)
             .setName('Show Root Folder')
