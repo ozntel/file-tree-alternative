@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.5.8
+
+-   Remember the last focused folder
+
 ## Version 1.5.7
 
 -   Custom Folder Icons
