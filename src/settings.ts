@@ -267,6 +267,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.customHeightKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.openFoldersKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.activeFolderPathKey });
+                        lsh.removeFromLocalStorage({ key: this.plugin.keys.focusedFolder });
                         this.plugin.refreshTreeLeafs();
                         new Notice('The plugin cache is cleared...');
                     });
