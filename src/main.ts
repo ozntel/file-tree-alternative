@@ -12,6 +12,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
         pinnedFilesKey: 'fileTreePlugin-PinnedFiles',
         openFoldersKey: 'fileTreePlugin-OpenFolders',
         customHeightKey: 'fileTreePlugin-CustomHeight',
+        focusedFolder: 'fileTreePlugin-FocusedFolder',
     };
 
     async onload() {

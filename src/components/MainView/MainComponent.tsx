@@ -56,7 +56,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // Initial Load
     useEffect(() => {
-        setFocusedFolder(plugin.app.vault.getRoot());
+        setInitialFocusedFolder();
         setExcludedFolders(getExcludedFolders());
         setExcludedExtensions(getExcludedExtensions());
         setPinnedFiles(getPinnedFilesFromSettings());
@@ -70,8 +70,21 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     useEffect(() => {
         if (focusedFolder) {
             setFolderTree(FileTreeUtils.createFolderTree(focusedFolder));
+            localStorage.setItem(plugin.keys.focusedFolder, focusedFolder.path);
         }
     }, [focusedFolder]);
+
+    const setInitialFocusedFolder = () => {
+        let localFocusedFolder = localStorage.getItem(plugin.keys.focusedFolder);
+        if (localFocusedFolder) {
+            let folder = plugin.app.vault.getAbstractFileByPath(localFocusedFolder);
+            if (folder && folder instanceof TFolder) {
+                setFocusedFolder(folder);
+                return;
+            }
+        }
+        setFocusedFolder(plugin.app.vault.getRoot());
+    };
 
     // State Change Handlers
     useEffect(() => savePinnedFilesToSettings(), [pinnedFiles]);
