@@ -99,6 +99,15 @@ export function FileComponent(props: FilesProps) {
             });
         });
 
+        // Make a Copy Item
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Make a copy');
+            menuItem.setIcon('documents');
+            menuItem.onClick((ev: MouseEvent) => {
+                plugin.app.vault.copy(file, `${file.parent.path}/${file.basename} 1.${file.extension}`);
+            });
+        });
+
         // Move Item
         if (!Util.internalPluginLoaded('file-explorer', plugin.app)) {
             fileMenu.addItem((menuItem) => {
