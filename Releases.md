@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.5.9
+
+-   Search files only under Focused Folder option
+
 ## Version 1.5.8
 
 -   Remember the last focused folder
