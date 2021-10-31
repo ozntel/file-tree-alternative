@@ -24,6 +24,7 @@ export function FileComponent(props: FilesProps) {
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
+    const [focusedFolder] = useRecoilState(recoilState.focusedFolder);
 
     // Local States
     const [activeFile, setActiveFile] = useState<TFile>(null as TFile);
@@ -184,7 +185,7 @@ export function FileComponent(props: FilesProps) {
         let allRegexMatch = searchPhrase.match(searchAllRegex);
         if (allRegexMatch) {
             searchPhrase = allRegexMatch[1] ? allRegexMatch[1] : '';
-            searchFolder = '/';
+            searchFolder = plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/';
             setTreeHeader('All Files');
         } else {
             setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app));
@@ -203,7 +204,7 @@ export function FileComponent(props: FilesProps) {
 
     const getFilesWithTag = (searchTag: string): Set<TFile> => {
         let filesWithTag: Set<TFile> = new Set();
-        let mdFiles = plugin.app.vault.getMarkdownFiles();
+        let mdFiles = Util.getFilesUnderPath(plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/', plugin, true);
         for (let mdFile of mdFiles) {
             let fileCache = plugin.app.metadataCache.getFileCache(mdFile);
             if (fileCache.tags) {

@@ -9,6 +9,7 @@ export interface FileTreeAlternativePluginSettings {
     showRootFolder: boolean;
     showFilesFromSubFolders: boolean;
     searchFunction: boolean;
+    allSearchOnlyInFocusedFolder: boolean;
     showFilesFromSubFoldersButton: boolean;
     excludedExtensions: string;
     excludedFolders: string;
@@ -26,6 +27,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     showRootFolder: true,
     showFilesFromSubFolders: true,
     searchFunction: true,
+    allSearchOnlyInFocusedFolder: false,
     showFilesFromSubFoldersButton: true,
     excludedExtensions: '',
     excludedFolders: '',
@@ -182,6 +184,18 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.settings.searchFunction = value;
                     this.plugin.saveSettings();
                     this.plugin.refreshTreeLeafs();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('All & Tag Search only in Focused Folder')
+            .setDesc(
+                `"all:" and "tag:" searches by default looks for all files in your vault. Turn on this option if you want search only in Focused Folder`
+            )
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.allSearchOnlyInFocusedFolder).onChange((value) => {
+                    this.plugin.settings.allSearchOnlyInFocusedFolder = value;
+                    this.plugin.saveSettings();
                 })
             );
 
