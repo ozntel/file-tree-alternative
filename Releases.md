@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.6.0
+
+-   Make a copy option manually included to file tree
+
 ## Version 1.5.9
 
 -   Search files only under Focused Folder option
