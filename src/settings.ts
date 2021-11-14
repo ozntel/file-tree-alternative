@@ -242,7 +242,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .setName('Excluded File Extensions')
             .setDesc(
                 `Provide extension of files, which you want to exclude from listing in file tree, divided by comma. i.e. 'png, pdf, jpeg'.
-            You need to reload the vault to make changes effective.`
+            You need to reload the vault or use "Reload File Tree" button below to make changes effective.`
             )
             .addTextArea((text) =>
                 text.setValue(this.plugin.settings.excludedExtensions).onChange((value) => {
@@ -255,7 +255,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .setName('Excluded Folder Paths')
             .setDesc(
                 `Provide full path of folders, which you want to exclude from listing in file tree, divided by comma. i.e. 'Personal/Attachments, Work/Documents/Folders'.
-            All subfolders are going to be excluded, as well. You need to reload the vault to make changes effective.`
+            All subfolders are going to be excluded, as well. You need to reload the vault or use "Reload File Tree" button below to make changes effective.`
             )
             .addTextArea((text) =>
                 text.setValue(this.plugin.settings.excludedFolders).onChange((value) => {
@@ -263,6 +263,20 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.saveSettings();
                 })
             );
+
+        new Setting(containerEl)
+            .setDesc(
+                'Use this button to reload the file tree. Reloading the file tree is required for some of the settings. You can also restart your vault to have same effect.'
+            )
+            .addButton((button) => {
+                button
+                    .setClass('reload-file-tree-button')
+                    .setTooltip('Click here to reload the file tree')
+                    .setButtonText('Reload File Tree')
+                    .onClick((e) => {
+                        this.plugin.refreshTreeLeafs();
+                    });
+            });
 
         /* ------------- Clear Data ------------- */
         containerEl.createEl('h2', { text: 'Clear Data' });
