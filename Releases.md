@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.6.1
+
+-   Reload File Tree button to make couple of settings effective without reloading the vault
+
 ## Version 1.6.0
 
 -   Make a copy option manually included to file tree
