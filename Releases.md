@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.6.2
+
+-   Small Bug Fixes
+-   Fontawesome icons are used from react-icons library
+
 ## Version 1.6.1
 
 -   Reload File Tree button to make couple of settings effective without reloading the vault
