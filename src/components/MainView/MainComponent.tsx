@@ -121,14 +121,14 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     }
 
     // Load The String List and Set Open Folders State
-    function getOpenFoldersFromSettings(): TFolder[] {
-        let openFolders: TFolder[] = [];
+    function getOpenFoldersFromSettings(): string[] {
+        let openFolders: string[] = [];
         let localStorageOpenFolders = localStorage.getItem(plugin.keys.openFoldersKey);
         if (localStorageOpenFolders) {
             localStorageOpenFolders = JSON.parse(localStorageOpenFolders);
             for (let folder of localStorageOpenFolders) {
                 let openFolder = plugin.app.vault.getAbstractFileByPath(folder);
-                if (openFolder) openFolders.push(openFolder as TFolder);
+                if (openFolder) openFolders.push(openFolder.path);
             }
         }
         return openFolders;
@@ -152,7 +152,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     function saveOpenFoldersToSettings() {
         let openFoldersToSave: string[] = [];
         for (let folder of openFolders) {
-            openFoldersToSave.push(folder.path);
+            openFoldersToSave.push(folder);
         }
         localStorage.setItem(plugin.keys.openFoldersKey, JSON.stringify(openFoldersToSave));
     }

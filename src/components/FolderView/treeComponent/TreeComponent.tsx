@@ -37,12 +37,9 @@ export default function Tree(props: TreeProps) {
         if (props.children) {
             // Set State in Main Component for Keeping Folders Open
             if (!open) {
-                setOpenFolders([...openFolders, props.folder]);
+                setOpenFolders([...openFolders, props.folder.path]);
             } else {
-                const newOpenFolders = openFolders.filter((folder) => {
-                    if (props.folder === folder) return false;
-                    return true;
-                });
+                const newOpenFolders = openFolders.filter((openFolder) => props.folder.path !== openFolder);
                 setOpenFolders(newOpenFolders);
             }
             // Set State Open for the Folder

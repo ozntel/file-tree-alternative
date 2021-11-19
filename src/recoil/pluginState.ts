@@ -12,6 +12,12 @@ export const activeFolderPath = atom({
     default: '',
 });
 
+export const activeFile = atom({
+    key: 'fileTreeActiveFile',
+    default: null as TFile,
+    dangerouslyAllowMutability: true,
+});
+
 export const excludedFolders = atom({
     key: 'fileTreeExcludedFoldersState',
     default: [] as string[],
@@ -47,8 +53,7 @@ export const pinnedFiles = atom({
 
 export const openFolders = atom({
     key: 'fileTreeOpenFoldersState',
-    default: [] as TFolder[],
-    dangerouslyAllowMutability: true,
+    default: [] as string[],
 });
 
 export const showSubFolders = atom({

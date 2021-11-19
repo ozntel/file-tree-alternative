@@ -18,16 +18,16 @@ export function FileComponent(props: FilesProps) {
     const plugin = props.plugin;
 
     // States Coming From Main Component
-    const [view, setView] = useRecoilState(recoilState.view);
+    const [_view, setView] = useRecoilState(recoilState.view);
     const [fileList, setFileList] = useRecoilState(recoilState.fileList);
     const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
     const [focusedFolder] = useRecoilState(recoilState.focusedFolder);
+    const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
 
     // Local States
-    const [activeFile, setActiveFile] = useState<TFile>(null as TFile);
     const [highlight, setHighlight] = useState<boolean>(false);
     const [searchPhrase, setSearchPhrase] = useState<string>('');
     const [searchBoxVisible, setSearchBoxVisible] = useState<boolean>(false);

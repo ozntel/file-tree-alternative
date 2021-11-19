@@ -73,6 +73,18 @@ export const getFileNameAndExtension = (fullName: string) => {
     };
 };
 
+// Returns all parent folder paths
+export const getParentFolderPaths = (file: TFile): string[] => {
+    let folderPaths: string[] = ['/'];
+    let parts: string[] = file.parent.path.split('/');
+    let current: string = '';
+    for (let i = 0; i < parts.length; i++) {
+        current += `${i === 0 ? '' : '/'}` + parts[i];
+        folderPaths.push(current);
+    }
+    return folderPaths;
+};
+
 // Extracts the Folder Name from the Full Folder Path
 export const getFolderName = (folderPath: string, app: App) => {
     if (folderPath === '/') return app.vault.getName();
