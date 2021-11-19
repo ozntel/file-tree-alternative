@@ -61,8 +61,6 @@ export default function Tree(props: TreeProps) {
     const folderContextMenuEvent = () => props.onContextMenu();
 
     // --> Icon
-
-    // const Icon = props.children ? (open ? Icons[openFolderIcon] : Icons[closedFolderIcon]) : Icons[inactiveOpenFolderIcon];
     const Icon = getFolderIcon(props.plugin, props.children, open);
 
     return (
