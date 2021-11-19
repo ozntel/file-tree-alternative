@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
 import { TFile, Menu } from 'obsidian';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as Icons from 'utils/icons';
 import { VaultChangeModal, MoveSuggestionModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
@@ -257,29 +256,29 @@ export function FileComponent(props: FilesProps) {
                             <div className={`oz-file-tree-header-wrapper${plugin.settings.fixedHeaderInFileList ? ' file-tree-header-fixed' : ''}`}>
                                 <div className="oz-flex-container">
                                     <div className="nav-action-button oz-nav-action-button">
-                                        <FontAwesomeIcon
-                                            icon={plugin.settings.evernoteView ? Icons.faTimesCircle : Icons.faArrowCircleLeft}
-                                            onClick={(e) => handleGoBack(e)}
-                                            size="lg"
-                                        />
+                                        {plugin.settings.evernoteView ? (
+                                            <Icons.FaTimesCircle onClick={(e) => handleGoBack(e)} size={20} />
+                                        ) : (
+                                            <Icons.FaArrowCircleLeft onClick={(e) => handleGoBack(e)} size={20} />
+                                        )}
                                     </div>
                                     <div className="oz-nav-buttons-right-block">
                                         {plugin.settings.showFilesFromSubFoldersButton && (
                                             <div className="nav-action-button oz-nav-action-button">
                                                 {showSubFolders ? (
-                                                    <FontAwesomeIcon icon={Icons.faEyeSlash} onClick={toggleShowSubFolders} size="lg" />
+                                                    <Icons.FaEyeSlash onClick={toggleShowSubFolders} size={20} />
                                                 ) : (
-                                                    <FontAwesomeIcon icon={Icons.faEye} onClick={toggleShowSubFolders} size="lg" />
+                                                    <Icons.FaEye onClick={toggleShowSubFolders} size={20} />
                                                 )}
                                             </div>
                                         )}
                                         {plugin.settings.searchFunction && (
                                             <div className="nav-action-button oz-nav-action-button">
-                                                <FontAwesomeIcon icon={Icons.faSearch} onClick={toggleSearchBox} size="lg" />
+                                                <Icons.FaSearch onClick={toggleSearchBox} size={20} />
                                             </div>
                                         )}
                                         <div className="nav-action-button oz-nav-action-button">
-                                            <FontAwesomeIcon icon={Icons.faPlusCircle} onClick={(e) => createNewFile(e, activeFolderPath)} size="lg" />
+                                            <Icons.FaPlusCircle onClick={(e) => createNewFile(e, activeFolderPath)} size={20} />
                                         </div>
                                     </div>
                                 </div>
@@ -320,11 +319,7 @@ export function FileComponent(props: FilesProps) {
                                                 <div className="nav-file-title-content">
                                                     {Util.getFileNameAndExtension(file.name).fileName}
                                                     {pinnedFiles.contains(file) && (
-                                                        <FontAwesomeIcon
-                                                            icon={Icons.faThumbtack}
-                                                            style={{ marginLeft: '3px', float: 'right' }}
-                                                            size="xs"
-                                                        />
+                                                        <Icons.FaThumbtack style={{ marginLeft: '3px', float: 'right', marginTop: '4px' }} size={14} />
                                                     )}
                                                 </div>
                                             </div>

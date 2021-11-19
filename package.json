@@ -22,9 +22,6 @@
         "typescript": "^4.2.4"
     },
     "dependencies": {
-        "@fortawesome/fontawesome-svg-core": "^1.2.35",
-        "@fortawesome/free-solid-svg-icons": "^5.15.3",
-        "@fortawesome/react-fontawesome": "^0.1.14",
         "@ozntel/local-storage-handler": "^1.0.3",
         "preact": "^10",
         "react": "npm:@preact/compat",

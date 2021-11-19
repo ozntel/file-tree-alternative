@@ -1,16 +1,10 @@
 import React from 'react';
 import FileTreeAlternativePlugin from 'main';
-import { faPlusCircle } from '@fortawesome/free-solid-svg-icons/faPlusCircle';
-import { faArrowCircleLeft } from '@fortawesome/free-solid-svg-icons/faArrowCircleLeft';
-import { faThumbtack } from '@fortawesome/free-solid-svg-icons/faThumbtack';
-import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
-import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
-import { faEyeSlash } from '@fortawesome/free-solid-svg-icons/faEyeSlash';
 import { BiFolderPlus, BiFolder, BiFolderMinus } from 'react-icons/bi';
 import { ImFolder, ImFolderPlus, ImFolderMinus } from 'react-icons/im';
 import { TiFolder, TiFolderOpen } from 'react-icons/ti';
 import { CgCloseO, CgAdd, CgRemove } from 'react-icons/cg';
+import { FaEye, FaEyeSlash, FaTimesCircle, FaSearch, FaThumbtack, FaPlusCircle, FaArrowCircleLeft } from 'react-icons/fa';
 
 const MinusSquareO = (props: any) => (
     <svg {...props} viewBox="64 -65 897 897">
@@ -93,13 +87,13 @@ export const getFolderIcon = (plugin: FileTreeAlternativePlugin, children: boole
 };
 
 export {
-    faPlusCircle,
-    faArrowCircleLeft,
-    faThumbtack,
-    faSearch,
-    faTimesCircle,
-    faEyeSlash,
-    faEye,
+    FaPlusCircle,
+    FaArrowCircleLeft,
+    FaThumbtack,
+    FaSearch,
+    FaTimesCircle,
+    FaEyeSlash,
+    FaEye,
     LocationIcon,
     ZoomOutIcon,
     ZoomInIcon,
