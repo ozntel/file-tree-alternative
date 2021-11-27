@@ -1,5 +1,5 @@
 import { TFolder } from 'obsidian';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
@@ -61,7 +61,7 @@ export default function Tree(props: TreeProps) {
     const folderContextMenuEvent = () => props.onContextMenu();
 
     // --> Icon
-    const Icon = getFolderIcon(props.plugin, props.children, open);
+    const Icon = useMemo(() => getFolderIcon(props.plugin, props.children, open), [open]);
 
     return (
         <Dropzone

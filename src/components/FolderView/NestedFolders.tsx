@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TFolder, Menu } from 'obsidian';
 import { FolderTree } from 'utils/types';
 import FileTreeAlternativePlugin from 'main';
@@ -124,10 +124,12 @@ export function NestedFolders(props: NestedFoldersProps) {
 
     if (!props.folderTree.children) return null;
 
+    let sortedFolderTree = useMemo(() => getSortedFolderTree(props.folderTree.children), [props.folderTree.children]);
+
     return (
         <React.Fragment>
             {Array.isArray(props.folderTree.children) &&
-                getSortedFolderTree(props.folderTree.children).map((child) => {
+                sortedFolderTree.map((child) => {
                     return (
                         <React.Fragment key={child.folder.path}>
                             {(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
