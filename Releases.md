@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.6.3
+
+-   Memory usage improvement
+
 ## Version 1.6.2
 
 -   Small Bug Fixes
