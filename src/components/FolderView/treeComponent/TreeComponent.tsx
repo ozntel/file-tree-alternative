@@ -61,7 +61,7 @@ export default function Tree(props: TreeProps) {
     const folderContextMenuEvent = () => props.onContextMenu();
 
     // --> Icon
-    const Icon = useMemo(() => getFolderIcon(props.plugin, props.children, open), [open]);
+    const Icon = useMemo(() => getFolderIcon(props.plugin, props.children, open), [open, props.children]);
 
     return (
         <Dropzone
@@ -86,8 +86,7 @@ export default function Tree(props: TreeProps) {
 
                             <div className="oz-folder-block" onClick={folderNameClickEvent} onContextMenu={folderContextMenuEvent}>
                                 <div className="oz-folder-type" style={{ marginRight: props.type ? 10 : 0 }}>
-                                    {' '}
-                                    {props.type}{' '}
+                                    {props.type}
                                 </div>
                                 <div
                                     className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}${props.isRootFolder ? ' is-root-folder' : ''}`}>
@@ -112,9 +111,9 @@ export default function Tree(props: TreeProps) {
                         }}
                         from={{ height: 0, opacity: 0, transform: 'translate3d(20px,0,0)' }}
                         to={{
-                            height: open ? 'auto' : 0,
-                            opacity: open ? 1 : 0,
-                            transform: open ? 'translate3d(0px,0,0)' : 'translate3d(20px,0,0)',
+                            height: open && props.children ? 'auto' : 0,
+                            opacity: open && props.children ? 1 : 0,
+                            transform: open && props.children ? 'translate3d(0px,0,0)' : 'translate3d(20px,0,0)',
                         }}
                         render={Contents}>
                         {props.children}
