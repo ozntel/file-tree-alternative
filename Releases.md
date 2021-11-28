@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 1.6.4
+
+-   New File creation will automatically change the active file in file list pane
+-   Icon update issue solution (Once children folders are removed)
+-   Action removing all children folders will also remove the space reserved for the children folders
+
 ## Version 1.6.3
 
 -   Memory usage improvement
