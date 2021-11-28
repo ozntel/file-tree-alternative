@@ -36,6 +36,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     const [_excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [_showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
+    const [_activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
 
     const setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : activeFolderPath;
@@ -52,6 +53,21 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                 }
             }
         }
+    };
+
+    // --> Create Custom Event Handlers
+    useEffect(() => {
+        window.addEventListener('file-tree-alternative-active-file-change', changeActiveFile);
+        return () => {
+            window.removeEventListener('file-tree-alternative-active-file-change', changeActiveFile);
+        };
+    }, []);
+
+    const changeActiveFile = (evt: Event) => {
+        // @ts-ignore
+        let filePath: string = evt.detail.filePath;
+        let file = plugin.app.vault.getAbstractFileByPath(filePath);
+        if (file) setActiveFile(file as TFile);
     };
 
     // Initial Load
