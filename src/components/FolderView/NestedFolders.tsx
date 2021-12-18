@@ -124,7 +124,7 @@ export function NestedFolders(props: NestedFoldersProps) {
 
     if (!props.folderTree.children) return null;
 
-    let sortedFolderTree = useMemo(() => getSortedFolderTree(props.folderTree.children), [props.folderTree.children]);
+    let sortedFolderTree = useMemo(() => getSortedFolderTree(props.folderTree.children), [props.folderTree.children, excludedFolders]);
 
     return (
         <React.Fragment>
