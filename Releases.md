@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.6.5
+
+-   Search Box Escape Listener
+-   File Tree Divider Style Change
+
 ## Version 1.6.4
 
 -   New File creation will automatically change the active file in file list pane
