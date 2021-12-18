@@ -131,7 +131,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         let excludedString: string = plugin.settings.excludedFolders;
         let excludedFolders: string[] = [];
         for (let excludedFolder of excludedString.split(',')) {
-            excludedFolders.push(excludedFolder.trim());
+            if (excludedFolder !== '') excludedFolders.push(excludedFolder.trim());
         }
         return excludedFolders;
     }
@@ -184,7 +184,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // Save Excluded Folders to Settings as String
     function saveExcludedFoldersToSettings() {
-        plugin.settings.excludedFolders = excludedFolders.join(', ');
+        plugin.settings.excludedFolders = excludedFolders.length > 1 ? excludedFolders.join(', ') : excludedFolders[0];
         plugin.saveSettings();
     }
 

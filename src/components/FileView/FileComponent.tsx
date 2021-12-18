@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
 import { TFile, Menu } from 'obsidian';
 import * as Icons from 'utils/icons';
@@ -22,6 +22,7 @@ export function FileComponent(props: FilesProps) {
     const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
+    const [excludedFolders] = useRecoilState(recoilState.excludedFolders);
     const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
     const [focusedFolder] = useRecoilState(recoilState.focusedFolder);
     const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
@@ -128,8 +129,20 @@ export function FileComponent(props: FilesProps) {
     // Sort - Filter Files Depending on Preferences
     const customFiles = (fileList: TFile[]) => {
         let sortedfileList: TFile[];
+        // Remove Files with Excluded Extensions
         if (excludedExtensions.length > 0) {
             sortedfileList = fileList.filter((file) => !excludedExtensions.contains(file.extension));
+        }
+        // Remove Files from Excluded Folders
+        if (excludedFolders.length > 0) {
+            sortedfileList = sortedfileList.filter((file) => {
+                for (let exc of excludedFolders) {
+                    if (file.path.startsWith(exc)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
         }
         // Sort File by Name or Last Content Update
         sortedfileList = sortedfileList.sort((a, b) => {
@@ -147,6 +160,8 @@ export function FileComponent(props: FilesProps) {
         }
         return sortedfileList;
     };
+
+    const filesToList: TFile[] = useMemo(() => customFiles(fileList), [excludedFolders, excludedExtensions, pinnedFiles, fileList]);
 
     // Handle Plus Button - Opens Modal to Create a New File
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
@@ -314,7 +329,7 @@ export function FileComponent(props: FilesProps) {
                                             : ' file-tree-files-fixed'
                                         : ''
                                 }`}>
-                                {customFiles(fileList).map((file) => {
+                                {filesToList.map((file) => {
                                     return (
                                         <div
                                             className="nav-file oz-nav-file"
