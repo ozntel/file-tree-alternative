@@ -163,7 +163,7 @@ export function FileComponent(props: FilesProps) {
     };
 
     // Toggle Search Box Visibility State
-    const toggleSearchBox = (e: React.MouseEvent) => {
+    const toggleSearchBox = () => {
         setSearchPhrase('');
         setSearchBoxVisible(!searchBoxVisible);
         setFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
@@ -285,7 +285,19 @@ export function FileComponent(props: FilesProps) {
 
                                 {searchBoxVisible && (
                                     <div className="search-input-container oz-input-container">
-                                        <input type="search" placeholder="Search..." ref={searchInput} value={searchPhrase} onChange={handleSearch} />
+                                        <input
+                                            type="search"
+                                            placeholder="Search..."
+                                            ref={searchInput}
+                                            value={searchPhrase}
+                                            onChange={handleSearch}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Escape') {
+                                                    e.preventDefault();
+                                                    toggleSearchBox();
+                                                }
+                                            }}
+                                        />
                                     </div>
                                 )}
 
