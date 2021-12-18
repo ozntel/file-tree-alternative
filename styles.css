@@ -191,8 +191,9 @@ div.oz-folder-name.is-root-folder {
 }
 
 #file-tree-divider {
-    height: 2.5px;
+    height: 0.5px;
     background-color: var(--text-muted);
+    opacity: 0.3;
     cursor: row-resize;
 }
 
