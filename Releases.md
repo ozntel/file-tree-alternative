@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 1.6.6
+
+-   After clicking "Add to Excluded Folders", the view is refreshed immediately to make them effective
+-   Excluded Folders are now taken into consideration within the file list
+-   Memory Usage Improvements
+
 ## Version 1.6.5
 
 -   Search Box Escape Listener
