@@ -131,19 +131,22 @@ div.oz-folder-name.is-root-folder {
     display: inline-block;
 }
 
+.oz-folder-line {
+    display: flex;
+    flex-flow: row;
+    white-space: nowrap;
+    min-width: 100%;
+}
+
 .oz-folder-block {
-    display: inline-block;
-    width: 100%;
+    display: flex;
+    flex-grow: 1;
+    padding-top: 2px;
 }
 
-.oz-folder-count.no-root {
-    float: right;
-    padding-right: 25px;
-}
-
+.oz-folder-count.no-root,
 .oz-folder-count.with-root {
-    float: right;
-    padding-right: 32px;
+    margin-left: auto;
 }
 
 .oz-folders-tree-wrapper {

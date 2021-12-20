@@ -79,7 +79,7 @@ export default function Tree(props: TreeProps) {
                         data-path={props.folder.path}>
                         <input {...getInputProps()} />
 
-                        <div style={{ width: '100%' }}>
+                        <div className="oz-folder-line">
                             <div className="oz-icon-div">
                                 <Icon className="oz-folder-toggle" style={{ opacity: props.children ? 1 : 0.3 }} onClick={toggle} />
                             </div>
