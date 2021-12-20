@@ -157,6 +157,15 @@ div.oz-folder-name.is-root-folder {
     height: 100%;
 }
 
+.oz-nav-file-tag {
+    font-size: 10px;
+    border-radius: 3px;
+    padding: 0px 4px 0px 4px;
+    background-color: var(--background-secondary-alt);
+    margin-right: 2px;
+    font-weight: 600;
+}
+
 .oz-folder-element {
     line-height: 1.35em;
     padding: 0px 0px 0px 0px;
