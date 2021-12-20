@@ -3,6 +3,11 @@ import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
 import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon } from './utils/icons';
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
 
+export const eventTypes = {
+    activeFileChange: 'file-tree-alternative-active-file-change',
+    refreshView: 'file-tree-alternative-refresh-view',
+};
+
 export default class FileTreeAlternativePlugin extends Plugin {
     settings: FileTreeAlternativePluginSettings;
     ribbonIconEl: HTMLElement | undefined = undefined;

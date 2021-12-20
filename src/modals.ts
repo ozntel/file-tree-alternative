@@ -1,4 +1,5 @@
 import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal } from 'obsidian';
+import { eventTypes } from 'main';
 
 type Action = 'rename' | 'create folder' | 'create note';
 
@@ -79,7 +80,7 @@ export class VaultChangeModal extends Modal {
                     type: 'markdown',
                     state: { file: newFile.path },
                 });
-                let evt = new CustomEvent('file-tree-alternative-active-file-change', { detail: { filePath: newFile.path } });
+                let evt = new CustomEvent(eventTypes.activeFileChange, { detail: { filePath: newFile.path } });
                 window.dispatchEvent(evt);
             }
             myModal.close();

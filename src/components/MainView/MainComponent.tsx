@@ -4,9 +4,9 @@ import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { SingleView } from 'components/MainView/SingleView';
 import { FileTreeView } from 'FileTreeView';
-import FileTreeAlternativePlugin from 'main';
+import FileTreeAlternativePlugin, { eventTypes } from 'main';
 import * as FileTreeUtils from 'utils/Utils';
-import * as recoilState from '../../recoil/pluginState';
+import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import useForceUpdate from 'hooks/ForceUpdate';
 
@@ -61,11 +61,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // --> Create Custom Event Handlers
     useEffect(() => {
-        window.addEventListener('file-tree-alternative-active-file-change', changeActiveFile);
-        window.addEventListener('file-tree-alternative-refresh-view', forceUpdate);
+        window.addEventListener(eventTypes.activeFileChange, changeActiveFile);
+        window.addEventListener(eventTypes.refreshView, forceUpdate);
         return () => {
-            window.removeEventListener('file-tree-alternative-active-file-change', changeActiveFile);
-            window.removeEventListener('file-tree-alternative-refresh-view', forceUpdate);
+            window.removeEventListener(eventTypes.activeFileChange, changeActiveFile);
+            window.removeEventListener(eventTypes.refreshView, forceUpdate);
         };
     }, []);
 

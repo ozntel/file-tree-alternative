@@ -1,4 +1,4 @@
-import FileTreeAlternativePlugin from './main';
+import FileTreeAlternativePlugin, { eventTypes } from './main';
 import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
@@ -49,7 +49,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
     }
 
     refreshView() {
-        let evt = new CustomEvent('file-tree-alternative-refresh-view', {});
+        let evt = new CustomEvent(eventTypes.refreshView, {});
         window.dispatchEvent(evt);
     }
 
