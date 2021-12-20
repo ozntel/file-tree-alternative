@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.6.7
+
+-   Fix for error happening after settings change
+-   Custom Event for refreshing the file tree alternative. It solves blinking issue during settings change.
+
 ## Version 1.6.6
 
 -   After clicking "Add to Excluded Folders", the view is refreshed immediately to make them effective
