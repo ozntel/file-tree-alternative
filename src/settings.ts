@@ -113,7 +113,6 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     .addOption('circle-gg', 'Circle GG')
                     .setValue(this.plugin.settings.folderIcon)
                     .onChange((value: FolderIcon) => {
-                        console.log(value);
                         this.plugin.settings.folderIcon = value;
                         this.plugin.saveSettings();
                         this.refreshView();
