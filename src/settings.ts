@@ -48,6 +48,11 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         this.plugin = plugin;
     }
 
+    refreshView() {
+        let evt = new CustomEvent('file-tree-alternative-refresh-view', {});
+        window.dispatchEvent(evt);
+    }
+
     display(): void {
         let { containerEl } = this;
         containerEl.empty();
@@ -77,7 +82,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.evernoteView).onChange((value) => {
                     this.plugin.settings.evernoteView = value;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 })
             );
 
@@ -111,7 +116,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                         console.log(value);
                         this.plugin.settings.folderIcon = value;
                         this.plugin.saveSettings();
-                        this.plugin.refreshTreeLeafs();
+                        this.refreshView();
                     });
             });
 
@@ -122,7 +127,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.showRootFolder).onChange((value) => {
                     this.plugin.settings.showRootFolder = value;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 })
             );
 
@@ -147,7 +152,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 dropdown.onChange((option) => {
                     this.plugin.settings.folderCountOption = option;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 });
             });
 
@@ -161,7 +166,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.showFilesFromSubFolders).onChange((value) => {
                     this.plugin.settings.showFilesFromSubFolders = value;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 })
             );
 
@@ -172,7 +177,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.showFilesFromSubFoldersButton).onChange((value) => {
                     this.plugin.settings.showFilesFromSubFoldersButton = value;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 })
             );
 
@@ -183,7 +188,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.searchFunction).onChange((value) => {
                     this.plugin.settings.searchFunction = value;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 })
             );
 
@@ -209,7 +214,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 cb.onChange((option: 'name' | 'last-update') => {
                     this.plugin.settings.sortFilesBy = option;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 });
             });
 
@@ -230,7 +235,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.fixedHeaderInFileList).onChange((value) => {
                     this.plugin.settings.fixedHeaderInFileList = value;
                     this.plugin.saveSettings();
-                    this.plugin.refreshTreeLeafs();
+                    this.refreshView();
                 })
             );
 

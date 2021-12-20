@@ -8,6 +8,7 @@ import FileTreeAlternativePlugin from 'main';
 import * as FileTreeUtils from 'utils/Utils';
 import * as recoilState from '../../recoil/pluginState';
 import { useRecoilState } from 'recoil';
+import useForceUpdate from 'hooks/ForceUpdate';
 
 interface MainTreeComponentProps {
     fileTreeView: FileTreeView;
@@ -17,6 +18,9 @@ interface MainTreeComponentProps {
 export default function MainTreeComponent(props: MainTreeComponentProps) {
     // --> Main Variables
     const { plugin } = props;
+
+    // --> Force Update Hook
+    const forceUpdate = useForceUpdate();
 
     // --> Register Event Handlers
     plugin.registerEvent(plugin.app.vault.on('modify', (file) => handleVaultChanges(file, 'modify')));
@@ -58,8 +62,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // --> Create Custom Event Handlers
     useEffect(() => {
         window.addEventListener('file-tree-alternative-active-file-change', changeActiveFile);
+        window.addEventListener('file-tree-alternative-refresh-view', forceUpdate);
         return () => {
             window.removeEventListener('file-tree-alternative-active-file-change', changeActiveFile);
+            window.removeEventListener('file-tree-alternative-refresh-view', forceUpdate);
         };
     }, []);
 
@@ -130,8 +136,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     function getExcludedFolders(): string[] {
         let excludedString: string = plugin.settings.excludedFolders;
         let excludedFolders: string[] = [];
-        for (let excludedFolder of excludedString.split(',')) {
-            if (excludedFolder !== '') excludedFolders.push(excludedFolder.trim());
+        if (excludedString) {
+            for (let excludedFolder of excludedString.split(',')) {
+                if (excludedFolder !== '') excludedFolders.push(excludedFolder.trim());
+            }
         }
         return excludedFolders;
     }
