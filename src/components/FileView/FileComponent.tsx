@@ -340,15 +340,15 @@ export function FileComponent(props: FilesProps) {
                                             <div
                                                 className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')}
                                                 data-path={file.path}>
-                                                {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
-                                                    <span className="nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
-                                                )}
                                                 <div className="nav-file-title-content">
                                                     {Util.getFileNameAndExtension(file.name).fileName}
                                                     {pinnedFiles.contains(file) && (
                                                         <Icons.FaThumbtack style={{ marginLeft: '3px', float: 'right', marginTop: '4px' }} size={14} />
                                                     )}
                                                 </div>
+                                                {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
+                                                    <span className="nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
+                                                )}
                                             </div>
                                         </div>
                                     );
