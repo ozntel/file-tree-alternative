@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.6.9
+
+-   Removal of unnecessary padding within folder view
+
 ## Version 1.6.8
 
 -   File Type correction within the file list
