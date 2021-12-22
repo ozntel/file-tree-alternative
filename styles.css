@@ -89,7 +89,7 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 
 .treeview {
     position: relative;
-    padding: 4px 0px 0px 0px;
+    padding: 0px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
