@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.7.0
+
+-   Tooltip for the file list pane
+-   Divider style change for easier grab
+
 ## Version 1.6.9
 
 -   Removal of unnecessary padding within folder view
