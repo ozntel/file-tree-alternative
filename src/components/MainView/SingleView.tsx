@@ -58,7 +58,7 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
                 ref={dividerRef}
                 onClick={(e) => e.preventDefault()}
                 onMouseDown={(e) => touchMouseStart(e)}
-                style={{ backgroundColor: dividerOnMove ? 'var(--interactive-accent)' : '' }}></div>
+                className={dividerOnMove ? 'active-divider' : ''}></div>
 
             <div className="oz-file-list-pane">
                 <FileComponent plugin={plugin} />
