@@ -272,28 +272,30 @@ export function FileComponent(props: FilesProps) {
                                 <div className="oz-flex-container">
                                     <div className="nav-action-button oz-nav-action-button">
                                         {plugin.settings.evernoteView ? (
-                                            <Icons.FaTimesCircle onClick={(e) => handleGoBack(e)} size={20} />
+                                            <div>
+                                                <Icons.FaTimesCircle onClick={(e) => handleGoBack(e)} size={20} aria-label="Close File Pane" />
+                                            </div>
                                         ) : (
-                                            <Icons.FaArrowCircleLeft onClick={(e) => handleGoBack(e)} size={20} />
+                                            <Icons.FaArrowCircleLeft onClick={(e) => handleGoBack(e)} size={20} aria-label="Go Back to Folder View" />
                                         )}
                                     </div>
                                     <div className="oz-nav-buttons-right-block">
                                         {plugin.settings.showFilesFromSubFoldersButton && (
                                             <div className="nav-action-button oz-nav-action-button">
                                                 {showSubFolders ? (
-                                                    <Icons.FaEyeSlash onClick={toggleShowSubFolders} size={20} />
+                                                    <Icons.FaEyeSlash onClick={toggleShowSubFolders} size={20} aria-label="Hide Files from Sub-Folders" />
                                                 ) : (
-                                                    <Icons.FaEye onClick={toggleShowSubFolders} size={20} />
+                                                    <Icons.FaEye onClick={toggleShowSubFolders} size={20} aria-label="Show Files from Sub-Folders" />
                                                 )}
                                             </div>
                                         )}
                                         {plugin.settings.searchFunction && (
                                             <div className="nav-action-button oz-nav-action-button">
-                                                <Icons.FaSearch onClick={toggleSearchBox} size={20} />
+                                                <Icons.FaSearch onClick={toggleSearchBox} size={20} aria-label="Search File by Name or Tag" />
                                             </div>
                                         )}
                                         <div className="nav-action-button oz-nav-action-button">
-                                            <Icons.FaPlusCircle onClick={(e) => createNewFile(e, activeFolderPath)} size={20} />
+                                            <Icons.FaPlusCircle onClick={(e) => createNewFile(e, activeFolderPath)} size={20} aria-label="Create a Note" />
                                         </div>
                                     </div>
                                 </div>
