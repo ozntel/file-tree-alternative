@@ -272,9 +272,7 @@ export function FileComponent(props: FilesProps) {
                                 <div className="oz-flex-container">
                                     <div className="nav-action-button oz-nav-action-button">
                                         {plugin.settings.evernoteView ? (
-                                            <div>
-                                                <Icons.FaTimesCircle onClick={(e) => handleGoBack(e)} size={20} aria-label="Close File Pane" />
-                                            </div>
+                                            <Icons.FaTimesCircle onClick={(e) => handleGoBack(e)} size={20} aria-label="Close File Pane" />
                                         ) : (
                                             <Icons.FaArrowCircleLeft onClick={(e) => handleGoBack(e)} size={20} aria-label="Go Back to Folder View" />
                                         )}
