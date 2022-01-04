@@ -155,20 +155,18 @@ export function FileComponent(props: FilesProps) {
                 return true;
             });
         }
-        // Sort File by Name or Last Content Update
+        // Sort File by Name or Last Content Update, moving pinned files to the front
         sortedfileList = sortedfileList.sort((a, b) => {
-            if (plugin.settings.sortFilesBy === 'name') {
+            if (pinnedFiles.contains(a) && !pinnedFiles.contains(b)) {
+                return -1;
+            } else if (!pinnedFiles.contains(a) && pinnedFiles.contains(b)) {
+                return 1;
+            } else if (plugin.settings.sortFilesBy === 'name') {
                 return a.name.localeCompare(b.name, 'en', { numeric: true });
             } else if (plugin.settings.sortFilesBy === 'last-update') {
                 return b.stat.mtime - a.stat.mtime;
             }
         });
-        if (pinnedFiles.length > 0) {
-            sortedfileList = sortedfileList.reduce((acc, element) => {
-                if (pinnedFiles.contains(element)) return [element, ...acc];
-                return [...acc, element];
-            }, []);
-        }
         return sortedfileList;
     };
 
