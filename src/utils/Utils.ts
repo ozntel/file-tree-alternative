@@ -101,3 +101,7 @@ export const internalPluginLoaded = (pluginName: string, app: App) => {
 export const openInternalLink = (event: React.MouseEvent<Element, MouseEvent>, link: string, app: App) => {
     app.workspace.openLinkText(link, '/', Keymap.isModifier(event as unknown as MouseEvent, 'Mod') || 1 === event.button);
 };
+
+export const openInNewPane = (app: App, path: string) => {
+    app.workspace.openLinkText(path, '/', true);
+};

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { TFile, Menu } from 'obsidian';
+import { TFile, Menu, Platform } from 'obsidian';
 import * as Icons from 'utils/icons';
 import { VaultChangeModal, MoveSuggestionModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
@@ -64,6 +64,17 @@ export function FileComponent(props: FilesProps) {
     // Handle Right Click Event on File - Custom Menu
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
         const fileMenu = new Menu(plugin.app);
+
+        // Open in a New Pane (Only for Mobile)
+        if (!Platform.isMobile) {
+            fileMenu.addItem((menuItem) => {
+                menuItem.setIcon('go-to-file');
+                menuItem.setTitle('Open in a new pane');
+                menuItem.onClick((ev: MouseEvent) => {
+                    Util.openInNewPane(plugin.app, file.path);
+                });
+            });
+        }
 
         // Pin - Unpin Item
         fileMenu.addItem((menuItem) => {
