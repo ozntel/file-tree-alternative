@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.7.2
+
+-   Mobile menu item correction
+
 ## Version 1.7.1
 
 -   Sorting for pinned files
