@@ -66,7 +66,7 @@ export function FileComponent(props: FilesProps) {
         const fileMenu = new Menu(plugin.app);
 
         // Open in a New Pane (Only for Mobile)
-        if (!Platform.isMobile) {
+        if (Platform.isMobile) {
             fileMenu.addItem((menuItem) => {
                 menuItem.setIcon('go-to-file');
                 menuItem.setTitle('Open in a new pane');
