@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.7.1
+
+-   Sorting for pinned files
+-   Open in a new pane button for mobile
+
 ## Version 1.7.0
 
 -   Tooltip for the file list pane
