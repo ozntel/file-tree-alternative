@@ -1,6 +1,8 @@
 import { TFile, TFolder, App, Keymap } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { FolderFileCountMap, FolderTree } from 'utils/types';
+import { stripIndents } from 'common-tags';
+import dayjs from 'dayjs';
 
 // Helper Function To Get List of Files
 export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): TFile[] => {
@@ -104,4 +106,21 @@ export const openInternalLink = (event: React.MouseEvent<Element, MouseEvent>, l
 
 export const openInNewPane = (app: App, path: string) => {
     app.workspace.openLinkText(path, '/', true);
+};
+
+export const getFileCreateString = (params: { plugin: FileTreeAlternativePlugin; fileName: string }): string => {
+    const { plugin, fileName } = params;
+
+    return stripIndents`
+    ${
+        plugin.settings.createdYaml
+            ? `
+        ---
+        created: ${dayjs(new Date()).format('YYYY-MM-DD hh:mm:ss')}
+        ---
+        `
+            : ''
+    }
+    ${plugin.settings.fileNameIsHeader ? `# ${fileName}` : ''}
+    `;
 };

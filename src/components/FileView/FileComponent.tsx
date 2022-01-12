@@ -96,7 +96,7 @@ export function FileComponent(props: FilesProps) {
             menuItem.setTitle('Rename');
             menuItem.setIcon('pencil');
             menuItem.onClick((ev: MouseEvent) => {
-                let vaultChangeModal = new VaultChangeModal(plugin.app, file, 'rename');
+                let vaultChangeModal = new VaultChangeModal(plugin, file, 'rename');
                 vaultChangeModal.open();
             });
         });
@@ -176,7 +176,7 @@ export function FileComponent(props: FilesProps) {
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
         let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
         if (!targetFolder) return;
-        let modal = new VaultChangeModal(plugin.app, targetFolder, 'create note');
+        let modal = new VaultChangeModal(plugin, targetFolder, 'create note');
         modal.open();
     };
 

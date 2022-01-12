@@ -20,6 +20,8 @@ export interface FileTreeAlternativePluginSettings {
     filePreviewOnHover: boolean;
     sortFilesBy: 'name' | 'last-update';
     fixedHeaderInFileList: boolean;
+    createdYaml: boolean;
+    fileNameIsHeader: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -38,6 +40,8 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     filePreviewOnHover: false,
     sortFilesBy: 'name',
     fixedHeaderInFileList: false,
+    createdYaml: false,
+    fileNameIsHeader: false,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -237,6 +241,31 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.refreshView();
                 })
             );
+
+        /* ------------- Exclusion Settings ------------- */
+        containerEl.createEl('h2', { text: 'File Creation' });
+
+        containerEl.createEl('p', { text: 'The settings below are only applicable if the plug (+) button within the file pane of the plugin is used.' });
+
+        new Setting(containerEl)
+            .setName('Created information in YAML')
+            .setDesc('Turn on if you want plugin to include created YAML key with the time of creation')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.createdYaml).onChange((value) => {
+                    this.plugin.settings.createdYaml = value;
+                    this.plugin.saveSettings();
+                });
+            });
+
+        new Setting(containerEl)
+            .setName('Set File Name as Header 1')
+            .setDesc('Turn on if you want plugin to add the initial file name as main header in the created file.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.fileNameIsHeader).onChange((value) => {
+                    this.plugin.settings.fileNameIsHeader = value;
+                    this.plugin.saveSettings();
+                });
+            });
 
         /* ------------- Exclusion Settings ------------- */
 

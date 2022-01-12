@@ -11,6 +11,7 @@
     "author": "",
     "license": "MIT",
     "devDependencies": {
+        "@types/common-tags": "^1.8.1",
         "@types/node": "^14.14.37",
         "@types/react": "^17.0.9",
         "@types/react-dom": "^17.0.6",
@@ -23,6 +24,8 @@
     },
     "dependencies": {
         "@ozntel/local-storage-handler": "^1.0.3",
+        "common-tags": "^1.8.2",
+        "dayjs": "^1.10.7",
         "preact": "^10",
         "react": "npm:@preact/compat",
         "react-dom": "npm:@preact/compat",

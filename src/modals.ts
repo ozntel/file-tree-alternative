@@ -1,16 +1,19 @@
 import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal } from 'obsidian';
-import { eventTypes } from 'main';
+import FileTreeAlternativePlugin, { eventTypes } from 'main';
+import { getFileCreateString } from 'utils/Utils';
 
 type Action = 'rename' | 'create folder' | 'create note';
 
 export class VaultChangeModal extends Modal {
     file: TFolder | TFile | TAbstractFile;
     action: Action;
+    plugin: FileTreeAlternativePlugin;
 
-    constructor(app: App, file: TFolder | TFile | TAbstractFile, action: Action) {
-        super(app);
+    constructor(plugin: FileTreeAlternativePlugin, file: TFolder | TFile | TAbstractFile, action: Action) {
+        super(plugin.app);
         this.file = file;
         this.action = action;
+        this.plugin = plugin;
     }
 
     onOpen() {
@@ -76,6 +79,9 @@ export class VaultChangeModal extends Modal {
             } else if (this.action === 'create note') {
                 // @ts-ignore
                 const newFile = await this.app.fileManager.createNewMarkdownFile(this.file, newName);
+                if (this.plugin.settings.createdYaml) {
+                    await this.app.vault.modify(newFile, getFileCreateString({ plugin: this.plugin, fileName: newName }));
+                }
                 this.app.workspace.activeLeaf.setViewState({
                     type: 'markdown',
                     state: { file: newFile.path },
