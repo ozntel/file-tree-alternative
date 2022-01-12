@@ -245,7 +245,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         /* ------------- Exclusion Settings ------------- */
         containerEl.createEl('h2', { text: 'File Creation' });
 
-        containerEl.createEl('p', { text: 'The settings below are only applicable if the plug (+) button within the file pane of the plugin is used.' });
+        containerEl.createEl('p', { text: 'The settings below are only applicable if the plus (+) button within the file pane of the plugin is used.' });
 
         new Setting(containerEl)
             .setName('Created information in YAML')
