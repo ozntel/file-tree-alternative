@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.7.3
+
+-   File creation custom settings
+
 ## Version 1.7.2
 
 -   Mobile menu item correction
