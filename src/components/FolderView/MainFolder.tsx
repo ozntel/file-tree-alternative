@@ -36,7 +36,7 @@ export function MainFolder(props: FolderProps) {
                 .setTitle('New Folder')
                 .setIcon('folder')
                 .onClick((ev: MouseEvent) => {
-                    let vaultChangeModal = new VaultChangeModal(app, folder, 'create folder');
+                    let vaultChangeModal = new VaultChangeModal(plugin, folder, 'create folder');
                     vaultChangeModal.open();
                 });
         });

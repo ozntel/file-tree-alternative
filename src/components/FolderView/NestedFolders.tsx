@@ -70,7 +70,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                 .setTitle('New Folder')
                 .setIcon('folder')
                 .onClick((ev: MouseEvent) => {
-                    let vaultChangeModal = new VaultChangeModal(app, folder, 'create folder');
+                    let vaultChangeModal = new VaultChangeModal(plugin, folder, 'create folder');
                     vaultChangeModal.open();
                 });
         });
@@ -89,7 +89,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                 .setTitle('Rename')
                 .setIcon('pencil')
                 .onClick((ev: MouseEvent) => {
-                    let vaultChangeModal = new VaultChangeModal(app, folder, 'rename');
+                    let vaultChangeModal = new VaultChangeModal(plugin, folder, 'rename');
                     vaultChangeModal.open();
                 });
         });
