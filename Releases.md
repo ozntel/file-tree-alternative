@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.7.4
+
+-   #48 Bug Solution for Creating Folder
+
 ## Version 1.7.3
 
 -   File creation custom settings
