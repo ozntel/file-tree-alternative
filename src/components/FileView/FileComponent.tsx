@@ -71,13 +71,13 @@ export function FileComponent(props: FilesProps) {
     function scrollToFile(fileToScroll: TFile) {
         const selector = `div.oz-file-tree-files div.nav-file-title[data-path="${fileToScroll.path}"]`;
         const fileTitleElement = document.querySelector(selector);
-        if (fileTitleElement) fileTitleElement.scrollIntoView();
+        if (fileTitleElement) fileTitleElement.scrollIntoView(false);
     }
 
     function scrollToFolder(folder: TFolder) {
         const selector = `div.oz-folder-contents div.oz-folder-element[data-path="${folder.path}"]`;
         const folderElement = document.querySelector(selector);
-        if (folderElement) folderElement.scrollIntoView();
+        if (folderElement) folderElement.scrollIntoView(false);
     }
 
     // --> Handle Reveal Active File Button
