@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.7.5
+
+-   Reveal active file button
+-   Icon update
+
 ## Version 1.7.4
 
 -   #48 Bug Solution for Creating Folder
