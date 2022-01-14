@@ -6,6 +6,7 @@ import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab
 export const eventTypes = {
     activeFileChange: 'file-tree-alternative-active-file-change',
     refreshView: 'file-tree-alternative-refresh-view',
+    revealFile: 'file-tree-alternative-reveal-file',
 };
 
 export default class FileTreeAlternativePlugin extends Plugin {
@@ -45,6 +46,23 @@ export default class FileTreeAlternativePlugin extends Plugin {
             id: 'open-file-tree-leaf',
             name: 'Open File Tree Leaf',
             callback: async () => await this.openFileTreeLeaf(true),
+        });
+
+        // Add Command to Reveal Active File
+        this.addCommand({
+            id: 'reveal-active-file',
+            name: 'Reveal Active File',
+            callback: () => {
+                // Activate file tree pane
+                let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+                if (leafs.length === 0) this.openFileTreeLeaf(true);
+                for (let leaf of leafs) {
+                    this.app.workspace.revealLeaf(leaf);
+                }
+                // Run custom event
+                let event = new CustomEvent(eventTypes.revealFile, { detail: { file: this.app.workspace.getActiveFile() } });
+                window.dispatchEvent(event);
+            },
         });
 
         // Ribbon Icon For Opening

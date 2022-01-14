@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { TFile, Menu, Platform, TFolder } from 'obsidian';
+import { TFile, Menu, Platform } from 'obsidian';
 import * as Icons from 'utils/icons';
 import { VaultChangeModal, MoveSuggestionModal } from 'modals';
-import FileTreeAlternativePlugin from 'main';
+import FileTreeAlternativePlugin, { eventTypes } from 'main';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
@@ -24,9 +24,8 @@ export function FileComponent(props: FilesProps) {
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [excludedFolders] = useRecoilState(recoilState.excludedFolders);
     const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
-    const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
+    const [focusedFolder, _setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
     const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
-    const [openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
 
     // Local States
     const [highlight, setHighlight] = useState<boolean>(false);
@@ -61,61 +60,6 @@ export function FileComponent(props: FilesProps) {
         Util.openInternalLink(e, file.path, plugin.app);
         setActiveFile(file);
     };
-
-    // --> During file list change, it will scroll to the active file element
-    useEffect(() => {
-        if (activeFile && fileList.length > 0) scrollToFile(activeFile);
-    }, [fileList]);
-
-    // Scrolling Functions
-    function scrollToFile(fileToScroll: TFile) {
-        const selector = `div.oz-file-tree-files div.nav-file-title[data-path="${fileToScroll.path}"]`;
-        const fileTitleElement = document.querySelector(selector);
-        if (fileTitleElement) fileTitleElement.scrollIntoView(false);
-    }
-
-    function scrollToFolder(folder: TFolder) {
-        const selector = `div.oz-folder-contents div.oz-folder-element[data-path="${folder.path}"]`;
-        const folderElement = document.querySelector(selector);
-        if (folderElement) folderElement.scrollIntoView(false);
-    }
-
-    // --> Handle Reveal Active File Button
-    function revealFileInFileTree(fileToReveal: TFile) {
-        // Get parent folder
-        const parentFolder = fileToReveal.parent;
-
-        // Focused Folder needs to be root for the reveal
-        if (focusedFolder.path !== '/') setFocusedFolder(plugin.app.vault.getRoot());
-
-        // Obtain all folders that needs to be opened
-        const getAllFoldersToOpen = (fileToReveal: TFile) => {
-            let foldersToOpen: string[] = [];
-            const recursiveFx = (folder: TFolder) => {
-                foldersToOpen.push(folder.path);
-                if (folder.parent) recursiveFx(folder.parent);
-            };
-            recursiveFx(fileToReveal.parent);
-            return foldersToOpen;
-        };
-
-        // Sanity check - Parent to be folder and set required component states
-        if (parentFolder instanceof TFolder) {
-            // Set Active Folder - It will trigger auto file list update
-            setActiveFolderPath(parentFolder.path);
-
-            // Set active file to show in the list
-            setActiveFile(fileToReveal);
-
-            // Set openfolders to expand in the folder list
-            const foldersToOpen = getAllFoldersToOpen(fileToReveal);
-            let openFoldersSet = new Set([...openFolders, ...foldersToOpen]);
-            setOpenFolders(Array.from(openFoldersSet));
-
-            scrollToFile(fileToReveal);
-            scrollToFolder(parentFolder);
-        }
-    }
 
     // Handle Right Click Event on File - Custom Menu
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
@@ -318,6 +262,11 @@ export function FileComponent(props: FilesProps) {
         setShowSubFolders(!showSubFolders);
     };
 
+    const handleRevealActiveFileButton = () => {
+        let event = new CustomEvent(eventTypes.revealFile, { detail: { file: this.app.workspace.getActiveFile() } });
+        window.dispatchEvent(event);
+    };
+
     return (
         <React.Fragment>
             <Dropzone
@@ -345,11 +294,7 @@ export function FileComponent(props: FilesProps) {
                                     <div className="oz-nav-buttons-right-block">
                                         {plugin.settings.revealActiveFileButton && (
                                             <div className="nav-action-button oz-nav-action-button">
-                                                <Icons.IoIosLocate
-                                                    onClick={() => revealFileInFileTree(plugin.app.workspace.getActiveFile())}
-                                                    size={20}
-                                                    aria-label="Reveal Active File"
-                                                />
+                                                <Icons.IoIosLocate onClick={handleRevealActiveFileButton} size={20} aria-label="Reveal Active File" />
                                             </div>
                                         )}
                                         {plugin.settings.showFilesFromSubFoldersButton && (

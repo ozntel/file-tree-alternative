@@ -1,4 +1,4 @@
-import { TAbstractFile, TFile, TFolder } from 'obsidian';
+import { TAbstractFile, TFile, TFolder, Notice } from 'obsidian';
 import React, { useEffect } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
@@ -40,7 +40,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     const [_excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [_showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
-    const [_activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
+    const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
 
     const setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : activeFolderPath;
@@ -63,9 +63,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     useEffect(() => {
         window.addEventListener(eventTypes.activeFileChange, changeActiveFile);
         window.addEventListener(eventTypes.refreshView, forceUpdate);
+        window.addEventListener(eventTypes.revealFile, handleRevealFileEvent);
         return () => {
             window.removeEventListener(eventTypes.activeFileChange, changeActiveFile);
             window.removeEventListener(eventTypes.refreshView, forceUpdate);
+            window.removeEventListener(eventTypes.revealFile, handleRevealFileEvent);
         };
     }, []);
 
@@ -218,6 +220,73 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         }
         // After Each Vault Change Folder Count Map to Be Updated
         if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
+    }
+
+    // ******** REVEAL ACTIVE FILE FUNCTIONS ******** //
+    // --> During file list change, it will scroll to the active file element
+    useEffect(() => {
+        if (activeFile && fileList.length > 0) scrollToFile(activeFile);
+    }, [fileList]);
+
+    // Custom Event Handler Function
+    function handleRevealFileEvent(evt: Event) {
+        // @ts-ignore
+        const file: TFile = evt.detail.file;
+        if (file && file instanceof TFile) {
+            revealFileInFileTree(file);
+        } else {
+            new Notice('No active file');
+        }
+    }
+
+    // Scrolling Functions
+    function scrollToFile(fileToScroll: TFile) {
+        const selector = `div.oz-file-tree-files div.nav-file-title[data-path="${fileToScroll.path}"]`;
+        const fileTitleElement = document.querySelector(selector);
+        if (fileTitleElement) fileTitleElement.scrollIntoView(false);
+    }
+
+    function scrollToFolder(folder: TFolder) {
+        const selector = `div.oz-folder-contents div.oz-folder-element[data-path="${folder.path}"]`;
+        const folderElement = document.querySelector(selector);
+        if (folderElement) folderElement.scrollIntoView(false);
+    }
+
+    // --> Handle Reveal Active File Button
+    function revealFileInFileTree(fileToReveal: TFile) {
+        // Get parent folder
+        const parentFolder = fileToReveal.parent;
+
+        // Focused Folder needs to be root for the reveal
+        if (focusedFolder && focusedFolder.path !== '/') setFocusedFolder(plugin.app.vault.getRoot());
+
+        // Obtain all folders that needs to be opened
+        const getAllFoldersToOpen = (fileToReveal: TFile) => {
+            let foldersToOpen: string[] = [];
+            const recursiveFx = (folder: TFolder) => {
+                foldersToOpen.push(folder.path);
+                if (folder.parent) recursiveFx(folder.parent);
+            };
+            recursiveFx(fileToReveal.parent);
+            return foldersToOpen;
+        };
+
+        // Sanity check - Parent to be folder and set required component states
+        if (parentFolder instanceof TFolder) {
+            // Set Active Folder - It will trigger auto file list update
+            setActiveFolderPath(parentFolder.path);
+
+            // Set active file to show in the list
+            setActiveFile(fileToReveal);
+
+            // Set openfolders to expand in the folder list
+            const foldersToOpen = getAllFoldersToOpen(fileToReveal);
+            let openFoldersSet = new Set([...openFolders, ...foldersToOpen]);
+            setOpenFolders(Array.from(openFoldersSet));
+
+            scrollToFile(fileToReveal);
+            scrollToFolder(parentFolder);
+        }
     }
 
     return (
