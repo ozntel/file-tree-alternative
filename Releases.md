@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.7.6
+
+-   Scroll correction for reveal active file
+
 ## Version 1.7.5
 
 -   Reveal active file button
