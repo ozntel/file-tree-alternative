@@ -4,7 +4,8 @@ import { BiFolderPlus, BiFolder, BiFolderMinus } from 'react-icons/bi';
 import { ImFolder, ImFolderPlus, ImFolderMinus } from 'react-icons/im';
 import { TiFolder, TiFolderOpen } from 'react-icons/ti';
 import { CgCloseO, CgAdd, CgRemove } from 'react-icons/cg';
-import { FaEye, FaEyeSlash, FaTimesCircle, FaSearch, FaThumbtack, FaPlusCircle, FaArrowCircleLeft } from 'react-icons/fa';
+import { FaTimesCircle, FaThumbtack, FaArrowCircleLeft } from 'react-icons/fa';
+import { IoIosSearch, IoIosEye, IoIosEyeOff, IoIosLocate, IoIosAddCircle, IoIosCloseCircleOutline, IoIosArrowBack } from 'react-icons/io';
 
 const MinusSquareO = (props: any) => (
     <svg {...props} viewBox="64 -65 897 897">
@@ -87,15 +88,18 @@ export const getFolderIcon = (plugin: FileTreeAlternativePlugin, children: boole
 };
 
 export {
-    FaPlusCircle,
     FaArrowCircleLeft,
     FaThumbtack,
-    FaSearch,
     FaTimesCircle,
-    FaEyeSlash,
-    FaEye,
     LocationIcon,
     ZoomOutIcon,
     ZoomInIcon,
     ZoomOutDoubleIcon,
+    IoIosSearch,
+    IoIosEye,
+    IoIosEyeOff,
+    IoIosLocate,
+    IoIosAddCircle,
+    IoIosCloseCircleOutline,
+    IoIosArrowBack,
 };

@@ -1,5 +1,5 @@
 import { TFolder } from 'obsidian';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
@@ -31,6 +31,9 @@ export default function Tree(props: TreeProps) {
     const [highlight, setHightlight] = useState<boolean>(false);
 
     const isFolderActive = props.folder.path === activeFolderPath;
+
+    // --> For state update from outside of the component
+    useEffect(() => setOpen(props.open), [props.open]);
 
     // --> Icon to be toggled between min(-) and plus(+) Each click sets openFolders Main Component state to save in settings
     const toggle = () => {

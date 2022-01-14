@@ -11,6 +11,7 @@ export interface FileTreeAlternativePluginSettings {
     searchFunction: boolean;
     allSearchOnlyInFocusedFolder: boolean;
     showFilesFromSubFoldersButton: boolean;
+    revealActiveFileButton: boolean;
     excludedExtensions: string;
     excludedFolders: string;
     folderIcon: FolderIcon;
@@ -31,6 +32,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     searchFunction: true,
     allSearchOnlyInFocusedFolder: false,
     showFilesFromSubFoldersButton: true,
+    revealActiveFileButton: true,
     excludedExtensions: '',
     excludedFolders: '',
     folderIcon: 'default',
@@ -179,6 +181,19 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.showFilesFromSubFoldersButton).onChange((value) => {
                     this.plugin.settings.showFilesFromSubFoldersButton = value;
+                    this.plugin.saveSettings();
+                    this.refreshView();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Reveal Active File in File Tree Button')
+            .setDesc(
+                `Turn on this option if you want to have an additional button to reveal the active file in the file tree. It will set the folder and file pane accordingly."`
+            )
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.revealActiveFileButton).onChange((value) => {
+                    this.plugin.settings.revealActiveFileButton = value;
                     this.plugin.saveSettings();
                     this.refreshView();
                 })
