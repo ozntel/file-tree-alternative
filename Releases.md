@@ -8,7 +8,7 @@
 Sample:
 
 ```ts
-let event = new CustomEvent(eventTypes.revealFile, {
+let event = new CustomEvent('file-tree-alternative-reveal-file', {
     detail: {
         file: plugin.app.workspace.getActiveFile(),
     },
