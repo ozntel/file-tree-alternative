@@ -263,7 +263,7 @@ export function FileComponent(props: FilesProps) {
     };
 
     const handleRevealActiveFileButton = () => {
-        let event = new CustomEvent(eventTypes.revealFile, { detail: { file: this.app.workspace.getActiveFile() } });
+        let event = new CustomEvent(eventTypes.revealFile, { detail: { file: plugin.app.workspace.getActiveFile() } });
         window.dispatchEvent(event);
     };
 
