@@ -1,5 +1,21 @@
 # Release Updates
 
+## Version 1.7.7
+
+-   Additional command for revealing the active file
+-   Window custom event listener to trigger revealing active file outside of plugin
+
+Sample:
+
+```ts
+let event = new CustomEvent(eventTypes.revealFile, {
+    detail: {
+        file: plugin.app.workspace.getActiveFile(),
+    },
+});
+window.dispatchEvent(event);
+```
+
 ## Version 1.7.6
 
 -   Scroll correction for reveal active file
