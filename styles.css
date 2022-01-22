@@ -4,6 +4,9 @@
     font-size: 15px;
     font-weight: bold;
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .oz-nav-action-button {
