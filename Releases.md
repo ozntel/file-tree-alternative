@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.7.8
+
+-   Overflow issue solution for Folder Name in File List Pane
+
 ## Version 1.7.7
 
 -   Additional command for revealing the active file
