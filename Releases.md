@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.7.9
+
+-   File view, file icon is not hidden behind fixed header solution
+
 ## Version 1.7.8
 
 -   Overflow issue solution for Folder Name in File List Pane
