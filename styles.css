@@ -246,6 +246,7 @@ div#file-tree-divider.active-divider {
     padding-left: 4px;
     padding-right: 4px;
     background-color: var(--background-secondary);
+    z-index: 100;
 }
 
 .file-tree-files-fixed {
