@@ -65,17 +65,6 @@ export function FileComponent(props: FilesProps) {
     const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
         const fileMenu = new Menu(plugin.app);
 
-        // Open in a New Pane (Only for Mobile)
-        if (Platform.isMobile) {
-            fileMenu.addItem((menuItem) => {
-                menuItem.setIcon('go-to-file');
-                menuItem.setTitle('Open in a new pane');
-                menuItem.onClick((ev: MouseEvent) => {
-                    Util.openInNewPane(plugin.app, file.path);
-                });
-            });
-        }
-
         // Pin - Unpin Item
         fileMenu.addItem((menuItem) => {
             menuItem.setIcon('pin');
@@ -107,6 +96,15 @@ export function FileComponent(props: FilesProps) {
             menuItem.setIcon('trash');
             menuItem.onClick((ev: MouseEvent) => {
                 plugin.app.vault.delete(file, true);
+            });
+        });
+
+        // Open in a New Pane
+        fileMenu.addItem((menuItem) => {
+            menuItem.setIcon('go-to-file');
+            menuItem.setTitle('Open in a new pane');
+            menuItem.onClick((ev: MouseEvent) => {
+                Util.openInNewPane(plugin.app, file.path);
             });
         });
 
