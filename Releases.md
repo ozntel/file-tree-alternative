@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.8.0
+
+-   Open in a new pane for Desktop
+
 ## Version 1.7.9
 
 -   File view, file icon is not hidden behind fixed header solution
