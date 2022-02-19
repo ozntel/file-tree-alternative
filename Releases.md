@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.8.1
+
+-   Folder Note Functionality Implementation
+
 ## Version 1.8.0
 
 -   Open in a new pane for Desktop
