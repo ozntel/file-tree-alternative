@@ -272,3 +272,8 @@ div#file-tree-divider.active-divider {
 svg.oz-folder-toggle path {
     fill: var(--interactive-accent);
 }
+
+/* Solution for React-Icon Center Issue */
+.oz-folder-name svg {
+    vertical-align: middle !important;
+}

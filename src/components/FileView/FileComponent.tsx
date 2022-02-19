@@ -153,6 +153,10 @@ export function FileComponent(props: FilesProps) {
                 return true;
             });
         }
+        // Remove Files for Folder Note (If file name is same as parent folder name)
+        if (plugin.settings.folderNote) {
+            sortedfileList = sortedfileList.filter((f) => f.basename !== f.parent.name);
+        }
         // Sort File by Name or Last Content Update, moving pinned files to the front
         sortedfileList = sortedfileList.sort((a, b) => {
             if (pinnedFiles.contains(a) && !pinnedFiles.contains(b)) {

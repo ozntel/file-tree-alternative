@@ -116,6 +116,34 @@ export function NestedFolders(props: NestedFoldersProps) {
                 });
         });
 
+        // Folder Note Create & Delete (If folder note loaded, avoid duplicate create, delete buttons)
+        if (!Util.pluginIsLoaded(plugin.app, 'folder-note-core')) {
+            let folderNoteExists = folder.children.some((f) => `${folder.name}.md` === f.name);
+            // Delete Folder Note Button
+            if (folderNoteExists) {
+                folderMenu.addItem((menuItem) => {
+                    menuItem
+                        .setTitle('Delete Folder Note')
+                        .setIcon('trash')
+                        .onClick((ev: MouseEvent) => {
+                            const folderNoteFile = plugin.app.vault.getAbstractFileByPath(`${folder.path}/${folder.name}.md`);
+                            if (folderNoteFile) plugin.app.vault.delete(folderNoteFile, true);
+                        });
+                });
+            }
+            // Create Folder Note Button
+            else {
+                folderMenu.addItem((menuItem) => {
+                    menuItem
+                        .setTitle('Create Folder Note')
+                        .setIcon('create-new')
+                        .onClick(async (ev: MouseEvent) => {
+                            Util.createNewMarkdownFile(plugin, folder, folder.name, `# ${folder.name}`);
+                        });
+                });
+            }
+        }
+
         // Trigger
         app.workspace.trigger('file-menu', folderMenu, folder, 'file-explorer');
         folderMenu.showAtPosition({ x: e.pageX, y: e.pageY });

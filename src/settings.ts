@@ -23,6 +23,7 @@ export interface FileTreeAlternativePluginSettings {
     fixedHeaderInFileList: boolean;
     createdYaml: boolean;
     fileNameIsHeader: boolean;
+    folderNote: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -44,6 +45,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     fixedHeaderInFileList: false,
     createdYaml: false,
     fileNameIsHeader: false,
+    folderNote: false,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -156,6 +158,21 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 dropdown.setValue(this.plugin.settings.folderCountOption);
                 dropdown.onChange((option) => {
                     this.plugin.settings.folderCountOption = option;
+                    this.plugin.saveSettings();
+                    this.refreshView();
+                });
+            });
+
+        new Setting(containerEl)
+            .setName('Folder Note')
+            .setDesc(
+                `Turn this option on if you want to create Folder Note same as Folder Note Plugin. 
+                By default, Click will open the list of files. You need to use "Shift+Click" to open the folder note. If folder has a folder note, 
+                you will see an arrow icon on the right side of folder. The note created as a folder note is hidden in the file list.`
+            )
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.folderNote).onChange((value) => {
+                    this.plugin.settings.folderNote = value;
                     this.plugin.saveSettings();
                     this.refreshView();
                 });

@@ -3,6 +3,7 @@ import FileTreeAlternativePlugin from 'main';
 import { FolderFileCountMap, FolderTree } from 'utils/types';
 import { stripIndents } from 'common-tags';
 import dayjs from 'dayjs';
+import { eventTypes } from 'main';
 
 // Helper Function To Get List of Files
 export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): TFile[] => {
@@ -47,6 +48,11 @@ export const getFolderNoteCountMap = (plugin: FileTreeAlternativePlugin) => {
         files = plugin.app.vault.getMarkdownFiles();
     } else {
         files = plugin.app.vault.getFiles();
+    }
+
+    // Filter Folder Note Files
+    if (plugin.settings.folderNote) {
+        files = files.filter((f) => f.extension !== 'md' || (f.extension === 'md' && f.basename !== f.parent.name));
     }
 
     files.forEach((file) => {
@@ -123,4 +129,21 @@ export const getFileCreateString = (params: { plugin: FileTreeAlternativePlugin;
     }
     ${plugin.settings.fileNameIsHeader ? `# ${fileName}` : ''}
     `;
+};
+
+export const pluginIsLoaded = (app: App, pluginId: string) => {
+    // @ts-ignore
+    return app.plugins.getPlugin(pluginId);
+};
+
+export const createNewMarkdownFile = async (plugin: FileTreeAlternativePlugin, folder: TFolder, newFileName: string, content?: string) => {
+    // @ts-ignore
+    const newFile = await plugin.app.fileManager.createNewMarkdownFile(folder, newFileName);
+    if (content && content !== '') await plugin.app.vault.modify(newFile, content);
+    plugin.app.workspace.activeLeaf.setViewState({
+        type: 'markdown',
+        state: { file: newFile.path },
+    });
+    let evt = new CustomEvent(eventTypes.activeFileChange, { detail: { filePath: newFile.path } });
+    window.dispatchEvent(evt);
 };

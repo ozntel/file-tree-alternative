@@ -1,9 +1,10 @@
-import { TFolder } from 'obsidian';
+import { TFolder, Notice } from 'obsidian';
 import React, { useState, useMemo, useEffect } from 'react';
 import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
 import { getFolderIcon } from 'utils/icons';
+import { IoMdArrowDropright } from 'react-icons/io';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 
@@ -60,7 +61,19 @@ export default function Tree(props: TreeProps) {
     };
 
     // --> Click Events
-    const folderNameClickEvent = () => props.onClick();
+    const folderNameClickEvent = (ev: React.MouseEvent) => {
+        if (props.plugin.settings.folderNote && ev.shiftKey) {
+            const fileFullPath = `${props.folder.path}/${props.folder.name}.md`;
+            const folderNoteFile = props.plugin.app.vault.getAbstractFileByPath(fileFullPath);
+            if (folderNoteFile) {
+                props.plugin.app.workspace.openLinkText(fileFullPath, '/', false);
+            } else {
+                new Notice('There is no note for this folder created');
+            }
+        } else {
+            props.onClick();
+        }
+    };
     const folderContextMenuEvent = () => props.onContextMenu();
 
     // --> Icon
@@ -93,7 +106,12 @@ export default function Tree(props: TreeProps) {
                                 </div>
                                 <div
                                     className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}${props.isRootFolder ? ' is-root-folder' : ''}`}>
-                                    {props.content}
+                                    {props.content}{' '}
+                                    {props.plugin.settings.folderNote && props.folder.children.some((f) => f.name === `${props.folder.name}.md`) ? (
+                                        <IoMdArrowDropright size={20} className="oz-folder-note-icon" />
+                                    ) : (
+                                        ''
+                                    )}
                                 </div>
                                 {!open && folderFileCountMap[props.folder.path] && (
                                     <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
