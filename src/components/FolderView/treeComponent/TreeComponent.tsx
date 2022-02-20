@@ -108,7 +108,7 @@ export default function Tree(props: TreeProps) {
                                     className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}${props.isRootFolder ? ' is-root-folder' : ''}`}>
                                     {props.content}{' '}
                                     {props.plugin.settings.folderNote && props.folder.children.some((f) => f.name === `${props.folder.name}.md`) ? (
-                                        <IoMdArrowDropright size={20} className="oz-folder-note-icon" />
+                                        <IoMdArrowDropright size={10} className="oz-folder-note-icon" />
                                     ) : (
                                         ''
                                     )}

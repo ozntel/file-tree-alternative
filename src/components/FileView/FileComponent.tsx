@@ -167,6 +167,8 @@ export function FileComponent(props: FilesProps) {
                 return a.name.localeCompare(b.name, 'en', { numeric: true });
             } else if (plugin.settings.sortFilesBy === 'last-update') {
                 return b.stat.mtime - a.stat.mtime;
+            } else if (plugin.settings.sortFilesBy === 'created') {
+                return b.stat.ctime - a.stat.ctime;
             }
         });
         return sortedfileList;

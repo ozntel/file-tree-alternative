@@ -19,7 +19,7 @@ export interface FileTreeAlternativePluginSettings {
     folderCountOption: string;
     evernoteView: boolean;
     filePreviewOnHover: boolean;
-    sortFilesBy: 'name' | 'last-update';
+    sortFilesBy: 'name' | 'last-update' | 'created';
     fixedHeaderInFileList: boolean;
     createdYaml: boolean;
     fileNameIsHeader: boolean;
@@ -245,6 +245,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addDropdown((cb) => {
                 cb.addOption('name', 'Name');
                 cb.addOption('last-update', 'Last Update');
+                cb.addOption('created', 'Created');
                 cb.setValue(this.plugin.settings.sortFilesBy);
                 cb.onChange((option: 'name' | 'last-update') => {
                     this.plugin.settings.sortFilesBy = option;
