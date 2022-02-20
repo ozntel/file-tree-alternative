@@ -1,4 +1,4 @@
-import { TFile, TFolder, App, Keymap } from 'obsidian';
+import { TFile, TFolder, App, Keymap, Platform } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { FolderFileCountMap, FolderTree } from 'utils/types';
 import { stripIndents } from 'common-tags';
@@ -146,4 +146,8 @@ export const createNewMarkdownFile = async (plugin: FileTreeAlternativePlugin, f
     });
     let evt = new CustomEvent(eventTypes.activeFileChange, { detail: { filePath: newFile.path } });
     window.dispatchEvent(evt);
+};
+
+export const platformIsMobile = () => {
+    return Platform.isMobile;
 };
