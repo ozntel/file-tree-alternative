@@ -13,6 +13,9 @@ You can find all release details under the [Release Updates](https://github.com/
     <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 300px;" /> 
 </a>
 
+You can also checkout the Youtube video created by Antone Heyward explaining the functionalities of the plugin:
+<a href="https://youtu.be/KBzE_BT0rtQ" target="_blank">Enhance The File Explorer File Tree Alternative Plugin</a>
+
 ## Plugin Features
 
 ### General
