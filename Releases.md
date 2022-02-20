@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 1.8.2
+
+-   Files can be sorted by Created Date
+-   Folder Note indicator style correction
+
 ## Version 1.8.1
 
 -   Folder Note Functionality Implementation
