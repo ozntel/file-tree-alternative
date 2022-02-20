@@ -116,9 +116,25 @@ export function NestedFolders(props: NestedFoldersProps) {
                 });
         });
 
-        // Folder Note Create & Delete (If folder note loaded, avoid duplicate create, delete buttons)
+        // Folder Note Open & Create & Delete (If folder note loaded, avoid duplicate create, delete buttons)
+        const folderNotePath = `${folder.path}/${folder.name}.md`;
+        let folderNoteExists = folder.children.some((f) => `${folder.name}.md` === f.name);
+
+        if (folderNoteExists) {
+            folderMenu.addItem((menuItem) => {
+                menuItem
+                    .setTitle('Open Folder Note')
+                    .setIcon('go-to-file')
+                    .onClick((ev: MouseEvent) => {
+                        plugin.app.workspace.activeLeaf.setViewState({
+                            type: 'markdown',
+                            state: { file: folderNotePath },
+                        });
+                    });
+            });
+        }
+
         if (!Util.pluginIsLoaded(plugin.app, 'folder-note-core')) {
-            let folderNoteExists = folder.children.some((f) => `${folder.name}.md` === f.name);
             // Delete Folder Note Button
             if (folderNoteExists) {
                 folderMenu.addItem((menuItem) => {
@@ -126,7 +142,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                         .setTitle('Delete Folder Note')
                         .setIcon('trash')
                         .onClick((ev: MouseEvent) => {
-                            const folderNoteFile = plugin.app.vault.getAbstractFileByPath(`${folder.path}/${folder.name}.md`);
+                            const folderNoteFile = plugin.app.vault.getAbstractFileByPath(folderNotePath);
                             if (folderNoteFile) plugin.app.vault.delete(folderNoteFile, true);
                         });
                 });
