@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.8.3
+
+-   Folder note button in context menu
+
 ## Version 1.8.2
 
 -   Files can be sorted by Created Date
