@@ -25,7 +25,7 @@ You can also checkout the YouTube video created by Antone Heyward explaining the
 
 ### Folder Pane
 
--   You can see the `number of notes` each folder within the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
+-   You can see the `number of notes` each folder under the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/number-of-notes.png" width="180"></img>
 
