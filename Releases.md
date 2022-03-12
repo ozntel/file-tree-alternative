@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 1.8.4
+
+-   File sort options moved to file list pane
+-   New sorting option with file size
+-   Reveal active file is not turned on by default during installation
+
 ## Version 1.8.3
 
 -   Folder note button in context menu
