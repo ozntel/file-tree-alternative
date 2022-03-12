@@ -3,6 +3,7 @@ import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
+export type SortType = 'name' | 'last-update' | 'created' | 'file-size';
 
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
@@ -19,7 +20,7 @@ export interface FileTreeAlternativePluginSettings {
     folderCountOption: string;
     evernoteView: boolean;
     filePreviewOnHover: boolean;
-    sortFilesBy: 'name' | 'last-update' | 'created';
+    sortFilesBy: SortType;
     fixedHeaderInFileList: boolean;
     createdYaml: boolean;
     fileNameIsHeader: boolean;
@@ -33,7 +34,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     searchFunction: true,
     allSearchOnlyInFocusedFolder: false,
     showFilesFromSubFoldersButton: true,
-    revealActiveFileButton: true,
+    revealActiveFileButton: false,
     excludedExtensions: '',
     excludedFolders: '',
     folderIcon: 'default',
@@ -238,21 +239,6 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.saveSettings();
                 })
             );
-
-        new Setting(containerEl)
-            .setName('Sort Files By')
-            .setDesc('Select your preference how the files should be sorted in the file list')
-            .addDropdown((cb) => {
-                cb.addOption('name', 'Name');
-                cb.addOption('last-update', 'Last Update');
-                cb.addOption('created', 'Created');
-                cb.setValue(this.plugin.settings.sortFilesBy);
-                cb.onChange((option: 'name' | 'last-update') => {
-                    this.plugin.settings.sortFilesBy = option;
-                    this.plugin.saveSettings();
-                    this.refreshView();
-                });
-            });
 
         new Setting(containerEl)
             .setName('Preview File on Hover')

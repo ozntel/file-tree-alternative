@@ -204,7 +204,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             if (view === 'file') {
                 if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
                     // If the file is modified but sorting is not last-update to not component update unnecessarily, return
-                    if (changeType === 'modify' && plugin.settings.sortFilesBy !== 'last-update') return;
+                    if (changeType === 'modify' && !['last-update', 'file-size'].contains(plugin.settings.sortFilesBy)) return;
                     // If the file renamed or deleted or modified is in the current view, it will be updated
                     if (fileList.some((stateFile) => stateFile.path === file.path)) setNewFileList();
                 } else if (changeType === 'create') {

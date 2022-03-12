@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { TFile, Menu, Platform } from 'obsidian';
+import { TFile, Menu } from 'obsidian';
 import * as Icons from 'utils/icons';
 import { VaultChangeModal, MoveSuggestionModal } from 'modals';
 import FileTreeAlternativePlugin, { eventTypes } from 'main';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
+import { SortType } from 'settings';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -32,6 +33,10 @@ export function FileComponent(props: FilesProps) {
     const [searchPhrase, setSearchPhrase] = useState<string>('');
     const [searchBoxVisible, setSearchBoxVisible] = useState<boolean>(false);
     const [treeHeader, setTreeHeader] = useState<string>(Util.getFolderName(activeFolderPath, plugin.app));
+
+    // Force Update
+    const [viewStatus, setViewStatus] = useState<number>(0);
+    const forceUpdate = () => setViewStatus(viewStatus + 1);
 
     // Folder Name Update once Active Folder Path Change
     useEffect(() => setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app)), [activeFolderPath]);
@@ -169,12 +174,14 @@ export function FileComponent(props: FilesProps) {
                 return b.stat.mtime - a.stat.mtime;
             } else if (plugin.settings.sortFilesBy === 'created') {
                 return b.stat.ctime - a.stat.ctime;
+            } else if (plugin.settings.sortFilesBy === 'file-size') {
+                return b.stat.size - a.stat.size;
             }
         });
         return sortedfileList;
     };
 
-    const filesToList: TFile[] = useMemo(() => customFiles(fileList), [excludedFolders, excludedExtensions, pinnedFiles, fileList]);
+    const filesToList: TFile[] = useMemo(() => customFiles(fileList), [excludedFolders, excludedExtensions, pinnedFiles, fileList, viewStatus]);
 
     // Handle Plus Button - Opens Modal to Create a New File
     const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
@@ -271,6 +278,49 @@ export function FileComponent(props: FilesProps) {
         window.dispatchEvent(event);
     };
 
+    const sortClicked = (e: React.MouseEvent) => {
+        const sortMenu = new Menu(plugin.app);
+
+        const changeSortSettingTo = (newValue: SortType) => {
+            plugin.settings.sortFilesBy = newValue;
+            plugin.saveSettings();
+            forceUpdate();
+        };
+
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('File Name (A to Z)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('name');
+            });
+        });
+
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('Created (New to Old)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('created');
+            });
+        });
+
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('File Size (Small to Big)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('file-size');
+            });
+        });
+
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('Last Update (New to Old)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('last-update');
+            });
+        });
+
+        // Trigger
+        plugin.app.workspace.trigger('sort-menu', sortMenu);
+        sortMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        return false;
+    };
+
     return (
         <React.Fragment>
             <Dropzone
@@ -315,6 +365,9 @@ export function FileComponent(props: FilesProps) {
                                                 <Icons.IoIosSearch onClick={toggleSearchBox} size={20} aria-label="Search File by Name or Tag" />
                                             </div>
                                         )}
+                                        <div className="nav-action-button oz-nav-action-button">
+                                            <Icons.FaSort size={20} onClick={sortClicked} aria-label="Sorting Options" />
+                                        </div>
                                         <div className="nav-action-button oz-nav-action-button">
                                             <Icons.IoIosAddCircle
                                                 onClick={(e) => createNewFile(e, activeFolderPath)}
