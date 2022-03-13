@@ -240,9 +240,8 @@ div#file-tree-divider.active-divider {
 }
 
 .file-tree-header-fixed {
-    position: fixed;
-    width: 100%;
-    left: 0;
+    position: sticky;
+    top: 0;
     padding-left: 4px;
     padding-right: 4px;
     background-color: var(--background-secondary);
@@ -250,7 +249,6 @@ div#file-tree-divider.active-divider {
 }
 
 .file-tree-files-fixed {
-    padding-top: 50px !important;
     display: flex;
     flex-direction: column;
 }
