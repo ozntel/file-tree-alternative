@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.8.6
+
+-   Removal of unnecessary space for mobile from the fixed header in file list
+
 ## Version 1.8.5
 
 -   Style correction for mobile fixed top file header buttons
