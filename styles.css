@@ -253,10 +253,6 @@ div#file-tree-divider.active-divider {
     flex-direction: column;
 }
 
-.is-mobile .file-tree-files-fixed {
-    padding-top: 55px !important;
-}
-
 .file-tree-files-fixed-with-search {
     padding-top: 80px !important;
     display: flex;
