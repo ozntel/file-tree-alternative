@@ -254,7 +254,7 @@ div#file-tree-divider.active-divider {
 }
 
 .file-tree-files-fixed-with-search {
-    padding-top: 80px !important;
+    /* padding-top: 80px !important; */
     display: flex;
     flex-direction: column;
 }
