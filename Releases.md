@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.8.5
+
+-   Style correction for mobile fixed top file header buttons
+
 ## Version 1.8.4
 
 -   File sort options moved to file list pane
