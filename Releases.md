@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.8.7
+
+-   Fixed Header during search correction
+
 ## Version 1.8.6
 
 -   Removal of unnecessary space for mobile from the fixed header in file list
