@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 1.8.8
+
+-   Count for open folders
+
 ## Version 1.8.7
 
 -   Fixed Header during search correction
