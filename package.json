@@ -27,7 +27,7 @@
         "common-tags": "^1.8.2",
         "dayjs": "^1.10.7",
         "preact": "^10",
-        "react": "npm:@preact/compat",
+        "react": "npm:@preact/compat@^17.0.3",
         "react-dom": "npm:@preact/compat",
         "react-dropzone": "^11.3.2",
         "react-icons": "^4.3.1",

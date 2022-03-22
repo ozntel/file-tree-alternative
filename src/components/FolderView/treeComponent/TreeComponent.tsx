@@ -79,6 +79,9 @@ export default function Tree(props: TreeProps) {
     // --> Icon
     const Icon = useMemo(() => getFolderIcon(props.plugin, props.children, open), [open, props.children]);
 
+    // --> Folder Count Map
+    const folderCount = folderFileCountMap[props.folder.path];
+
     return (
         <Dropzone
             onDrop={onDrop}
@@ -113,9 +116,9 @@ export default function Tree(props: TreeProps) {
                                         ''
                                     )}
                                 </div>
-                                {!open && folderFileCountMap[props.folder.path] && (
+                                {folderCount && (
                                     <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
-                                        <span className="oz-nav-file-tag">{folderFileCountMap[props.folder.path]}</span>
+                                        <span className="oz-nav-file-tag">{open ? folderCount.open : folderCount.closed}</span>
                                     </div>
                                 )}
                             </div>

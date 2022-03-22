@@ -57,7 +57,12 @@ export const getFolderNoteCountMap = (plugin: FileTreeAlternativePlugin) => {
 
     files.forEach((file) => {
         for (let folder = file.parent; folder != null; folder = folder.parent) {
-            counts[folder.path] = 1 + (counts[folder.path] || 0);
+            // -> Create object if doesn't exist
+            if (!counts[folder.path]) counts[folder.path] = { open: 0, closed: 0 };
+            // -> Create number for open state
+            if (folder == file.parent) counts[folder.path].open = 1 + counts[folder.path].open;
+            // -> Create number for closed state
+            counts[folder.path].closed = 1 + counts[folder.path].closed;
         }
     });
     return counts;

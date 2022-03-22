@@ -1,7 +1,10 @@
 import { TFolder } from 'obsidian';
 
 export interface FolderFileCountMap {
-    [key: string]: number;
+    [key: string]: {
+        open: number;
+        closed: number;
+    };
 }
 
 export interface FolderTree {
