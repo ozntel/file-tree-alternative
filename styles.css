@@ -79,6 +79,8 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 
 .oz-folders-action-items .oz-nav-action-button {
     margin-left: 5px;
+    color: var(--text-muted);
+    opacity: 0.5;
 }
 
 .oz-folder-contents {
