@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.0.1
+
+-   Removal of react-spring dependency
+-   Style corrections
+-   Closed folders to not take place in DOM
+
 ## Version 2.0.0
 
 -   You can use now Mouse Wheel button to open file in a new pane
