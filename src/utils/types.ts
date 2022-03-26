@@ -11,3 +11,9 @@ export interface FolderTree {
     folder: TFolder;
     children: FolderTree[];
 }
+
+// --> app.vault.config
+export interface ObsidianVaultConfig {
+    newLinkFormat: 'shortest' | 'relative' | 'absolute';
+    useMarkdownLinks: boolean;
+}

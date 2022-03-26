@@ -8,6 +8,7 @@ import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import { SortType } from 'settings';
+import { ObsidianVaultConfig } from 'utils/types';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -321,6 +322,15 @@ export function FileComponent(props: FilesProps) {
         return false;
     };
 
+    // --> Dragging for File
+    const dragStarted = (e: React.DragEvent<HTMLDivElement>, file: TFile) => {
+        // @ts-ignore
+        const obsidianConfig = plugin.app.vault.config as ObsidianVaultConfig;
+        const linkText = ['absolute', 'relative'].contains(obsidianConfig.newLinkFormat) ? file.parent.path + '/' + file.basename : file.basename;
+        const link = obsidianConfig.useMarkdownLinks ? `[${file.basename}](${encodeURI(linkText + '.' + file.extension)})` : `[[${linkText}]]`;
+        e.dataTransfer.setData('text/plain', link);
+    };
+
     return (
         <React.Fragment>
             <Dropzone
@@ -414,6 +424,8 @@ export function FileComponent(props: FilesProps) {
                                         <div
                                             className="nav-file oz-nav-file"
                                             key={file.path}
+                                            draggable
+                                            onDragStart={(e) => dragStarted(e, file)}
                                             onClick={(e) => openFile(file, e)}
                                             onContextMenu={(e) => triggerContextMenu(file, e)}
                                             onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
