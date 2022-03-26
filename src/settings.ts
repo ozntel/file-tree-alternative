@@ -4,6 +4,7 @@ import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
 export type SortType = 'name' | 'last-update' | 'created' | 'file-size';
+export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 
 export interface FileTreeAlternativePluginSettings {
     ribbonIcon: boolean;
@@ -25,6 +26,7 @@ export interface FileTreeAlternativePluginSettings {
     createdYaml: boolean;
     fileNameIsHeader: boolean;
     folderNote: boolean;
+    deleteFileOption: DeleteFileOption;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -47,6 +49,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     createdYaml: false,
     fileNameIsHeader: false,
     folderNote: false,
+    deleteFileOption: 'trash',
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -260,6 +263,20 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.refreshView();
                 })
             );
+
+        new Setting(containerEl)
+            .setName('Deleted File Destination')
+            .setDesc('Select where you want images to be moved once they are deleted')
+            .addDropdown((dropdown) => {
+                dropdown.addOption('permanent', 'Delete Permanently');
+                dropdown.addOption('trash', 'Move to Obsidian Trash');
+                dropdown.addOption('system-trash', 'Move to System Trash');
+                dropdown.setValue(this.plugin.settings.deleteFileOption);
+                dropdown.onChange((option: DeleteFileOption) => {
+                    this.plugin.settings.deleteFileOption = option;
+                    this.plugin.saveSettings();
+                });
+            });
 
         /* ------------- Exclusion Settings ------------- */
         containerEl.createEl('h2', { text: 'File Creation' });

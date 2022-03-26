@@ -376,7 +376,14 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             menuItem.setTitle('Delete');
             menuItem.setIcon('trash');
             menuItem.onClick((ev: MouseEvent) => {
-                plugin.app.vault.delete(file, true);
+                let deleteOption = plugin.settings.deleteFileOption;
+                if (deleteOption === 'permanent') {
+                    plugin.app.vault.delete(file, true);
+                } else if (deleteOption === 'system-trash') {
+                    plugin.app.vault.trash(file, true);
+                } else if (deleteOption === 'trash') {
+                    plugin.app.vault.trash(file, false);
+                }
             });
         });
 
