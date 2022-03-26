@@ -21,13 +21,12 @@ export function FileComponent(props: FilesProps) {
     // States Coming From Main Component
     const [_view, setView] = useRecoilState(recoilState.view);
     const [fileList, setFileList] = useRecoilState(recoilState.fileList);
-    const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
+    const [pinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [excludedFolders] = useRecoilState(recoilState.excludedFolders);
     const [showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
     const [focusedFolder, _setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
-    const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
 
     // Local States
     const [highlight, setHighlight] = useState<boolean>(false);
@@ -59,86 +58,6 @@ export function FileComponent(props: FilesProps) {
                 plugin.app.vault.adapter.writeBinary(activeFolderPath + '/' + file.name, arrayBuffer);
             });
         });
-    };
-
-    // Handle Click Event on File - Allows Open with Cmd/Ctrl
-    const openFile = (file: TFile, e: React.MouseEvent) => {
-        Util.openInternalLink(e, file.path, plugin.app);
-        setActiveFile(file);
-    };
-
-    // Handle Right Click Event on File - Custom Menu
-    const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
-        const fileMenu = new Menu(plugin.app);
-
-        // Pin - Unpin Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setIcon('pin');
-            if (pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
-            else menuItem.setTitle('Pin to Top');
-            menuItem.onClick((ev: MouseEvent) => {
-                if (pinnedFiles.contains(file)) {
-                    let newPinnedFiles = pinnedFiles.filter((pinnedFile) => pinnedFile !== file);
-                    setPinnedFiles(newPinnedFiles);
-                } else {
-                    setPinnedFiles([...pinnedFiles, file]);
-                }
-            });
-        });
-
-        // Rename Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setTitle('Rename');
-            menuItem.setIcon('pencil');
-            menuItem.onClick((ev: MouseEvent) => {
-                let vaultChangeModal = new VaultChangeModal(plugin, file, 'rename');
-                vaultChangeModal.open();
-            });
-        });
-
-        // Delete Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setTitle('Delete');
-            menuItem.setIcon('trash');
-            menuItem.onClick((ev: MouseEvent) => {
-                plugin.app.vault.delete(file, true);
-            });
-        });
-
-        // Open in a New Pane
-        fileMenu.addItem((menuItem) => {
-            menuItem.setIcon('go-to-file');
-            menuItem.setTitle('Open in a new pane');
-            menuItem.onClick((ev: MouseEvent) => {
-                Util.openInNewPane(plugin.app, file.path);
-            });
-        });
-
-        // Make a Copy Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setTitle('Make a copy');
-            menuItem.setIcon('documents');
-            menuItem.onClick((ev: MouseEvent) => {
-                plugin.app.vault.copy(file, `${file.parent.path}/${file.basename} 1.${file.extension}`);
-            });
-        });
-
-        // Move Item
-        if (!Util.internalPluginLoaded('file-explorer', plugin.app)) {
-            fileMenu.addItem((menuItem) => {
-                menuItem.setTitle('Move file to...');
-                menuItem.setIcon('paper-plane');
-                menuItem.onClick((ev: MouseEvent) => {
-                    let fileMoveSuggester = new MoveSuggestionModal(plugin.app, file);
-                    fileMoveSuggester.open();
-                });
-            });
-        }
-
-        // Trigger
-        plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
-        fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
-        return false;
     };
 
     // Sort - Filter Files Depending on Preferences
@@ -262,12 +181,6 @@ export function FileComponent(props: FilesProps) {
         return filesWithTag;
     };
 
-    const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
-        if (plugin.settings.filePreviewOnHover) {
-            plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
-        }
-    };
-
     const toggleShowSubFolders = async () => {
         plugin.settings.showFilesFromSubFolders = !showSubFolders;
         await plugin.saveSettings();
@@ -320,18 +233,6 @@ export function FileComponent(props: FilesProps) {
         plugin.app.workspace.trigger('sort-menu', sortMenu);
         sortMenu.showAtPosition({ x: e.pageX, y: e.pageY });
         return false;
-    };
-
-    // --> Dragging for File
-    const dragStarted = (e: React.DragEvent<HTMLDivElement>, file: TFile) => {
-        // @ts-ignore
-        const obsidianConfig = plugin.app.vault.config as ObsidianVaultConfig;
-        const linkText = ['absolute', 'relative'].contains(obsidianConfig.newLinkFormat) ? file.parent.path + '/' + file.basename : file.basename;
-        const link = obsidianConfig.useMarkdownLinks ? `[${file.basename}](${encodeURI(linkText + '.' + file.extension)})` : `[[${linkText}]]`;
-        // text to drag file to editor
-        e.dataTransfer.setData('text/plain', link);
-        // json to move file to folder
-        e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
     };
 
     return (
@@ -423,30 +324,7 @@ export function FileComponent(props: FilesProps) {
                                         : ''
                                 }`}>
                                 {filesToList.map((file) => {
-                                    return (
-                                        <div
-                                            className="nav-file oz-nav-file"
-                                            key={file.path}
-                                            draggable
-                                            onDragStart={(e) => dragStarted(e, file)}
-                                            onClick={(e) => openFile(file, e)}
-                                            onContextMenu={(e) => triggerContextMenu(file, e)}
-                                            onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
-                                            <div
-                                                className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')}
-                                                data-path={file.path}>
-                                                <div className="nav-file-title-content">
-                                                    {Util.getFileNameAndExtension(file.name).fileName}
-                                                    {pinnedFiles.contains(file) && (
-                                                        <Icons.FaThumbtack style={{ marginLeft: '3px', float: 'right', marginTop: '4px' }} size={14} />
-                                                    )}
-                                                </div>
-                                                {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
-                                                    <span className="nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
+                                    return <NavFile file={file} plugin={plugin} />;
                                 })}
                             </div>
                             {/* End: File List */}
@@ -457,3 +335,131 @@ export function FileComponent(props: FilesProps) {
         </React.Fragment>
     );
 }
+
+/* ----------- SINGLE NAVFILE ELEMENT ----------- */
+
+const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
+    const { file, plugin } = props;
+
+    const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
+    const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
+
+    // Handle Click Event on File - Allows Open with Cmd/Ctrl
+    const openFile = (file: TFile, e: React.MouseEvent) => {
+        Util.openInternalLink(e, file.path, plugin.app);
+        setActiveFile(file);
+    };
+
+    // Handle Right Click Event on File - Custom Menu
+    const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
+        const fileMenu = new Menu(plugin.app);
+
+        // Pin - Unpin Item
+        fileMenu.addItem((menuItem) => {
+            menuItem.setIcon('pin');
+            if (pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
+            else menuItem.setTitle('Pin to Top');
+            menuItem.onClick((ev: MouseEvent) => {
+                if (pinnedFiles.contains(file)) {
+                    let newPinnedFiles = pinnedFiles.filter((pinnedFile) => pinnedFile !== file);
+                    setPinnedFiles(newPinnedFiles);
+                } else {
+                    setPinnedFiles([...pinnedFiles, file]);
+                }
+            });
+        });
+
+        // Rename Item
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Rename');
+            menuItem.setIcon('pencil');
+            menuItem.onClick((ev: MouseEvent) => {
+                let vaultChangeModal = new VaultChangeModal(plugin, file, 'rename');
+                vaultChangeModal.open();
+            });
+        });
+
+        // Delete Item
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Delete');
+            menuItem.setIcon('trash');
+            menuItem.onClick((ev: MouseEvent) => {
+                plugin.app.vault.delete(file, true);
+            });
+        });
+
+        // Open in a New Pane
+        fileMenu.addItem((menuItem) => {
+            menuItem.setIcon('go-to-file');
+            menuItem.setTitle('Open in a new pane');
+            menuItem.onClick((ev: MouseEvent) => {
+                Util.openInNewPane(plugin.app, file.path);
+            });
+        });
+
+        // Make a Copy Item
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Make a copy');
+            menuItem.setIcon('documents');
+            menuItem.onClick((ev: MouseEvent) => {
+                plugin.app.vault.copy(file, `${file.parent.path}/${file.basename} 1.${file.extension}`);
+            });
+        });
+
+        // Move Item
+        if (!Util.internalPluginLoaded('file-explorer', plugin.app)) {
+            fileMenu.addItem((menuItem) => {
+                menuItem.setTitle('Move file to...');
+                menuItem.setIcon('paper-plane');
+                menuItem.onClick((ev: MouseEvent) => {
+                    let fileMoveSuggester = new MoveSuggestionModal(plugin.app, file);
+                    fileMoveSuggester.open();
+                });
+            });
+        }
+
+        // Trigger
+        plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
+        fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        return false;
+    };
+
+    const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
+        if (plugin.settings.filePreviewOnHover) {
+            plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
+        }
+    };
+
+    // --> Dragging for File
+    const dragStarted = (e: React.DragEvent<HTMLDivElement>, file: TFile) => {
+        // @ts-ignore
+        const obsidianConfig = plugin.app.vault.config as ObsidianVaultConfig;
+        const linkText = ['absolute', 'relative'].contains(obsidianConfig.newLinkFormat) ? file.parent.path + '/' + file.basename : file.basename;
+        const link = obsidianConfig.useMarkdownLinks ? `[${file.basename}](${encodeURI(linkText + '.' + file.extension)})` : `[[${linkText}]]`;
+        // text to drag file to editor
+        e.dataTransfer.setData('text/plain', link);
+        // json to move file to folder
+        e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
+    };
+
+    return (
+        <div
+            className="nav-file oz-nav-file"
+            key={file.path}
+            draggable
+            onDragStart={(e) => dragStarted(e, file)}
+            onClick={(e) => openFile(file, e)}
+            onContextMenu={(e) => triggerContextMenu(file, e)}
+            onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
+            <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
+                <div className="nav-file-title-content">
+                    {Util.getFileNameAndExtension(file.name).fileName}
+                    {pinnedFiles.contains(file) && <Icons.FaThumbtack style={{ marginLeft: '3px', float: 'right', marginTop: '4px' }} size={14} />}
+                </div>
+                {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
+                    <span className="nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
+                )}
+            </div>
+        </div>
+    );
+};
