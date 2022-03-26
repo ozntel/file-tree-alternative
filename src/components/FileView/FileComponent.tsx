@@ -449,6 +449,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             draggable
             onDragStart={(e) => dragStarted(e, file)}
             onClick={(e) => openFile(file, e)}
+            onAuxClick={(e) => Util.openInNewPane(plugin.app, file.path)}
             onContextMenu={(e) => triggerContextMenu(file, e)}
             onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
             <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
