@@ -1,5 +1,12 @@
 # Release Updates
 
+## Version 1.8.9
+
+-   File can be dragged to Editor and link to file will be inserted
+-   File can be dragged into Folder view and dropped to move
+-   Folder can be dragged into another Folder
+-   Known Issue: drag needs to be initiated firstly out of the side pane. It doesn't work if the drag happens only within the file tree pane.
+
 ## Version 1.8.8
 
 -   Count for open folders
