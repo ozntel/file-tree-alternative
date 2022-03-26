@@ -82,6 +82,23 @@ export default function Tree(props: TreeProps) {
     // --> Folder Count Map
     const folderCount = folderFileCountMap[props.folder.path];
 
+    const dragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        let data = e.dataTransfer.getData('application/json');
+        if (data !== '') {
+            // get file path
+            let dataJson = JSON.parse(data);
+            const filePath = dataJson.path;
+            // check if file exists
+            let file = props.plugin.app.vault.getAbstractFileByPath(filePath);
+            if (file) {
+                props.plugin.app.vault.rename(file, `${props.folder.path}/${file.name}`);
+            } else {
+                new Notice('Couldnt find the file');
+            }
+        }
+        setHightlight(false);
+    };
+
     return (
         <Dropzone
             onDrop={onDrop}
@@ -91,40 +108,48 @@ export default function Tree(props: TreeProps) {
             onDropAccepted={() => setHightlight(false)}
             onDropRejected={() => setHightlight(false)}>
             {({ getRootProps, getInputProps }) => (
-                <div style={{ ...props.style }} className="treeview">
+                <div>
                     <div
-                        {...getRootProps({ className: 'dropzone' })}
-                        className={'oz-folder-element' + (highlight ? ' drag-entered' : '')}
-                        data-path={props.folder.path}>
-                        <input {...getInputProps()} />
+                        style={{ ...props.style }}
+                        className="treeview"
+                        onDrop={(e) => dragOver(e)}
+                        onDragOver={() => setHightlight(true)}
+                        onDragLeave={() => setHightlight(false)}>
+                        <div
+                            {...getRootProps({ className: 'dropzone' })}
+                            className={'oz-folder-element' + (highlight ? ' drag-entered' : '')}
+                            data-path={props.folder.path}>
+                            <input {...getInputProps()} />
 
-                        <div className="oz-folder-line">
-                            <div className="oz-icon-div">
-                                <Icon className="oz-folder-toggle" style={{ opacity: props.children ? 1 : 0.3 }} onClick={toggle} />
-                            </div>
-
-                            <div className="oz-folder-block" onClick={folderNameClickEvent} onContextMenu={folderContextMenuEvent}>
-                                <div className="oz-folder-type" style={{ marginRight: props.type ? 10 : 0 }}>
-                                    {props.type}
+                            <div className="oz-folder-line">
+                                <div className="oz-icon-div">
+                                    <Icon className="oz-folder-toggle" style={{ opacity: props.children ? 1 : 0.3 }} onClick={toggle} />
                                 </div>
-                                <div
-                                    className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}${props.isRootFolder ? ' is-root-folder' : ''}`}>
-                                    {props.content}{' '}
-                                    {props.plugin.settings.folderNote && props.folder.children.some((f) => f.name === `${props.folder.name}.md`) ? (
-                                        <IoMdArrowDropright size={10} className="oz-folder-note-icon" />
-                                    ) : (
-                                        ''
+
+                                <div className="oz-folder-block" onClick={folderNameClickEvent} onContextMenu={folderContextMenuEvent}>
+                                    <div className="oz-folder-type" style={{ marginRight: props.type ? 10 : 0 }}>
+                                        {props.type}
+                                    </div>
+                                    <div
+                                        className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}${
+                                            props.isRootFolder ? ' is-root-folder' : ''
+                                        }`}>
+                                        {props.content}{' '}
+                                        {props.plugin.settings.folderNote && props.folder.children.some((f) => f.name === `${props.folder.name}.md`) ? (
+                                            <IoMdArrowDropright size={10} className="oz-folder-note-icon" />
+                                        ) : (
+                                            ''
+                                        )}
+                                    </div>
+                                    {folderCount && (
+                                        <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
+                                            <span className="oz-nav-file-tag">{open ? folderCount.open : folderCount.closed}</span>
+                                        </div>
                                     )}
                                 </div>
-                                {folderCount && (
-                                    <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
-                                        <span className="oz-nav-file-tag">{open ? folderCount.open : folderCount.closed}</span>
-                                    </div>
-                                )}
                             </div>
                         </div>
                     </div>
-
                     <Spring
                         native
                         immediate={true}

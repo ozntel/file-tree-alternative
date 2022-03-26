@@ -328,7 +328,10 @@ export function FileComponent(props: FilesProps) {
         const obsidianConfig = plugin.app.vault.config as ObsidianVaultConfig;
         const linkText = ['absolute', 'relative'].contains(obsidianConfig.newLinkFormat) ? file.parent.path + '/' + file.basename : file.basename;
         const link = obsidianConfig.useMarkdownLinks ? `[${file.basename}](${encodeURI(linkText + '.' + file.extension)})` : `[[${linkText}]]`;
+        // text to drag file to editor
         e.dataTransfer.setData('text/plain', link);
+        // json to move file to folder
+        e.dataTransfer.setData('application/json', JSON.stringify({ path: file.path }));
     };
 
     return (
