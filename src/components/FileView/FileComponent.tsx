@@ -441,6 +441,11 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
         e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
     };
 
+    // --> AuxClick (Mouse Wheel Button Action)
+    const onAuxClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if (e.button === 1) Util.openInNewPane(plugin.app, file.path);
+    };
+
     return (
         <div
             className="nav-file oz-nav-file"
@@ -448,7 +453,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             draggable
             onDragStart={(e) => dragStarted(e, file)}
             onClick={(e) => openFile(file, e)}
-            onAuxClick={(e) => Util.openInNewPane(plugin.app, file.path)}
+            onAuxClick={onAuxClick}
             onContextMenu={(e) => triggerContextMenu(file, e)}
             onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
             <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
