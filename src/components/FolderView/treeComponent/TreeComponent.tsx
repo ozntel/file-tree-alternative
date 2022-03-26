@@ -3,8 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
-import { getFolderIcon } from 'utils/icons';
-import { IoMdArrowDropright } from 'react-icons/io';
+import { getFolderIcon, IoMdArrowDropright } from 'utils/icons';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 

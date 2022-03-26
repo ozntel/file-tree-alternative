@@ -103,14 +103,6 @@ export function FileComponent(props: FilesProps) {
 
     const filesToList: TFile[] = useMemo(() => customFiles(fileList), [excludedFolders, excludedExtensions, pinnedFiles, fileList, viewStatus]);
 
-    // Handle Plus Button - Opens Modal to Create a New File
-    const createNewFile = async (e: React.MouseEvent, folderPath: string) => {
-        let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
-        if (!targetFolder) return;
-        let modal = new VaultChangeModal(plugin, targetFolder, 'create note');
-        modal.open();
-    };
-
     // Go Back Button - Sets Main Component View to Folder
     const handleGoBack = (e: React.MouseEvent) => {
         setView('folder');
@@ -284,7 +276,7 @@ export function FileComponent(props: FilesProps) {
                                         </div>
                                         <div className="nav-action-button oz-nav-action-button">
                                             <Icons.IoIosAddCircle
-                                                onClick={(e) => createNewFile(e, activeFolderPath)}
+                                                onClick={(e) => Util.createNewFile(e, activeFolderPath, plugin)}
                                                 size={20}
                                                 aria-label="Create a Note"
                                             />

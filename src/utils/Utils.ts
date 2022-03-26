@@ -4,6 +4,7 @@ import { FolderFileCountMap, FolderTree } from 'utils/types';
 import { stripIndents } from 'common-tags';
 import dayjs from 'dayjs';
 import { eventTypes } from 'main';
+import { VaultChangeModal } from 'modals';
 
 // Helper Function To Get List of Files
 export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): TFile[] => {
@@ -155,4 +156,11 @@ export const createNewMarkdownFile = async (plugin: FileTreeAlternativePlugin, f
 
 export const platformIsMobile = () => {
     return Platform.isMobile;
+};
+
+export const createNewFile = async (e: React.MouseEvent, folderPath: string, plugin: FileTreeAlternativePlugin) => {
+    let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
+    if (!targetFolder) return;
+    let modal = new VaultChangeModal(plugin, targetFolder, 'create note');
+    modal.open();
 };

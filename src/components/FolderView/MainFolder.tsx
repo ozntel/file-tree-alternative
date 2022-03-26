@@ -7,6 +7,7 @@ import * as recoilState from 'recoil/pluginState';
 import { NestedFolders } from 'components/FolderView/NestedFolders';
 import { TFolder, Menu } from 'obsidian';
 import { VaultChangeModal } from 'modals';
+import * as Icons from 'utils/icons';
 
 interface FolderProps {
     plugin: FileTreeAlternativePlugin;
@@ -22,6 +23,13 @@ export function MainFolder(props: FolderProps) {
     const [_activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [folderTree] = useRecoilState(recoilState.folderTree);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
+    const [_openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
+    const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
+
+    const createFolder = (underFolder: TFolder) => {
+        let vaultChangeModal = new VaultChangeModal(plugin, underFolder, 'create folder');
+        vaultChangeModal.open();
+    };
 
     const handleRootFolderContextMenu = (event: MouseEvent, folder: TFolder) => {
         // Event Undefined Correction
@@ -35,10 +43,7 @@ export function MainFolder(props: FolderProps) {
             menuItem
                 .setTitle('New Folder')
                 .setIcon('folder')
-                .onClick((ev: MouseEvent) => {
-                    let vaultChangeModal = new VaultChangeModal(plugin, folder, 'create folder');
-                    vaultChangeModal.open();
-                });
+                .onClick((ev: MouseEvent) => createFolder(folder));
         });
 
         if (!folder.isRoot()) {
@@ -65,8 +70,32 @@ export function MainFolder(props: FolderProps) {
         return false;
     };
 
+    // --> Collapse, Expland Button Functions
+    const collapseAllFolders = () => setOpenFolders([]);
+
+    const explandAllFolders = () => {
+        let newOpenFolders: string[] = [];
+        Object.keys(folderFileCountMap).forEach((key) => {
+            let folder = plugin.app.vault.getAbstractFileByPath(key);
+            if (folder && folder instanceof TFolder && folder.children.some((f) => f instanceof TFolder)) {
+                newOpenFolders.push(folder.path);
+            }
+        });
+        setOpenFolders(newOpenFolders);
+    };
+
     return (
         <div className="oz-folders-tree-wrapper">
+            <div className="oz-folders-action-items file-tree-header-fixed">
+                <Icons.MdOutlineCreateNewFolder
+                    className="oz-nav-action-button"
+                    size={24}
+                    onClick={(e) => createFolder(plugin.app.vault.getRoot())}
+                    aria-label="Create Folder"
+                />
+                <Icons.MdExpandLess className="oz-nav-action-button" size={24} onClick={collapseAllFolders} aria-label="Collapse Folders" />
+                <Icons.MdExpandMore className="oz-nav-action-button" size={24} onClick={explandAllFolders} aria-label="Expand Folders" />
+            </div>
             <ConditionalRootFolderWrapper
                 condition={(focusedFolder && !focusedFolder.isRoot()) || (focusedFolder && focusedFolder.isRoot && plugin.settings.showRootFolder)}
                 wrapper={(children) => {

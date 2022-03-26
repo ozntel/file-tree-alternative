@@ -73,11 +73,20 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     background-color: var(--text-selection);
 }
 
+.oz-folders-action-items {
+    text-align: center;
+}
+
+.oz-folders-action-items .oz-nav-action-button {
+    margin-left: 5px;
+}
+
 .oz-folder-contents {
     will-change: transform, opacity, height;
     margin-left: 6;
     padding: 4px 0px 0px 14px;
-    border-left: 1px dashed;
+    border-left: 2px solid var(--text-accent);
+    margin-left: 5px !important;
     border-left-color: var(--text-muted);
     font-size: 12.8px;
 }

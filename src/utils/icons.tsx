@@ -5,7 +5,17 @@ import { ImFolder, ImFolderPlus, ImFolderMinus } from 'react-icons/im';
 import { TiFolder, TiFolderOpen } from 'react-icons/ti';
 import { CgCloseO, CgAdd, CgRemove } from 'react-icons/cg';
 import { FaTimesCircle, FaThumbtack, FaArrowCircleLeft, FaSort } from 'react-icons/fa';
-import { IoIosSearch, IoIosEye, IoIosEyeOff, IoIosLocate, IoIosAddCircle, IoIosCloseCircleOutline, IoIosArrowBack } from 'react-icons/io';
+import {
+    IoIosSearch,
+    IoIosEye,
+    IoIosEyeOff,
+    IoIosLocate,
+    IoIosAddCircle,
+    IoIosCloseCircleOutline,
+    IoIosArrowBack,
+    IoMdArrowDropright,
+} from 'react-icons/io';
+import { MdExpandLess, MdExpandMore, MdOutlineCreateNewFolder } from 'react-icons/md';
 
 const MinusSquareO = (props: any) => (
     <svg {...props} viewBox="64 -65 897 897">
@@ -103,4 +113,8 @@ export {
     IoIosAddCircle,
     IoIosCloseCircleOutline,
     IoIosArrowBack,
+    IoMdArrowDropright,
+    MdExpandLess,
+    MdExpandMore,
+    MdOutlineCreateNewFolder,
 };
