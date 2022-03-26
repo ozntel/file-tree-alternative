@@ -1,6 +1,5 @@
 import { TFolder, Notice } from 'obsidian';
 import React, { useState, useMemo, useEffect } from 'react';
-import { animated, config, Spring } from 'react-spring';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
 import { getFolderIcon, IoMdArrowDropright } from 'utils/icons';
@@ -129,7 +128,7 @@ export default function Tree(props: TreeProps) {
             onDropAccepted={() => setHightlight(false)}
             onDropRejected={() => setHightlight(false)}>
             {({ getRootProps, getInputProps }) => (
-                <div>
+                <React.Fragment>
                     <div
                         style={{ ...props.style }}
                         className="treeview"
@@ -164,41 +163,26 @@ export default function Tree(props: TreeProps) {
                                             ''
                                         )}
                                     </div>
-                                    {folderCount && (
-                                        <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
-                                            <span className="oz-nav-file-tag">{open ? folderCount.open : folderCount.closed}</span>
-                                        </div>
-                                    )}
+                                    <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
+                                        <span className="oz-nav-file-tag">{folderCount ? (open ? folderCount.open : folderCount.closed) : 0}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <Spring
-                        native
-                        immediate={true}
-                        config={{
-                            ...config.default,
-                            restSpeedThreshold: 1,
-                            restDisplacementThreshold: 0.01,
-                        }}
-                        from={{ height: 0, opacity: 0, transform: 'translate3d(20px,0,0)' }}
-                        to={{
-                            height: open && props.children ? 'auto' : 0,
-                            opacity: open && props.children ? 1 : 0,
-                            transform: open && props.children ? 'translate3d(0px,0,0)' : 'translate3d(20px,0,0)',
-                        }}
-                        render={Contents}>
-                        {props.children}
-                    </Spring>
-                </div>
+                    {props.children && (
+                        <div
+                            className="oz-folder-contents"
+                            style={{
+                                height: open ? 'auto' : 0,
+                                opacity: open ? 1 : 0,
+                                display: open ? 'inherit' : 'none',
+                            }}>
+                            {props.children}
+                        </div>
+                    )}
+                </React.Fragment>
             )}
         </Dropzone>
     );
 }
-
-// @ts-ignore
-const Contents = ({ children, ...style }) => (
-    <animated.div style={{ ...style }} className="oz-folder-contents">
-        {children}
-    </animated.div>
-);

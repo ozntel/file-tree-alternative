@@ -86,11 +86,10 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 .oz-folder-contents {
     will-change: transform, opacity, height;
     margin-left: 6;
-    padding: 4px 0px 0px 14px;
+    padding-left: 14px;
     border-left: 2px solid var(--text-accent);
     margin-left: 5px !important;
     border-left-color: var(--text-muted);
-    font-size: 12.8px;
 }
 
 .oz-folder-toggle {
@@ -181,7 +180,7 @@ div.oz-folder-name.is-root-folder {
 }
 
 .oz-folder-element {
-    line-height: 1.35em;
+    line-height: 1.5em;
     padding: 0px 0px 0px 0px;
 }
 
