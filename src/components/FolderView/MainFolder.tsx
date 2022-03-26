@@ -93,8 +93,8 @@ export function MainFolder(props: FolderProps) {
                     onClick={(e) => createFolder(plugin.app.vault.getRoot())}
                     aria-label="Create Folder"
                 />
-                <Icons.MdExpandLess className="oz-nav-action-button" size={24} onClick={collapseAllFolders} aria-label="Collapse Folders" />
-                <Icons.MdExpandMore className="oz-nav-action-button" size={24} onClick={explandAllFolders} aria-label="Expand Folders" />
+                <Icons.CgChevronDoubleUp className="oz-nav-action-button" size={24} onClick={collapseAllFolders} aria-label="Collapse Folders" />
+                <Icons.CgChevronDoubleDown className="oz-nav-action-button" size={24} onClick={explandAllFolders} aria-label="Expand Folders" />
             </div>
             <ConditionalRootFolderWrapper
                 condition={(focusedFolder && !focusedFolder.isRoot()) || (focusedFolder && focusedFolder.isRoot && plugin.settings.showRootFolder)}

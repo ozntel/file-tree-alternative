@@ -15,7 +15,8 @@ import {
     IoIosArrowBack,
     IoMdArrowDropright,
 } from 'react-icons/io';
-import { MdExpandLess, MdExpandMore, MdOutlineCreateNewFolder } from 'react-icons/md';
+import { MdOutlineCreateNewFolder } from 'react-icons/md';
+import { CgChevronDoubleDown, CgChevronDoubleUp } from 'react-icons/cg';
 
 const MinusSquareO = (props: any) => (
     <svg {...props} viewBox="64 -65 897 897">
@@ -114,7 +115,7 @@ export {
     IoIosCloseCircleOutline,
     IoIosArrowBack,
     IoMdArrowDropright,
-    MdExpandLess,
-    MdExpandMore,
+    CgChevronDoubleDown,
+    CgChevronDoubleUp,
     MdOutlineCreateNewFolder,
 };
