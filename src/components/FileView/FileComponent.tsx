@@ -331,7 +331,7 @@ export function FileComponent(props: FilesProps) {
         // text to drag file to editor
         e.dataTransfer.setData('text/plain', link);
         // json to move file to folder
-        e.dataTransfer.setData('application/json', JSON.stringify({ path: file.path }));
+        e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
     };
 
     return (

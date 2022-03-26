@@ -82,21 +82,43 @@ export default function Tree(props: TreeProps) {
     // --> Folder Count Map
     const folderCount = folderFileCountMap[props.folder.path];
 
-    const dragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    // --> Drag and Drop Actions
+    const dropFileOrFolder = (e: React.DragEvent<HTMLDivElement>) => {
         let data = e.dataTransfer.getData('application/json');
         if (data !== '') {
-            // get file path
             let dataJson = JSON.parse(data);
-            const filePath = dataJson.path;
-            // check if file exists
-            let file = props.plugin.app.vault.getAbstractFileByPath(filePath);
-            if (file) {
-                props.plugin.app.vault.rename(file, `${props.folder.path}/${file.name}`);
-            } else {
-                new Notice('Couldnt find the file');
+            // File Drop
+            if (dataJson['filePath']) {
+                const filePath = dataJson.filePath;
+                // check if file exists
+                let file = props.plugin.app.vault.getAbstractFileByPath(filePath);
+                if (file) {
+                    props.plugin.app.vault.rename(file, `${props.folder.path}/${file.name}`);
+                } else {
+                    new Notice('Couldnt find the file');
+                }
+            }
+            // Folder Drop
+            else if (dataJson['folderPath']) {
+                const folderPath = dataJson.folderPath;
+                let folder = props.plugin.app.vault.getAbstractFileByPath(folderPath);
+                if (folder) {
+                    if (!props.folder.path.startsWith(folder.path)) {
+                        props.plugin.app.vault.rename(folder, `${props.folder.path}/${folder.name}`);
+                    } else {
+                        new Notice('You cant move folder under its child');
+                    }
+                } else {
+                    new Notice('Couldnt find the folder');
+                }
             }
         }
         setHightlight(false);
+        e.dataTransfer.clearData();
+    };
+
+    const onFolderDragStart = (e: React.DragEvent<HTMLDivElement>, folder: TFolder) => {
+        e.dataTransfer.setData('application/json', JSON.stringify({ folderPath: folder.path }));
     };
 
     return (
@@ -112,7 +134,9 @@ export default function Tree(props: TreeProps) {
                     <div
                         style={{ ...props.style }}
                         className="treeview"
-                        onDrop={(e) => dragOver(e)}
+                        draggable
+                        onDragStart={(e) => onFolderDragStart(e, props.folder)}
+                        onDrop={(e) => dropFileOrFolder(e)}
                         onDragOver={() => setHightlight(true)}
                         onDragLeave={() => setHightlight(false)}>
                         <div
