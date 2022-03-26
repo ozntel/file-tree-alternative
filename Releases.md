@@ -1,5 +1,13 @@
 # Release Updates
 
+## Version 2.0.0
+
+-   You can use now Mouse Wheel button to open file in a new pane
+-   There are now expand and collapse all buttons for folder view.
+-   There is an additional button to create a folder in the root folder
+-   Small style change for the line used for indenting children folders
+-   There is an option to select what should happen to the file deleted (system trash, obsidian trash etc.)
+
 ## Version 1.8.9
 
 -   File can be dragged to Editor and link to file will be inserted
