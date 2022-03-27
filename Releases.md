@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.0.2
+
+-   Open file tree pane command correction
+
 ## Version 2.0.1
 
 -   Removal of react-spring dependency
