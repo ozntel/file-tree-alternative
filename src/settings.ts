@@ -266,7 +266,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Deleted File Destination')
-            .setDesc('Select where you want images to be moved once they are deleted')
+            .setDesc('Select where you want files to be moved once they are deleted')
             .addDropdown((dropdown) => {
                 dropdown.addOption('permanent', 'Delete Permanently');
                 dropdown.addOption('trash', 'Move to Obsidian Trash');

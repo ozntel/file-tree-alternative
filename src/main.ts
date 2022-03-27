@@ -92,10 +92,15 @@ export default class FileTreeAlternativePlugin extends Plugin {
     };
 
     openFileTreeLeaf = async (showAfterAttach: boolean) => {
-        if (this.app.workspace.getLeavesOfType(VIEW_TYPE).length == 0) {
+        let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+        if (leafs.length == 0) {
+            // Needs to be mounted
             let leaf = this.app.workspace.getLeftLeaf(false);
             await leaf.setViewState({ type: VIEW_TYPE });
             if (showAfterAttach) this.app.workspace.revealLeaf(leaf);
+        } else {
+            // Already mounted - needs to be revealed
+            leafs.forEach((leaf) => this.app.workspace.revealLeaf(leaf));
         }
     };
 
