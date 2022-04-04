@@ -424,7 +424,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     };
 
     const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
-        if (plugin.settings.filePreviewOnHover) {
+        if (plugin.settings.filePreviewOnHover || e.ctrlKey) {
             plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
         }
     };
