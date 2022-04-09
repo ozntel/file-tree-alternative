@@ -112,6 +112,12 @@ export const internalPluginLoaded = (pluginName: string, app: App) => {
     return app.internalPlugins.plugins[pluginName]?._loaded;
 };
 
+export const openInternalFile = (e: React.MouseEvent<Element, MouseEvent>, file: TFile, app: App) => {
+    let leaf = app.workspace.getLeaf(e.ctrlKey || e.metaKey);
+    app.workspace.setActiveLeaf(leaf, false);
+    leaf.openFile(file, { eState: { focus: true } });
+};
+
 export const openInternalLink = (event: React.MouseEvent<Element, MouseEvent>, link: string, app: App) => {
     app.workspace.openLinkText(link, '/', Keymap.isModifier(event as unknown as MouseEvent, 'Mod') || 1 === event.button);
 };

@@ -338,7 +338,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
     const openFile = (file: TFile, e: React.MouseEvent) => {
-        Util.openInternalLink(e, file.path, plugin.app);
+        Util.openInternalFile(e, file, plugin.app);
         setActiveFile(file);
     };
 
