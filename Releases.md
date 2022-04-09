@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.0.3
+
+-   Files with names including hashtag will be correctly opening
+-   Preview on hover will requre Ctrl/Cmd
+
 ## Version 2.0.2
 
 -   Open file tree pane command correction
