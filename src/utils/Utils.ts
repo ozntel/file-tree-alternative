@@ -112,8 +112,9 @@ export const internalPluginLoaded = (pluginName: string, app: App) => {
     return app.internalPlugins.plugins[pluginName]?._loaded;
 };
 
-export const openInternalFile = (e: React.MouseEvent<Element, MouseEvent>, file: TFile, app: App) => {
-    let leaf = app.workspace.getLeaf(e.ctrlKey || e.metaKey);
+export const openFile = (props: { file: TFile; app: App; newLeaf: boolean }) => {
+    const { file, app, newLeaf } = props;
+    let leaf = app.workspace.getLeaf(newLeaf);
     app.workspace.setActiveLeaf(leaf, false);
     leaf.openFile(file, { eState: { focus: true } });
 };
@@ -122,8 +123,8 @@ export const openInternalLink = (event: React.MouseEvent<Element, MouseEvent>, l
     app.workspace.openLinkText(link, '/', Keymap.isModifier(event as unknown as MouseEvent, 'Mod') || 1 === event.button);
 };
 
-export const openInNewPane = (app: App, path: string) => {
-    app.workspace.openLinkText(path, '/', true);
+export const openFileInNewPane = (app: App, file: TFile) => {
+    openFile({ file: file, app: app, newLeaf: true });
 };
 
 export const getFileCreateString = (params: { plugin: FileTreeAlternativePlugin; fileName: string }): string => {
