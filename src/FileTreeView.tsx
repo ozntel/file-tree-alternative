@@ -39,12 +39,12 @@ export class FileTreeView extends ItemView {
     }
 
     async onOpen(): Promise<void> {
-        ReactDOM.unmountComponentAtNode(this.contentEl);
+        this.destroy();
         this.constructFileTree(this.app.vault.getRoot().path, '');
     }
 
     constructFileTree(folderPath: string, vaultChange: string) {
-        ReactDOM.unmountComponentAtNode(this.contentEl);
+        this.destroy();
         ReactDOM.render(
             <div className="file-tree-plugin-view">
                 <RecoilRoot>

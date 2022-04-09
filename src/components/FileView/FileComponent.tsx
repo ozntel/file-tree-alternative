@@ -316,7 +316,7 @@ export function FileComponent(props: FilesProps) {
                                         : ''
                                 }`}>
                                 {filesToList.map((file) => {
-                                    return <NavFile file={file} plugin={plugin} />;
+                                    return <NavFile file={file} plugin={plugin} key={file.path} />;
                                 })}
                             </div>
                             {/* End: File List */}
@@ -424,7 +424,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     };
 
     const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
-        if (plugin.settings.filePreviewOnHover) {
+        if (plugin.settings.filePreviewOnHover && (e.ctrlKey || e.metaKey)) {
             plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
         }
     };

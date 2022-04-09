@@ -245,7 +245,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Preview File on Hover')
-            .setDesc('Turn on if you want to preview the files once you hover on them within the file list.')
+            .setDesc('Turn on if you want to preview the files once you hover on them within the file list holding Ctrl/Cmd button.')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.filePreviewOnHover).onChange((value) => {
                     this.plugin.settings.filePreviewOnHover = value;
