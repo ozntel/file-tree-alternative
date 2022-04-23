@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.0.4
+
+-   Styling corrections (Removing Obsidian default classes from HTML Elements)
+-   Folder sorting options
+
 ## Version 2.0.3
 
 -   Files with names including hashtag will be correctly opening
