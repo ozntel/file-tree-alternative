@@ -26,17 +26,15 @@
 }
 
 .oz-nav-file-title {
-    padding-left: 2px !important;
-    padding-right: 2px !important;
     width: calc(100% - 30px);
     display: flex;
     white-space: nowrap;
     min-width: 100%;
     cursor: pointer;
-    line-height: 20px;
+    line-height: 22px;
     border-radius: 3px;
     font-size: 13px;
-    padding: 1px 10px 0 26px;
+    padding: 1px 2px 0px 2px;
     min-width: 100%;
     border: 1px solid transparent;
 }
@@ -61,6 +59,8 @@
     padding: 0 4px;
     text-transform: uppercase;
     align-self: center;
+    padding: 0px 4px 0px 4px;
+    margin-right: 2px;
 }
 
 div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
@@ -193,15 +193,6 @@ div.oz-folder-name.is-root-folder {
     padding-bottom: 5px;
     padding-left: 8px;
     height: 100%;
-}
-
-.oz-nav-file-tag {
-    font-size: 10px;
-    border-radius: 3px;
-    padding: 0px 4px 0px 4px;
-    background-color: var(--background-secondary-alt);
-    margin-right: 2px;
-    font-weight: 600;
 }
 
 .oz-folder-element {

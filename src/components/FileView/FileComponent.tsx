@@ -227,6 +227,8 @@ export function FileComponent(props: FilesProps) {
         return false;
     };
 
+    const topIconSize = 18;
+
     return (
         <React.Fragment>
             <Dropzone
@@ -246,38 +248,58 @@ export function FileComponent(props: FilesProps) {
                                 <div className="oz-flex-container">
                                     <div className="oz-nav-action-button" style={{ marginLeft: '0px' }}>
                                         {plugin.settings.evernoteView ? (
-                                            <Icons.IoIosCloseCircleOutline onClick={(e) => handleGoBack(e)} size={20} aria-label="Close File Pane" />
+                                            <Icons.IoIosCloseCircleOutline
+                                                onClick={(e) => handleGoBack(e)}
+                                                size={topIconSize}
+                                                aria-label="Close File Pane"
+                                            />
                                         ) : (
-                                            <Icons.IoIosArrowBack onClick={(e) => handleGoBack(e)} size={20} aria-label="Go Back to Folder View" />
+                                            <Icons.IoIosArrowBack
+                                                onClick={(e) => handleGoBack(e)}
+                                                size={topIconSize}
+                                                aria-label="Go Back to Folder View"
+                                            />
                                         )}
                                     </div>
                                     <div className="oz-nav-buttons-right-block">
                                         {plugin.settings.revealActiveFileButton && (
                                             <div className="oz-nav-action-button">
-                                                <Icons.IoIosLocate onClick={handleRevealActiveFileButton} size={20} aria-label="Reveal Active File" />
+                                                <Icons.IoIosLocate
+                                                    onClick={handleRevealActiveFileButton}
+                                                    size={topIconSize}
+                                                    aria-label="Reveal Active File"
+                                                />
                                             </div>
                                         )}
                                         {plugin.settings.showFilesFromSubFoldersButton && (
                                             <div className="oz-nav-action-button">
                                                 {showSubFolders ? (
-                                                    <Icons.IoIosEyeOff onClick={toggleShowSubFolders} size={20} aria-label="Hide Files from Sub-Folders" />
+                                                    <Icons.IoIosEyeOff
+                                                        onClick={toggleShowSubFolders}
+                                                        size={topIconSize}
+                                                        aria-label="Hide Files from Sub-Folders"
+                                                    />
                                                 ) : (
-                                                    <Icons.IoIosEye onClick={toggleShowSubFolders} size={20} aria-label="Show Files from Sub-Folders" />
+                                                    <Icons.IoIosEye
+                                                        onClick={toggleShowSubFolders}
+                                                        size={topIconSize}
+                                                        aria-label="Show Files from Sub-Folders"
+                                                    />
                                                 )}
                                             </div>
                                         )}
                                         {plugin.settings.searchFunction && (
                                             <div className="oz-nav-action-button">
-                                                <Icons.IoIosSearch onClick={toggleSearchBox} size={20} aria-label="Search File by Name or Tag" />
+                                                <Icons.IoIosSearch onClick={toggleSearchBox} size={topIconSize} aria-label="Search File by Name or Tag" />
                                             </div>
                                         )}
                                         <div className="oz-nav-action-button">
-                                            <Icons.FaSort size={20} onClick={sortClicked} aria-label="Sorting Options" />
+                                            <Icons.FaSort size={topIconSize} onClick={sortClicked} aria-label="Sorting Options" />
                                         </div>
                                         <div className="oz-nav-action-button">
                                             <Icons.IoIosAddCircle
                                                 onClick={(e) => Util.createNewFile(e, activeFolderPath, plugin)}
-                                                size={20}
+                                                size={topIconSize}
                                                 aria-label="Create a Note"
                                             />
                                         </div>
