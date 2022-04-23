@@ -244,7 +244,7 @@ export function FileComponent(props: FilesProps) {
                             {/* Header */}
                             <div className={`oz-file-tree-header-wrapper${plugin.settings.fixedHeaderInFileList ? ' file-tree-header-fixed' : ''}`}>
                                 <div className="oz-flex-container">
-                                    <div className="nav-action-button oz-nav-action-button">
+                                    <div className="oz-nav-action-button" style={{ marginLeft: '0px' }}>
                                         {plugin.settings.evernoteView ? (
                                             <Icons.IoIosCloseCircleOutline onClick={(e) => handleGoBack(e)} size={20} aria-label="Close File Pane" />
                                         ) : (
@@ -253,12 +253,12 @@ export function FileComponent(props: FilesProps) {
                                     </div>
                                     <div className="oz-nav-buttons-right-block">
                                         {plugin.settings.revealActiveFileButton && (
-                                            <div className="nav-action-button oz-nav-action-button">
+                                            <div className="oz-nav-action-button">
                                                 <Icons.IoIosLocate onClick={handleRevealActiveFileButton} size={20} aria-label="Reveal Active File" />
                                             </div>
                                         )}
                                         {plugin.settings.showFilesFromSubFoldersButton && (
-                                            <div className="nav-action-button oz-nav-action-button">
+                                            <div className="oz-nav-action-button">
                                                 {showSubFolders ? (
                                                     <Icons.IoIosEyeOff onClick={toggleShowSubFolders} size={20} aria-label="Hide Files from Sub-Folders" />
                                                 ) : (
@@ -267,14 +267,14 @@ export function FileComponent(props: FilesProps) {
                                             </div>
                                         )}
                                         {plugin.settings.searchFunction && (
-                                            <div className="nav-action-button oz-nav-action-button">
+                                            <div className="oz-nav-action-button">
                                                 <Icons.IoIosSearch onClick={toggleSearchBox} size={20} aria-label="Search File by Name or Tag" />
                                             </div>
                                         )}
-                                        <div className="nav-action-button oz-nav-action-button">
+                                        <div className="oz-nav-action-button">
                                             <Icons.FaSort size={20} onClick={sortClicked} aria-label="Sorting Options" />
                                         </div>
-                                        <div className="nav-action-button oz-nav-action-button">
+                                        <div className="oz-nav-action-button">
                                             <Icons.IoIosAddCircle
                                                 onClick={(e) => Util.createNewFile(e, activeFolderPath, plugin)}
                                                 size={20}
@@ -448,7 +448,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     return (
         <div
-            className="nav-file oz-nav-file"
+            className="oz-nav-file"
             key={file.path}
             draggable
             onDragStart={(e) => dragStarted(e, file)}
@@ -456,13 +456,11 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             onAuxClick={onAuxClick}
             onContextMenu={(e) => triggerContextMenu(file, e)}
             onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
-            <div className={'nav-file-title oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
-                <div className="nav-file-title-content">
-                    {Util.getFileNameAndExtension(file.name).fileName}
-                    {pinnedFiles.contains(file) && <Icons.FaThumbtack style={{ marginLeft: '3px', float: 'right', marginTop: '4px' }} size={14} />}
-                </div>
+            <div className={'oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
+                <div className="oz-nav-file-title-content">{Util.getFileNameAndExtension(file.name).fileName}</div>
+                {pinnedFiles.contains(file) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
                 {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
-                    <span className="nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
+                    <span className="oz-nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
                 )}
             </div>
         </div>
