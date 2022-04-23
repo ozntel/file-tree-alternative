@@ -8,6 +8,8 @@ import { NestedFolders } from 'components/FolderView/NestedFolders';
 import { TFolder, Menu } from 'obsidian';
 import { VaultChangeModal } from 'modals';
 import * as Icons from 'utils/icons';
+import { FolderSortType } from 'settings';
+import useForceUpdate from 'hooks/ForceUpdate';
 
 interface FolderProps {
     plugin: FileTreeAlternativePlugin;
@@ -25,6 +27,9 @@ export function MainFolder(props: FolderProps) {
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
     const [_openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
     const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
+
+    // Force Update
+    const forceUpdate = useForceUpdate();
 
     const createFolder = (underFolder: TFolder) => {
         let vaultChangeModal = new VaultChangeModal(plugin, underFolder, 'create folder');
@@ -84,6 +89,35 @@ export function MainFolder(props: FolderProps) {
         setOpenFolders(newOpenFolders);
     };
 
+    const triggerFolderSortOptions = (e: React.MouseEvent) => {
+        const sortMenu = new Menu(plugin.app);
+
+        const changeSortSettingTo = (newValue: FolderSortType) => {
+            plugin.settings.sortFoldersBy = newValue;
+            plugin.saveSettings();
+            forceUpdate();
+        };
+
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('Folder Name (A to Z)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('name');
+            });
+        });
+
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('Item Numbers (Bigger to Smaller)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('item-number');
+            });
+        });
+
+        // Trigger
+        plugin.app.workspace.trigger('sort-menu', sortMenu);
+        sortMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        return false;
+    };
+
     return (
         <div className="oz-folders-tree-wrapper">
             <div className="oz-folders-action-items file-tree-header-fixed">
@@ -93,6 +127,7 @@ export function MainFolder(props: FolderProps) {
                     onClick={(e) => createFolder(plugin.app.vault.getRoot())}
                     aria-label="Create Folder"
                 />
+                <Icons.CgSortAz className="oz-nav-action-button" size={24} onClick={triggerFolderSortOptions} aria-label="Sorting Options" />
                 <Icons.CgChevronDoubleUp className="oz-nav-action-button" size={24} onClick={collapseAllFolders} aria-label="Collapse Folders" />
                 <Icons.CgChevronDoubleDown className="oz-nav-action-button" size={24} onClick={explandAllFolders} aria-label="Expand Folders" />
             </div>

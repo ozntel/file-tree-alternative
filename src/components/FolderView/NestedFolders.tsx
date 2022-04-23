@@ -23,6 +23,7 @@ export function NestedFolders(props: NestedFoldersProps) {
     const [_activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
+    const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
 
     const handleFolderNameClick = (folderPath: string) => setActiveFolderPath(folderPath);
 
@@ -31,7 +32,15 @@ export function NestedFolders(props: NestedFoldersProps) {
         if (excludedFolders.length > 0) {
             newTree = newTree.filter((tree) => !excludedFolders.contains(tree.folder.path));
         }
-        newTree = newTree.sort((a, b) => a.folder.name.localeCompare(b.folder.name, 'en', { numeric: true }));
+        newTree = newTree.sort((a, b) => {
+            if (plugin.settings.sortFoldersBy === 'name') {
+                return a.folder.name.localeCompare(b.folder.name, 'en', { numeric: true });
+            } else if (plugin.settings.sortFoldersBy === 'item-number') {
+                let aCount = folderFileCountMap[a.folder.path] ? folderFileCountMap[a.folder.path].closed : 0;
+                let bCount = folderFileCountMap[b.folder.path] ? folderFileCountMap[b.folder.path].closed : 0;
+                return bCount - aCount;
+            }
+        });
         return newTree;
     };
 
@@ -168,7 +177,10 @@ export function NestedFolders(props: NestedFoldersProps) {
 
     if (!props.folderTree.children) return null;
 
-    let sortedFolderTree = useMemo(() => getSortedFolderTree(props.folderTree.children), [props.folderTree.children, excludedFolders]);
+    let sortedFolderTree = useMemo(
+        () => getSortedFolderTree(props.folderTree.children),
+        [props.folderTree.children, excludedFolders, plugin.settings.sortFoldersBy]
+    );
 
     return (
         <React.Fragment>

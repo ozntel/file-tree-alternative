@@ -4,6 +4,7 @@ import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
 export type SortType = 'name' | 'last-update' | 'created' | 'file-size';
+export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 
 export interface FileTreeAlternativePluginSettings {
@@ -22,6 +23,7 @@ export interface FileTreeAlternativePluginSettings {
     evernoteView: boolean;
     filePreviewOnHover: boolean;
     sortFilesBy: SortType;
+    sortFoldersBy: FolderSortType;
     fixedHeaderInFileList: boolean;
     createdYaml: boolean;
     fileNameIsHeader: boolean;
@@ -45,6 +47,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     evernoteView: true,
     filePreviewOnHover: false,
     sortFilesBy: 'name',
+    sortFoldersBy: 'name',
     fixedHeaderInFileList: false,
     createdYaml: false,
     fileNameIsHeader: false,

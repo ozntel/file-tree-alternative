@@ -9,6 +9,7 @@ import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import { SortType } from 'settings';
 import { ObsidianVaultConfig } from 'utils/types';
+import useForceUpdate from 'hooks/ForceUpdate';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -35,8 +36,7 @@ export function FileComponent(props: FilesProps) {
     const [treeHeader, setTreeHeader] = useState<string>(Util.getFolderName(activeFolderPath, plugin.app));
 
     // Force Update
-    const [viewStatus, setViewStatus] = useState<number>(0);
-    const forceUpdate = () => setViewStatus(viewStatus + 1);
+    const forceUpdate = useForceUpdate();
 
     // Folder Name Update once Active Folder Path Change
     useEffect(() => setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app)), [activeFolderPath]);
@@ -101,7 +101,10 @@ export function FileComponent(props: FilesProps) {
         return sortedfileList;
     };
 
-    const filesToList: TFile[] = useMemo(() => customFiles(fileList), [excludedFolders, excludedExtensions, pinnedFiles, fileList, viewStatus]);
+    const filesToList: TFile[] = useMemo(
+        () => customFiles(fileList),
+        [excludedFolders, excludedExtensions, pinnedFiles, fileList, plugin.settings.sortFilesBy]
+    );
 
     // Go Back Button - Sets Main Component View to Folder
     const handleGoBack = (e: React.MouseEvent) => {
@@ -294,7 +297,7 @@ export function FileComponent(props: FilesProps) {
                                             </div>
                                         )}
                                         <div className="oz-nav-action-button">
-                                            <Icons.FaSort size={topIconSize} onClick={sortClicked} aria-label="Sorting Options" />
+                                            <Icons.CgSortAz size={topIconSize + 2} onClick={sortClicked} aria-label="Sorting Options" />
                                         </div>
                                         <div className="oz-nav-action-button">
                                             <Icons.IoIosAddCircle
