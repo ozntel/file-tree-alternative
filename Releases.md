@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.0.5
+
+-   File Icons
+-   Style Corrections
+
 ## Version 2.0.4
 
 -   Styling corrections (Removing Obsidian default classes from HTML Elements)
