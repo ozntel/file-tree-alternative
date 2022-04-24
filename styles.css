@@ -37,6 +37,7 @@
     padding: 1px 2px 0px 2px;
     min-width: 100%;
     border: 1px solid transparent;
+    color: var(--text-muted);
 }
 
 .oz-nav-file-title .oz-nav-file-title-content {
@@ -49,6 +50,7 @@
 }
 
 .oz-nav-file-tag {
+    color: var(--text-muted);
     background-color: var(--background-secondary-alt);
     border-radius: 3px;
     font-size: 9px;
@@ -296,4 +298,15 @@ svg.oz-folder-toggle path {
 /* Solution for React-Icon Center Issue */
 .oz-folder-name svg {
     vertical-align: middle !important;
+}
+
+.oz-nav-file-icon {
+    line-height: 1;
+    display: inline-block;
+    font-weight: normal;
+    font-style: normal;
+    font-variant: normal;
+    margin-right: 2px;
+    padding-bottom: 2.5px;
+    vertical-align: middle;
 }

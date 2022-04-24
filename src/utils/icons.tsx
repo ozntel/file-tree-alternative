@@ -1,10 +1,11 @@
 import React from 'react';
 import FileTreeAlternativePlugin from 'main';
-import { BiFolderPlus, BiFolder, BiFolderMinus } from 'react-icons/bi';
+import { BiFolderPlus, BiFolder, BiFolderMinus, BiFile } from 'react-icons/bi';
 import { ImFolder, ImFolderPlus, ImFolderMinus } from 'react-icons/im';
 import { TiFolder, TiFolderOpen } from 'react-icons/ti';
 import { CgCloseO, CgAdd, CgRemove } from 'react-icons/cg';
 import { FaTimesCircle, FaThumbtack, FaArrowCircleLeft } from 'react-icons/fa';
+import { AiFillFilePdf, AiFillFileImage, AiFillFileWord } from 'react-icons/ai';
 import {
     IoIosSearch,
     IoIosEye,
@@ -118,4 +119,8 @@ export {
     CgChevronDoubleUp,
     CgSortAz,
     MdOutlineCreateNewFolder,
+    BiFile,
+    AiFillFilePdf,
+    AiFillFileImage,
+    AiFillFileWord,
 };

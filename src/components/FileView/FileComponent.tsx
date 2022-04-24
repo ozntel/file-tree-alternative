@@ -471,6 +471,18 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
         if (e.button === 1) Util.openFileInNewPane(plugin.app, file);
     };
 
+    const getFileIcon = () => {
+        return file.extension === 'pdf'
+            ? Icons.AiFillFilePdf
+            : ['png', 'jpg', 'jpeg', 'svg'].contains(file.extension)
+            ? Icons.AiFillFileImage
+            : ['doc', 'docx'].contains(file.extension)
+            ? Icons.AiFillFileWord
+            : Icons.BiFile;
+    };
+
+    const FileIcon = useMemo(() => getFileIcon(), [plugin.settings.iconBeforeFileName]);
+
     return (
         <div
             className="oz-nav-file"
@@ -482,7 +494,10 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             onContextMenu={(e) => triggerContextMenu(file, e)}
             onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
             <div className={'oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
-                <div className="oz-nav-file-title-content">{Util.getFileNameAndExtension(file.name).fileName}</div>
+                <div className="oz-nav-file-title-content">
+                    {plugin.settings.iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
+                    {Util.getFileNameAndExtension(file.name).fileName}
+                </div>
                 {pinnedFiles.contains(file) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
                 {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
                     <span className="oz-nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>

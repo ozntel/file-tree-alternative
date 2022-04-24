@@ -22,6 +22,7 @@ export interface FileTreeAlternativePluginSettings {
     folderCountOption: string;
     evernoteView: boolean;
     filePreviewOnHover: boolean;
+    iconBeforeFileName: boolean;
     sortFilesBy: SortType;
     sortFoldersBy: FolderSortType;
     fixedHeaderInFileList: boolean;
@@ -46,6 +47,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     folderCountOption: 'notes',
     evernoteView: true,
     filePreviewOnHover: false,
+    iconBeforeFileName: true,
     sortFilesBy: 'name',
     sortFoldersBy: 'name',
     fixedHeaderInFileList: false,
@@ -243,6 +245,17 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.allSearchOnlyInFocusedFolder).onChange((value) => {
                     this.plugin.settings.allSearchOnlyInFocusedFolder = value;
                     this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Icon Before File Name')
+            .setDesc('Turn on if you want to file icon before the file name in the file list.')
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.iconBeforeFileName).onChange((value) => {
+                    this.plugin.settings.iconBeforeFileName = value;
+                    this.plugin.saveSettings();
+                    this.refreshView();
                 })
             );
 
