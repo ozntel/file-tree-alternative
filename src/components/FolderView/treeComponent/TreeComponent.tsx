@@ -163,9 +163,11 @@ export default function Tree(props: TreeProps) {
                                             ''
                                         )}
                                     </div>
-                                    <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
-                                        <span className="oz-nav-file-tag">{folderCount ? (open ? folderCount.open : folderCount.closed) : 0}</span>
-                                    </div>
+                                    {props.plugin.settings.folderCount && (
+                                        <div className={`oz-folder-count ${props.plugin.settings.showRootFolder ? 'with-root' : 'no-root'}`}>
+                                            <span className="oz-nav-file-tag">{folderCount ? (open ? folderCount.open : folderCount.closed) : 0}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
