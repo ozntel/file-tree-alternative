@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.0.6
+
+-   Folder count bug correction
+-   File name style
+
 ## Version 2.0.5
 
 -   File Icons
