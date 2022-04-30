@@ -15,6 +15,8 @@ interface MainTreeComponentProps {
     plugin: FileTreeAlternativePlugin;
 }
 
+type VaultChange = 'create' | 'delete' | 'rename' | 'modify';
+
 export default function MainTreeComponent(props: MainTreeComponentProps) {
     // --> Main Variables
     const { plugin } = props;
@@ -199,7 +201,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     }
 
     // Function for Event Handlers
-    function handleVaultChanges(file: TAbstractFile, changeType: string, oldPathBeforeRename?: string) {
+    function handleVaultChanges(file: TAbstractFile, changeType: VaultChange, oldPathBeforeRename?: string) {
         if (file instanceof TFile) {
             if (view === 'file') {
                 if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
@@ -241,7 +243,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // Scrolling Functions
     function scrollToFile(fileToScroll: TFile) {
-        const selector = `div.oz-file-tree-files div.nav-file-title[data-path="${fileToScroll.path}"]`;
+        const selector = `div.oz-file-tree-files div.oz-nav-file-title[data-path="${fileToScroll.path}"]`;
         const fileTitleElement = document.querySelector(selector);
         if (fileTitleElement) fileTitleElement.scrollIntoView(false);
     }
