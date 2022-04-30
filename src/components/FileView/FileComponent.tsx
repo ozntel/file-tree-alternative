@@ -267,7 +267,7 @@ export function FileComponent(props: FilesProps) {
                                     <div className="oz-nav-buttons-right-block">
                                         {plugin.settings.revealActiveFileButton && (
                                             <div className="oz-nav-action-button">
-                                                <Icons.IoIosLocate
+                                                <Icons.BiCurrentLocation
                                                     onClick={handleRevealActiveFileButton}
                                                     size={topIconSize}
                                                     aria-label="Reveal Active File"
