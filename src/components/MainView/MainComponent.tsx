@@ -221,7 +221,9 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             }
         }
         // After Each Vault Change Folder Count Map to Be Updated
-        if (plugin.settings.folderCount) setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
+        if (plugin.settings.folderCount && changeType !== 'modify') {
+            setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));
+        }
     }
 
     // ******** REVEAL ACTIVE FILE FUNCTIONS ******** //
