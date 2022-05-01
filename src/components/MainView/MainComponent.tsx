@@ -229,18 +229,41 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             if (currentView === 'file') {
                 if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
                     // If the file is modified but sorting is not last-update to not component update unnecessarily, return
+                    let sortFilesBy = plugin.settings.sortFilesBy;
                     if (changeType === 'modify') {
-                        let sortFilesBy = plugin.settings.sortFilesBy;
                         if (!(sortFilesBy === 'last-update' || sortFilesBy === 'file-size')) {
                             return;
                         }
                     }
                     // If the file renamed or deleted or modified is in the current view, it will be updated
-                    let fileInCurrentView = currentFileList.some((stateFile) => stateFile.path === file.path);
-                    if (fileInCurrentView) setNewFileList(currentActiveFolderPath);
+                    let fileInCurrentView = currentFileList.some((f) => f.path === file.path);
+                    if (fileInCurrentView) {
+                        if (changeType === 'delete') {
+                            setFileList(
+                                currentFileList.filter((f) => {
+                                    return f.path !== file.path;
+                                })
+                            );
+                        } else if (
+                            changeType === 'rename' ||
+                            (changeType === 'modify' && (sortFilesBy === 'last-update' || sortFilesBy === 'file-size'))
+                        ) {
+                            setFileList([
+                                ...currentFileList.filter((f) => {
+                                    return f.path !== file.path;
+                                }),
+                                file,
+                            ]);
+                        }
+                    }
                 } else if (changeType === 'create') {
                     let fileIsCreatedUnderActiveFolder = file.path.match(new RegExp(currentActiveFolderPath + '.*'));
-                    if (fileIsCreatedUnderActiveFolder) setNewFileList(currentActiveFolderPath);
+                    if (fileIsCreatedUnderActiveFolder) {
+                        // If file is not already in the list, add into view
+                        if (!currentFileList.some((f) => f.path === file.path)) {
+                            setFileList([...currentFileList, file]);
+                        }
+                    }
                 }
             }
         }

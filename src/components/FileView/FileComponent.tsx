@@ -211,7 +211,7 @@ export function FileComponent(props: FilesProps) {
         });
 
         sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('File Size (Small to Big)');
+            menuItem.setTitle('File Size (Big to Small)');
             menuItem.onClick((ev: MouseEvent) => {
                 changeSortSettingTo('file-size');
             });
