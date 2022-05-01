@@ -9,13 +9,12 @@ import * as FileTreeUtils from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import useForceUpdate from 'hooks/ForceUpdate';
+import { CustomVaultChangeEvent, VaultChange } from 'utils/types';
 
 interface MainTreeComponentProps {
     fileTreeView: FileTreeView;
     plugin: FileTreeAlternativePlugin;
 }
-
-type VaultChange = 'create' | 'delete' | 'rename' | 'modify';
 
 export default function MainTreeComponent(props: MainTreeComponentProps) {
     // --> Main Variables
@@ -23,12 +22,6 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // --> Force Update Hook
     const forceUpdate = useForceUpdate();
-
-    // --> Register Event Handlers
-    plugin.registerEvent(plugin.app.vault.on('modify', (file) => handleVaultChanges(file, 'modify')));
-    plugin.registerEvent(plugin.app.vault.on('rename', (file, oldPath) => handleVaultChanges(file, 'rename', oldPath)));
-    plugin.registerEvent(plugin.app.vault.on('delete', (file) => handleVaultChanges(file, 'delete')));
-    plugin.registerEvent(plugin.app.vault.on('create', (file) => handleVaultChanges(file, 'create')));
 
     // --> Plugin States
     const [view, setView] = useRecoilState(recoilState.view);
@@ -63,15 +56,21 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // --> Create Custom Event Handlers
     useEffect(() => {
+        window.addEventListener(eventTypes.vaultChange, vaultChangeEvent);
         window.addEventListener(eventTypes.activeFileChange, changeActiveFile);
         window.addEventListener(eventTypes.refreshView, forceUpdate);
         window.addEventListener(eventTypes.revealFile, handleRevealFileEvent);
         return () => {
+            window.removeEventListener(eventTypes.vaultChange, vaultChangeEvent);
             window.removeEventListener(eventTypes.activeFileChange, changeActiveFile);
             window.removeEventListener(eventTypes.refreshView, forceUpdate);
             window.removeEventListener(eventTypes.revealFile, handleRevealFileEvent);
         };
     }, []);
+
+    const vaultChangeEvent = (evt: CustomVaultChangeEvent) => {
+        handleVaultChanges(evt.detail.file, evt.detail.changeType, evt.detail.oldPath);
+    };
 
     const changeActiveFile = (evt: Event) => {
         // @ts-ignore
@@ -202,24 +201,59 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
     // Function for Event Handlers
     function handleVaultChanges(file: TAbstractFile, changeType: VaultChange, oldPathBeforeRename?: string) {
+        // Get Current States from Setters
+        let currentFocusedFolder: TFolder = null;
+        let currentActiveFolderPath: string = '';
+        let currentView: string = '';
+        let currentFileList: TFile[] = [];
+
+        setFocusedFolder((focusedFolder) => {
+            currentFocusedFolder = focusedFolder;
+            return focusedFolder;
+        });
+        setActiveFolderPath((activeFolderPath) => {
+            currentActiveFolderPath = activeFolderPath;
+            return activeFolderPath;
+        });
+        setView((view) => {
+            currentView = view;
+            return view;
+        });
+        setFileList((fileList) => {
+            currentFileList = fileList;
+            return fileList;
+        });
+
+        // File Event Handlers
         if (file instanceof TFile) {
-            if (view === 'file') {
+            if (currentView === 'file') {
                 if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
                     // If the file is modified but sorting is not last-update to not component update unnecessarily, return
-                    if (changeType === 'modify' && !['last-update', 'file-size'].contains(plugin.settings.sortFilesBy)) return;
+                    if (changeType === 'modify') {
+                        let sortFilesBy = plugin.settings.sortFilesBy;
+                        if (!(sortFilesBy === 'last-update' || sortFilesBy === 'file-size')) {
+                            return;
+                        }
+                    }
                     // If the file renamed or deleted or modified is in the current view, it will be updated
-                    if (fileList.some((stateFile) => stateFile.path === file.path)) setNewFileList();
+                    let fileInCurrentView = currentFileList.some((stateFile) => stateFile.path === file.path);
+                    if (fileInCurrentView) setNewFileList(currentActiveFolderPath);
                 } else if (changeType === 'create') {
-                    if (file.path.match(new RegExp(activeFolderPath + '.*'))) setNewFileList();
+                    let fileIsCreatedUnderActiveFolder = file.path.match(new RegExp(currentActiveFolderPath + '.*'));
+                    if (fileIsCreatedUnderActiveFolder) setNewFileList(currentActiveFolderPath);
                 }
             }
-        } else if (file instanceof TFolder) {
-            setFolderTree(FileTreeUtils.createFolderTree(focusedFolder));
+        }
+
+        // Folder Event Handlers
+        else if (file instanceof TFolder) {
+            setFolderTree(FileTreeUtils.createFolderTree(currentFocusedFolder));
             // if active folder is renamed, activefolderpath needs to be refreshed
-            if (changeType === 'rename' && oldPathBeforeRename && activeFolderPath === oldPathBeforeRename) {
+            if (changeType === 'rename' && oldPathBeforeRename && currentActiveFolderPath === oldPathBeforeRename) {
                 setActiveFolderPath(file.path);
             }
         }
+
         // After Each Vault Change Folder Count Map to Be Updated
         if (plugin.settings.folderCount && changeType !== 'modify') {
             setFolderFileCountMap(FileTreeUtils.getFolderNoteCountMap(plugin));

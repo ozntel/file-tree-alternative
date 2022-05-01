@@ -1,4 +1,4 @@
-import { TFolder } from 'obsidian';
+import { TFolder, TFile } from 'obsidian';
 
 export interface FolderFileCountMap {
     [key: string]: {
@@ -16,4 +16,14 @@ export interface FolderTree {
 export interface ObsidianVaultConfig {
     newLinkFormat: 'shortest' | 'relative' | 'absolute';
     useMarkdownLinks: boolean;
+}
+
+export type VaultChange = 'create' | 'delete' | 'rename' | 'modify';
+
+export class CustomVaultChangeEvent extends Event {
+    detail: {
+        file: TFile;
+        changeType: VaultChange;
+        oldPath: string;
+    };
 }

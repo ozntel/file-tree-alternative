@@ -1,12 +1,14 @@
-import { Plugin, addIcon } from 'obsidian';
+import { Plugin, addIcon, TAbstractFile } from 'obsidian';
 import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
 import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon } from './utils/icons';
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
+import { VaultChange } from 'utils/types';
 
 export const eventTypes = {
-    activeFileChange: 'file-tree-alternative-active-file-change',
-    refreshView: 'file-tree-alternative-refresh-view',
-    revealFile: 'file-tree-alternative-reveal-file',
+    activeFileChange: 'fta-active-file-change',
+    refreshView: 'fta-refresh-view',
+    revealFile: 'fta-reveal-file',
+    vaultChange: 'fta-vault-change',
 };
 
 export default class FileTreeAlternativePlugin extends Plugin {
@@ -64,6 +66,22 @@ export default class FileTreeAlternativePlugin extends Plugin {
                 window.dispatchEvent(event);
             },
         });
+
+        // Add event listener for vault changes
+        const triggerVaultChangeEvent = (file: TAbstractFile, changeType: VaultChange, oldPath?: string) => {
+            let event = new CustomEvent(eventTypes.vaultChange, {
+                detail: {
+                    file: file,
+                    changeType: changeType,
+                    oldPath: oldPath ? oldPath : '',
+                },
+            });
+            window.dispatchEvent(event);
+        };
+        this.app.vault.on('create', (file) => triggerVaultChangeEvent(file, 'create', ''));
+        this.app.vault.on('delete', (file) => triggerVaultChangeEvent(file, 'delete', ''));
+        this.app.vault.on('modify', (file) => triggerVaultChangeEvent(file, 'modify', ''));
+        this.app.vault.on('rename', (file, oldPath) => triggerVaultChangeEvent(file, 'rename', oldPath));
 
         // Ribbon Icon For Opening
         this.refreshIconRibbon();
