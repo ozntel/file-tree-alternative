@@ -56,7 +56,6 @@
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.05em;
-    line-height: 14px;
     margin-left: 4px;
     padding: 0 4px;
     text-transform: uppercase;
@@ -184,9 +183,9 @@ div.oz-folder-name.is-root-folder {
     padding-top: 2px;
 }
 
-.oz-folder-count.no-root,
-.oz-folder-count.with-root {
+.oz-folder-count {
     margin-left: auto;
+    padding-bottom: 2px;
 }
 
 .oz-folders-tree-wrapper {
@@ -198,7 +197,7 @@ div.oz-folder-name.is-root-folder {
 }
 
 .oz-folder-element {
-    line-height: 1.5em;
+    line-height: 1.15em;
     padding: 0px 0px 0px 0px;
 }
 
