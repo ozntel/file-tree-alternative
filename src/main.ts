@@ -68,20 +68,10 @@ export default class FileTreeAlternativePlugin extends Plugin {
         });
 
         // Add event listener for vault changes
-        const triggerVaultChangeEvent = (file: TAbstractFile, changeType: VaultChange, oldPath?: string) => {
-            let event = new CustomEvent(eventTypes.vaultChange, {
-                detail: {
-                    file: file,
-                    changeType: changeType,
-                    oldPath: oldPath ? oldPath : '',
-                },
-            });
-            window.dispatchEvent(event);
-        };
-        this.app.vault.on('create', (file) => triggerVaultChangeEvent(file, 'create', ''));
-        this.app.vault.on('delete', (file) => triggerVaultChangeEvent(file, 'delete', ''));
-        this.app.vault.on('modify', (file) => triggerVaultChangeEvent(file, 'modify', ''));
-        this.app.vault.on('rename', (file, oldPath) => triggerVaultChangeEvent(file, 'rename', oldPath));
+        this.app.vault.on('create', this.onCreate);
+        this.app.vault.on('delete', this.onDelete);
+        this.app.vault.on('modify', this.onModify);
+        this.app.vault.on('rename', this.onRename);
 
         // Ribbon Icon For Opening
         this.refreshIconRibbon();
@@ -90,6 +80,11 @@ export default class FileTreeAlternativePlugin extends Plugin {
     onunload() {
         console.log('Unloading Alternative File Tree Plugin');
         this.detachFileTreeLeafs();
+        // Remove event listeners
+        this.app.vault.off('create', this.onCreate);
+        this.app.vault.off('delete', this.onDelete);
+        this.app.vault.off('modify', this.onModify);
+        this.app.vault.off('rename', this.onRename);
     }
 
     async loadSettings() {
@@ -99,6 +94,22 @@ export default class FileTreeAlternativePlugin extends Plugin {
     async saveSettings() {
         await this.saveData(this.settings);
     }
+
+    triggerVaultChangeEvent = (file: TAbstractFile, changeType: VaultChange, oldPath?: string) => {
+        let event = new CustomEvent(eventTypes.vaultChange, {
+            detail: {
+                file: file,
+                changeType: changeType,
+                oldPath: oldPath ? oldPath : '',
+            },
+        });
+        window.dispatchEvent(event);
+    };
+
+    onCreate = (file: TAbstractFile) => this.triggerVaultChangeEvent(file, 'create', '');
+    onDelete = (file: TAbstractFile) => this.triggerVaultChangeEvent(file, 'delete', '');
+    onModify = (file: TAbstractFile) => this.triggerVaultChangeEvent(file, 'modify', '');
+    onRename = (file: TAbstractFile, oldPath: string) => this.triggerVaultChangeEvent(file, 'rename', oldPath);
 
     refreshIconRibbon = () => {
         this.ribbonIconEl?.remove();
