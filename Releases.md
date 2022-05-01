@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.0.7
+
+-   Vault Change Handlers performance optimization
+-   State Handler optimization without additional checks within the vault
+-   Small style and line corrections
+
 ## Version 2.0.6
 
 -   Folder count bug correction
