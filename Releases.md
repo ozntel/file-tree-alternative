@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.0.8
+
+-   Remove event listeners after unload
+
 ## Version 2.0.7
 
 -   Vault Change Handlers performance optimization
