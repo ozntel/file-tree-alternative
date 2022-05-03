@@ -252,7 +252,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                                 ...currentFileList.filter((f) => {
                                     return f.path !== file.path;
                                 }),
-                                file,
+                                ...(file.parent.path === currentActiveFolderPath ? [file] : []),
                             ]);
                         }
                     }
