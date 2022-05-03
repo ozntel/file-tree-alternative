@@ -105,7 +105,6 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     flex-direction: row;
     justify-content: space-between;
     height: 26px;
-    margin-top: 2px;
 }
 
 .is-mobile .oz-flex-container {
