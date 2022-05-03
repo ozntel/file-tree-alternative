@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.1.0
+
+-   Mobile style optimization
+
 ## Version 2.0.9
 
 -   Active File & Folder Corrections
