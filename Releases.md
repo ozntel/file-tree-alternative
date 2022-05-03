@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.0.9
+
+-   Active File & Folder Corrections
+-   Style Changes
+
 ## Version 2.0.8
 
 -   Remove event listeners after unload
