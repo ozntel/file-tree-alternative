@@ -1,6 +1,12 @@
+:root {
+    --oz-fta-folder-font-size: 13px;
+    --oz-fta-file-font-size: 12px;
+}
+
 .oz-file-tree-header {
     height: 22px;
     color: var(--text-normal);
+    margin-top: 3px;
     font-size: 15px;
     font-weight: bold;
     text-align: center;
@@ -12,13 +18,27 @@
 .oz-nav-action-button {
     color: var(--text-normal);
     display: inline-block;
-    padding: 3px 0px 0 3px !important;
+    padding: 0px 0px 0px 2px;
+    margin-left: 5px;
+    opacity: 0.5;
+}
+
+.oz-nav-action-button:hover {
+    color: var(--interactive-accent-hover);
+}
+
+.oz-nav-action-button svg {
+    vertical-align: middle !important;
 }
 
 .oz-input-container {
     margin-bottom: 3px !important;
     margin-top: 3px !important;
     height: 30px;
+}
+
+.oz-input-container input {
+    width: 100%;
 }
 
 .oz-nav-buttons-right-block {
@@ -33,7 +53,7 @@
     cursor: pointer;
     line-height: 22px;
     border-radius: 3px;
-    font-size: 12px;
+    font-size: var(--oz-fta-file-font-size);
     padding: 1px 2px 0px 2px;
     min-width: 100%;
     border: 1px solid transparent;
@@ -49,6 +69,14 @@
     display: inline-block;
 }
 
+div.oz-nav-file.is-active,
+div.oz-nav-file.is-active div.oz-nav-file-title,
+div.oz-nav-file.is-active div.oz-nav-file-title-content {
+    background-color: var(--background-secondary-alt);
+    color: var(--text-normal);
+    font-weight: bold;
+}
+
 .oz-nav-file-tag {
     color: var(--text-muted);
     background-color: var(--background-secondary-alt);
@@ -56,12 +84,12 @@
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.05em;
-    margin-left: 4px;
-    padding: 0 4px;
+    margin: 0px 2px 0px 4px;
     text-transform: uppercase;
     align-self: center;
     padding: 0px 4px 0px 4px;
-    margin-right: 2px;
+    vertical-align: middle !important;
+    line-height: 13px;
 }
 
 div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
@@ -91,7 +119,8 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 .drag-entered,
 .oz-folder-element:hover,
 .oz-nav-file:hover {
-    background-color: var(--text-selection);
+    background-color: var(--background-secondary-alt);
+    color: var(--text-normal);
 }
 
 .oz-nav-file {
@@ -101,12 +130,6 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 
 .oz-folders-action-items {
     text-align: center;
-}
-
-.oz-nav-action-button {
-    margin-left: 5px;
-    color: var(--text-muted);
-    opacity: 0.5;
 }
 
 .oz-folder-contents {
@@ -146,24 +169,24 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 .oz-folder-name {
     vertical-align: middle;
     display: inline-block;
-    color: var(--text-normal);
-    font-size: 13px;
+    color: var(--text-muted);
+    font-size: var(--oz-fta-folder-font-size);
 }
 
 div.oz-folder-name.is-root-folder {
-    font-size: 16px;
+    font-size: calc(var(--oz-fta-folder-font-size) + 2.5px);
 }
 
 .is-mobile .oz-folder-name.is-root-folder {
-    font-size: 18px;
+    font-size: calc(var(--oz-fta-folder-font-size) + 5px);
 }
 
 .is-mobile .oz-folder-name {
-    font-size: 15.5px;
+    font-size: calc(var(--oz-fta-folder-font-size) + 2.5px);
 }
 
 .is-mobile div.oz-nav-file-title .nav-file-title-content {
-    font-size: 15px;
+    font-size: calc(var(--oz-fta-file-font-size) + 3px);
 }
 
 .oz-icon-div {
@@ -185,7 +208,12 @@ div.oz-folder-name.is-root-folder {
 
 .oz-folder-count {
     margin-left: auto;
-    padding-bottom: 2px;
+    height: 1.4em;
+}
+
+.oz-folder-element {
+    line-height: 1.4em;
+    padding: 0px 0px 0px 0px;
 }
 
 .oz-folders-tree-wrapper {
@@ -196,22 +224,9 @@ div.oz-folder-name.is-root-folder {
     height: 100%;
 }
 
-.oz-folder-element {
-    line-height: 1.15em;
-    padding: 0px 0px 0px 0px;
-}
-
 .oz-input-container > input {
     padding-left: 8px;
     padding-right: 4px;
-}
-
-.oz-nav-action-button:hover {
-    color: var(--interactive-accent);
-}
-
-.oz-nav-action-button .fa-lg {
-    font-size: 1.15em;
 }
 
 .file-tree-container {
@@ -262,7 +277,7 @@ div#file-tree-divider.active-divider {
 }
 
 .is-folder-active {
-    color: var(--text-accent);
+    color: var(--text-normal);
     font-weight: bold;
 }
 
@@ -281,13 +296,8 @@ div#file-tree-divider.active-divider {
 }
 
 .file-tree-files-fixed-with-search {
-    /* padding-top: 80px !important; */
     display: flex;
     flex-direction: column;
-}
-
-.is-mobile .file-tree-files-fixed-with-search {
-    padding-top: 85px !important;
 }
 
 svg.oz-folder-toggle path {

@@ -310,7 +310,7 @@ export function FileComponent(props: FilesProps) {
                                 </div>
 
                                 {searchBoxVisible && (
-                                    <div className="search-input-container oz-input-container">
+                                    <div className="oz-input-container">
                                         <input
                                             type="search"
                                             placeholder="Search..."
@@ -485,7 +485,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     return (
         <div
-            className="oz-nav-file"
+            className={'oz-nav-file' + (activeFile === file ? ' is-active' : '')}
             key={file.path}
             draggable
             onDragStart={(e) => dragStarted(e, file)}
@@ -493,7 +493,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             onAuxClick={onAuxClick}
             onContextMenu={(e) => triggerContextMenu(file, e)}
             onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
-            <div className={'oz-nav-file-title' + (activeFile === file ? ' is-active' : '')} data-path={file.path}>
+            <div className="oz-nav-file-title" data-path={file.path}>
                 <div className="oz-nav-file-title-content">
                     {plugin.settings.iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
                     {Util.getFileNameAndExtension(file.name).fileName}
