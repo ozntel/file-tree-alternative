@@ -51,7 +51,7 @@
     white-space: nowrap;
     min-width: 100%;
     cursor: pointer;
-    line-height: 22px;
+    line-height: 19px;
     border-radius: 3px;
     font-size: var(--oz-fta-file-font-size);
     padding: 1px 2px 0px 2px;
