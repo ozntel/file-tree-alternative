@@ -60,6 +60,10 @@
     color: var(--text-muted);
 }
 
+.is-mobile .oz-nav-file-title {
+    line-height: 21px;
+}
+
 .oz-nav-file-title .oz-nav-file-title-content {
     width: 100%;
     white-space: nowrap;
@@ -101,6 +105,7 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     flex-direction: row;
     justify-content: space-between;
     height: 26px;
+    margin-top: 2px;
 }
 
 .is-mobile .oz-flex-container {
@@ -178,11 +183,11 @@ div.oz-folder-name.is-root-folder {
 }
 
 .is-mobile .oz-folder-name.is-root-folder {
-    font-size: calc(var(--oz-fta-folder-font-size) + 5px);
+    font-size: calc(var(--oz-fta-folder-font-size) + 2.5px);
 }
 
 .is-mobile .oz-folder-name {
-    font-size: calc(var(--oz-fta-folder-font-size) + 2.5px);
+    font-size: var(--oz-fta-folder-font-size);
 }
 
 .is-mobile div.oz-nav-file-title .nav-file-title-content {
@@ -227,6 +232,14 @@ div.oz-folder-name.is-root-folder {
 .oz-input-container > input {
     padding-left: 8px;
     padding-right: 4px;
+}
+
+.is-mobile .oz-input-container > input {
+    height: 33px;
+}
+
+.is-mobile .oz-nav-action-button svg {
+    transform: scale(1.2);
 }
 
 .file-tree-container {
