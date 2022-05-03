@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.1.1
+
+-   #86 Correction - Moved folder doesn't disappear from the view
+
 ## Version 2.1.0
 
 -   Mobile style optimization
