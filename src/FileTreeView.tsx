@@ -13,6 +13,9 @@ export class FileTreeView extends ItemView {
     plugin: FileTreeAlternativePlugin;
     currentFolderPath: string;
 
+    // @ Temp Fix for Opening New File
+    navigation = false;
+
     constructor(leaf: WorkspaceLeaf, plugin: FileTreeAlternativePlugin) {
         super(leaf);
         this.plugin = plugin;
