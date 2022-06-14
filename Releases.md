@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.1.2
+
+-   Fix for opening a file from the file tree
+
 ## Version 2.1.1
 
 -   #86 Correction - Moved folder doesn't disappear from the view
