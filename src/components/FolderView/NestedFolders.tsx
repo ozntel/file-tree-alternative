@@ -103,6 +103,15 @@ export function NestedFolders(props: NestedFoldersProps) {
                 });
         });
 
+        folderMenu.addItem((menuItem) => {
+            menuItem
+                .setTitle('New File')
+                .setIcon('document')
+                .onClick((ev: MouseEvent) => {
+                    Util.createNewFile(ev as unknown as React.MouseEvent<Element, MouseEvent>, folder.path, plugin);
+                });
+        });
+
         // Move Item
         if (!Util.internalPluginLoaded('file-explorer', app)) {
             folderMenu.addItem((menuItem) => {

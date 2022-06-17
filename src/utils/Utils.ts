@@ -153,10 +153,7 @@ export const createNewMarkdownFile = async (plugin: FileTreeAlternativePlugin, f
     // @ts-ignore
     const newFile = await plugin.app.fileManager.createNewMarkdownFile(folder, newFileName);
     if (content && content !== '') await plugin.app.vault.modify(newFile, content);
-    plugin.app.workspace.activeLeaf.setViewState({
-        type: 'markdown',
-        state: { file: newFile.path },
-    });
+    openFile({ file: newFile, app: plugin.app, newLeaf: false });
     let evt = new CustomEvent(eventTypes.activeFileChange, { detail: { filePath: newFile.path } });
     window.dispatchEvent(evt);
 };
