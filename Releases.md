@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.1.3
+
+-   New file button will not open the new file in the file tree leaf
+-   New file button for folder context menu
+
 ## Version 2.1.2
 
 -   Fix for opening a file from the file tree
