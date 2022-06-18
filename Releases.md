@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.1.4
+
+-   Adoption of reveal active file to Obsidian 0.15.0
+
 ## Version 2.1.3
 
 -   New file button will not open the new file in the file tree leaf
