@@ -62,7 +62,12 @@ export default class FileTreeAlternativePlugin extends Plugin {
                     this.app.workspace.revealLeaf(leaf);
                 }
                 // Run custom event
-                let event = new CustomEvent(eventTypes.revealFile, { detail: { file: this.app.workspace.getActiveFile() } });
+                let event = new CustomEvent(eventTypes.revealFile, {
+                    detail: {
+                        // @ts-ignore
+                        file: this.app.workspace.getMostRecentlyActiveFile(),
+                    },
+                });
                 window.dispatchEvent(event);
             },
         });
