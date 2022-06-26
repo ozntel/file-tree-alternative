@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.1.5
+
+-   Long press event for context menu on Mobile App
+
 ## Version 2.1.4
 
 -   Adoption of reveal active file to Obsidian 0.15.0
