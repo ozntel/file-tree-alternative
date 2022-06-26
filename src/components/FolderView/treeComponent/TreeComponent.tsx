@@ -5,6 +5,7 @@ import Dropzone from 'react-dropzone';
 import { getFolderIcon, IoMdArrowDropright } from 'utils/icons';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
+import useLongPress from 'hooks/useLongPress';
 
 type TreeProps = {
     open?: boolean;
@@ -24,6 +25,10 @@ export default function Tree(props: TreeProps) {
     const [openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
     const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
     const [activeFolderPath] = useRecoilState(recoilState.activeFolderPath);
+
+    const longPressEvents = useLongPress((e: React.MouseEvent | React.TouchEvent) => {
+        props.onContextMenu(e);
+    }, 500);
 
     // Local States
     const [open, setOpen] = useState<boolean>(props.open);
@@ -148,7 +153,11 @@ export default function Tree(props: TreeProps) {
                                     <Icon className="oz-folder-toggle" style={{ opacity: props.children ? 1 : 0.3 }} onClick={toggle} />
                                 </div>
 
-                                <div className="oz-folder-block" onClick={folderNameClickEvent} onContextMenu={folderContextMenuEvent}>
+                                <div
+                                    className="oz-folder-block"
+                                    onClick={folderNameClickEvent}
+                                    onContextMenu={folderContextMenuEvent}
+                                    {...longPressEvents}>
                                     <div className="oz-folder-type" style={{ marginRight: props.type ? 10 : 0 }}>
                                         {props.type}
                                     </div>

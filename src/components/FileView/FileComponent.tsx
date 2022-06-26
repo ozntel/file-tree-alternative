@@ -10,18 +10,10 @@ import { useRecoilState } from 'recoil';
 import { SortType } from 'settings';
 import { ObsidianVaultConfig } from 'utils/types';
 import useForceUpdate from 'hooks/ForceUpdate';
-import useLongPress from 'hooks/useLongPress';
+import useLongPress, { isMouseEvent } from 'hooks/useLongPress';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
-}
-
-function isTouchEvent(e: React.TouchEvent | React.MouseEvent): e is React.TouchEvent {
-    return e && 'touches' in e;
-}
-
-function isMouseEvent(e: React.TouchEvent | React.MouseEvent): e is React.MouseEvent {
-    return e && 'screenX' in e;
 }
 
 export function FileComponent(props: FilesProps) {

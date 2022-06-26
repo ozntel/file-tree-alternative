@@ -44,7 +44,7 @@ export function NestedFolders(props: NestedFoldersProps) {
         return newTree;
     };
 
-    const handleFolderContextMenu = (params: { event: MouseEvent; folder: TFolder }) => {
+    const handleFolderContextMenu = (params: { event: MouseEvent | TouchEvent; folder: TFolder }) => {
         let { event, folder } = params;
 
         // Event Undefined Correction
@@ -180,7 +180,11 @@ export function NestedFolders(props: NestedFoldersProps) {
 
         // Trigger
         app.workspace.trigger('file-menu', folderMenu, folder, 'file-explorer');
-        folderMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        if (e instanceof MouseEvent) {
+            folderMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        } else {
+            folderMenu.showAtPosition({ x: 0, y: 0 });
+        }
         return false;
     };
 
@@ -203,7 +207,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                                     content={child.folder.name}
                                     open={openFolders.contains(child.folder.path)}
                                     onClick={() => handleFolderNameClick(child.folder.path)}
-                                    onContextMenu={(e: MouseEvent) =>
+                                    onContextMenu={(e: MouseEvent | TouchEvent) =>
                                         handleFolderContextMenu({
                                             event: e,
                                             folder: child.folder,
