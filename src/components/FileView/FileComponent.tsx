@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { TFile, Menu } from 'obsidian';
+import { TFile, Menu, Platform } from 'obsidian';
 import * as Icons from 'utils/icons';
 import { VaultChangeModal, MoveSuggestionModal } from 'modals';
 import FileTreeAlternativePlugin, { eventTypes } from 'main';
@@ -10,9 +10,18 @@ import { useRecoilState } from 'recoil';
 import { SortType } from 'settings';
 import { ObsidianVaultConfig } from 'utils/types';
 import useForceUpdate from 'hooks/ForceUpdate';
+import useLongPress from 'hooks/useLongPress';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
+}
+
+function isTouchEvent(e: React.TouchEvent | React.MouseEvent): e is React.TouchEvent {
+    return e && 'touches' in e;
+}
+
+function isMouseEvent(e: React.TouchEvent | React.MouseEvent): e is React.MouseEvent {
+    return e && 'screenX' in e;
 }
 
 export function FileComponent(props: FilesProps) {
@@ -366,6 +375,10 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
 
+    const longPressEvents = useLongPress((e: React.MouseEvent | React.TouchEvent) => {
+        triggerContextMenu(file, e);
+    }, 500);
+
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
     const openFile = (file: TFile, e: React.MouseEvent) => {
         Util.openFile({ file: file, app: plugin.app, newLeaf: e.ctrlKey || e.metaKey });
@@ -373,7 +386,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     };
 
     // Handle Right Click Event on File - Custom Menu
-    const triggerContextMenu = (file: TFile, e: React.MouseEvent) => {
+    const triggerContextMenu = (file: TFile, e: React.MouseEvent | React.TouchEvent) => {
         const fileMenu = new Menu(plugin.app);
 
         // Pin - Unpin Item
@@ -449,7 +462,12 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
         // Trigger
         plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
-        fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        if (isMouseEvent(e)) {
+            fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        } else {
+            // @ts-ignore
+            fileMenu.showAtPosition({ x: e.nativeEvent.locationX, y: e.nativeEvent.locationY });
+        }
         return false;
     };
 
@@ -497,7 +515,8 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             onClick={(e) => openFile(file, e)}
             onAuxClick={onAuxClick}
             onContextMenu={(e) => triggerContextMenu(file, e)}
-            onMouseEnter={(e) => mouseEnteredOnFile(e, file)}>
+            onMouseEnter={(e) => mouseEnteredOnFile(e, file)}
+            {...longPressEvents}>
             <div className="oz-nav-file-title" data-path={file.path}>
                 <div className="oz-nav-file-title-content">
                     {plugin.settings.iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
