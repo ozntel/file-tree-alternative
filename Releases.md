@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.1.6
+
+-   Reveal Active File reverted back to the original function
+-   Long Press Event is triggered only by the touch event
+
 ## Version 2.1.5
 
 -   Long press event for context menu on Mobile App
