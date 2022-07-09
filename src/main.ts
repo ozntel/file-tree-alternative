@@ -64,8 +64,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
                 // Run custom event
                 let event = new CustomEvent(eventTypes.revealFile, {
                     detail: {
-                        // @ts-ignore
-                        file: this.app.workspace.getMostRecentlyActiveFile(),
+                        file: this.app.workspace.getActiveFile(),
                     },
                 });
                 window.dispatchEvent(event);

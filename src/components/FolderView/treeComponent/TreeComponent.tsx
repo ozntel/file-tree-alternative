@@ -26,7 +26,7 @@ export default function Tree(props: TreeProps) {
     const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
     const [activeFolderPath] = useRecoilState(recoilState.activeFolderPath);
 
-    const longPressEvents = useLongPress((e: React.MouseEvent | React.TouchEvent) => {
+    const longPressEvents = useLongPress((e: React.TouchEvent) => {
         props.onContextMenu(e);
     }, 500);
 

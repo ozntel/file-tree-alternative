@@ -186,8 +186,7 @@ export function FileComponent(props: FilesProps) {
     const handleRevealActiveFileButton = () => {
         let event = new CustomEvent(eventTypes.revealFile, {
             detail: {
-                // @ts-ignore
-                file: plugin.app.workspace.getMostRecentlyActiveFile(),
+                file: plugin.app.workspace.getActiveFile(),
             },
         });
         window.dispatchEvent(event);
@@ -367,7 +366,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
 
-    const longPressEvents = useLongPress((e: React.MouseEvent | React.TouchEvent) => {
+    const longPressEvents = useLongPress((e: React.TouchEvent) => {
         triggerContextMenu(file, e);
     }, 500);
 

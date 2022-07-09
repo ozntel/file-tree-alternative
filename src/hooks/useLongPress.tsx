@@ -8,9 +8,9 @@ export function isMouseEvent(e: React.TouchEvent | React.MouseEvent): e is React
     return e && 'screenX' in e;
 }
 
-export default function useLongPress(callback = (e: React.MouseEvent | React.TouchEvent) => {}, ms = 300) {
+export default function useLongPress(callback = (e: React.TouchEvent) => {}, ms = 300) {
     const [startLongPress, setStartLongPress] = useState<boolean>(false);
-    const [longPressEvent, setLongPressEvent] = useState<React.MouseEvent | React.TouchEvent>(null);
+    const [longPressEvent, setLongPressEvent] = useState<React.TouchEvent>(null);
 
     useEffect(() => {
         let timerId: any;
@@ -27,20 +27,17 @@ export default function useLongPress(callback = (e: React.MouseEvent | React.Tou
         };
     }, [callback, ms, startLongPress]);
 
-    const start = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const start = useCallback((e: React.TouchEvent) => {
         setStartLongPress(true);
         setLongPressEvent(e);
     }, []);
 
-    const stop = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    const stop = useCallback((e: React.TouchEvent) => {
         setStartLongPress(false);
         setLongPressEvent(null);
     }, []);
 
     return {
-        onMouseDown: start,
-        onMouseUp: stop,
-        onMouseLeave: stop,
         onTouchStart: start,
         onTouchEnd: stop,
     };
