@@ -13,7 +13,7 @@ You can find all release details under the [Release Updates](https://github.com/
     <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 300px;" /> 
 </a>
 
-You can also checkout the Youtube video created by Antone Heyward explaining the functionalities of the plugin:
+You can also checkout the YouTube video created by Antone Heyward explaining the functionalities of the plugin:
 <a href="https://youtu.be/KBzE_BT0rtQ" target="_blank">Enhance The File Explorer File Tree Alternative Plugin</a>
 
 ## Plugin Features
@@ -25,7 +25,7 @@ You can also checkout the Youtube video created by Antone Heyward explaining the
 
 ### Folder Pane
 
--   You can see the `number of notes` under each folder within the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
+-   You can see the `number of notes` each folder under the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/number-of-notes.png" width="180"></img>
 
