@@ -68,11 +68,7 @@ export default function Tree(props: TreeProps) {
         if (props.plugin.settings.folderNote && ev.shiftKey) {
             const fileFullPath = `${props.folder.path}/${props.folder.name}.md`;
             const folderNoteFile = props.plugin.app.vault.getAbstractFileByPath(fileFullPath);
-            if (folderNoteFile) {
-                props.plugin.app.workspace.openLinkText(fileFullPath, '/', false);
-            } else {
-                new Notice('There is no note for this folder created');
-            }
+            props.plugin.app.workspace.openLinkText(fileFullPath, '/', false);
         } else {
             props.onClick();
         }

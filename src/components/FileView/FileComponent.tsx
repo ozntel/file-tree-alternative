@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { TFile, Menu, Platform } from 'obsidian';
+import { TFile, Menu } from 'obsidian';
 import * as Icons from 'utils/icons';
 import { VaultChangeModal, MoveSuggestionModal } from 'modals';
 import FileTreeAlternativePlugin, { eventTypes } from 'main';
