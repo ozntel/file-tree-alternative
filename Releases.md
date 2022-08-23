@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.1.7
+
+-   #100 Folder Note Auto Creation
+-   #105 Location Check during Long Press for Mobile
+
 ## Version 2.1.6
 
 -   Reveal Active File reverted back to the original function
