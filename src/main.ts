@@ -41,12 +41,16 @@ export default class FileTreeAlternativePlugin extends Plugin {
         });
 
         // Event Listeners
-        this.app.workspace.onLayoutReady(async () => await this.openFileTreeLeaf(true));
+        this.app.workspace.onLayoutReady(async () => {
+            if (this.settings.openViewOnStart) {
+                await this.openFileTreeLeaf(true);
+            }
+        });
 
         // Add Command to Open File Tree Leaf
         this.addCommand({
-            id: 'open-file-tree-leaf',
-            name: 'Open File Tree Leaf',
+            id: 'open-file-tree-view',
+            name: 'Open File Tree View',
             callback: async () => await this.openFileTreeLeaf(true),
         });
 

@@ -8,6 +8,7 @@ export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 
 export interface FileTreeAlternativePluginSettings {
+    openViewOnStart: boolean;
     ribbonIcon: boolean;
     showRootFolder: boolean;
     showFilesFromSubFolders: boolean;
@@ -33,6 +34,7 @@ export interface FileTreeAlternativePluginSettings {
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
+    openViewOnStart: true,
     ribbonIcon: true,
     showRootFolder: true,
     showFilesFromSubFolders: true,
@@ -111,6 +113,16 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.plugin.settings.ribbonIcon = value;
                     this.plugin.saveSettings();
                     this.plugin.refreshIconRibbon();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Open on Start')
+            .setDesc("Turn off if you don't want file tree view to be opened automatically during vault start")
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.openViewOnStart).onChange((value) => {
+                    this.plugin.settings.openViewOnStart = value;
+                    this.plugin.saveSettings();
                 })
             );
 
@@ -215,7 +227,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Reveal Active File in File Tree Button')
             .setDesc(
-                `Turn on this option if you want to have an additional button to reveal the active file in the file tree. It will set the folder and file pane accordingly."`
+                `Turn on this option if you want to have an additional button to reveal the active file in the file tree. It will set the folder and file pane accordingly.`
             )
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.revealActiveFileButton).onChange((value) => {
