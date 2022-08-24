@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.1.8
+
+-   #101 Folder delete option respects the plugin settings
+
 ## Version 2.1.7
 
 -   #100 Folder Note Auto Creation
