@@ -90,6 +90,16 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         });
         coffeeImg.height = 40;
 
+        const tipDiv = containerEl.createDiv('tip');
+        tipDiv.addClass('oz-coffee-div');
+        const tipLink = tipDiv.createEl('a', { href: 'https://revolut.me/ozante' });
+        const tipImg = tipLink.createEl('img', {
+            attr: {
+                src: 'https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/tip%20the%20artist.png',
+            },
+        });
+        tipImg.height = 40;
+
         /* ------------- General Settings ------------- */
 
         containerEl.createEl('h2', { text: 'General' });
