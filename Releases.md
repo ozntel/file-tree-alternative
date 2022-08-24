@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.1.9
+
+-   Option to open file tree view on vault start
+
 ## Version 2.1.8
 
 -   #101 Folder delete option respects the plugin settings
