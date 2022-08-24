@@ -20,10 +20,11 @@ export function NestedFolders(props: NestedFoldersProps) {
 
     // Global States
     const [openFolders] = useRecoilState(recoilState.openFolders);
-    const [_activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
+    const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
     const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
+    const [_view, setView] = useRecoilState(recoilState.view);
 
     const handleFolderNameClick = (folderPath: string) => setActiveFolderPath(folderPath);
 
@@ -89,7 +90,18 @@ export function NestedFolders(props: NestedFoldersProps) {
                 .setTitle('Delete')
                 .setIcon('trash')
                 .onClick((ev: MouseEvent) => {
-                    plugin.app.vault.delete(folder, true);
+                    let deleteOption = plugin.settings.deleteFileOption;
+                    if (deleteOption === 'permanent') {
+                        plugin.app.vault.delete(folder, true);
+                    } else if (deleteOption === 'system-trash') {
+                        plugin.app.vault.trash(folder, true);
+                    } else if (deleteOption === 'trash') {
+                        plugin.app.vault.trash(folder, false);
+                    }
+                    if (activeFolderPath === folder.path) {
+                        setActiveFolderPath('');
+                        setView('folder');
+                    }
                 });
         });
 
