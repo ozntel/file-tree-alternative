@@ -118,18 +118,35 @@ export function MainFolder(props: FolderProps) {
         return false;
     };
 
+    let folderActionItemSize = 22;
+
     return (
         <div className="oz-folders-tree-wrapper">
             <div className="oz-folders-action-items file-tree-header-fixed">
                 <Icons.MdOutlineCreateNewFolder
                     className="oz-nav-action-button"
-                    size={24}
+                    size={folderActionItemSize}
                     onClick={(e) => createFolder(plugin.app.vault.getRoot())}
                     aria-label="Create Folder"
                 />
-                <Icons.CgSortAz className="oz-nav-action-button" size={24} onClick={triggerFolderSortOptions} aria-label="Sorting Options" />
-                <Icons.CgChevronDoubleUp className="oz-nav-action-button" size={24} onClick={collapseAllFolders} aria-label="Collapse Folders" />
-                <Icons.CgChevronDoubleDown className="oz-nav-action-button" size={24} onClick={explandAllFolders} aria-label="Expand Folders" />
+                <Icons.CgSortAz
+                    className="oz-nav-action-button"
+                    size={folderActionItemSize}
+                    onClick={triggerFolderSortOptions}
+                    aria-label="Sorting Options"
+                />
+                <Icons.CgChevronDoubleUp
+                    className="oz-nav-action-button"
+                    size={folderActionItemSize}
+                    onClick={collapseAllFolders}
+                    aria-label="Collapse Folders"
+                />
+                <Icons.CgChevronDoubleDown
+                    className="oz-nav-action-button"
+                    size={folderActionItemSize}
+                    onClick={explandAllFolders}
+                    aria-label="Expand Folders"
+                />
             </div>
             <ConditionalRootFolderWrapper
                 condition={(focusedFolder && !focusedFolder.isRoot()) || (focusedFolder && focusedFolder.isRoot && plugin.settings.showRootFolder)}

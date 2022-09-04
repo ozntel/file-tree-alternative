@@ -235,7 +235,7 @@ export function FileComponent(props: FilesProps) {
         return false;
     };
 
-    const topIconSize = 18;
+    const topIconSize = 19;
 
     return (
         <React.Fragment>

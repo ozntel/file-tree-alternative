@@ -52,7 +52,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     iconBeforeFileName: true,
     sortFilesBy: 'name',
     sortFoldersBy: 'name',
-    fixedHeaderInFileList: false,
+    fixedHeaderInFileList: true,
     createdYaml: false,
     fileNameIsHeader: false,
     folderNote: false,
