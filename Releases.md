@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.2.0
+
+-   Style changes (Mostly inspired by Prism Theme)
+
 ## Version 2.1.9
 
 -   Option to open file tree view on vault start
