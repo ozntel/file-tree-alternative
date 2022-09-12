@@ -3,7 +3,7 @@ import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
-export type SortType = 'name' | 'last-update' | 'created' | 'file-size';
+export type SortType = 'name' | 'name-rev' | 'last-update' | 'created' | 'file-size';
 export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 
@@ -31,6 +31,7 @@ export interface FileTreeAlternativePluginSettings {
     fileNameIsHeader: boolean;
     folderNote: boolean;
     deleteFileOption: DeleteFileOption;
+    showFileNameAsFullPath: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -57,6 +58,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     fileNameIsHeader: false,
     folderNote: false,
     deleteFileOption: 'trash',
+    showFileNameAsFullPath: false,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -301,6 +303,17 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.refreshView();
                 })
             );
+
+        new Setting(containerEl)
+            .setName('Show file names as full path')
+            .setDesc('Turn on if you want to see the full path within the file name list rather than only file name')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.showFileNameAsFullPath).onChange((value) => {
+                    this.plugin.settings.showFileNameAsFullPath = value;
+                    this.plugin.saveSettings();
+                    this.refreshView();
+                });
+            });
 
         new Setting(containerEl)
             .setName('Deleted File Destination')

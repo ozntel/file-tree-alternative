@@ -90,7 +90,13 @@ export function FileComponent(props: FilesProps) {
             } else if (!pinnedFiles.contains(a) && pinnedFiles.contains(b)) {
                 return 1;
             } else if (plugin.settings.sortFilesBy === 'name') {
-                return a.name.localeCompare(b.name, 'en', { numeric: true });
+                return plugin.settings.showFileNameAsFullPath
+                    ? a.path.localeCompare(b.path, 'en', { numeric: true })
+                    : a.name.localeCompare(b.name, 'en', { numeric: true });
+            } else if (plugin.settings.sortFilesBy === 'name-rev') {
+                return plugin.settings.showFileNameAsFullPath
+                    ? b.path.localeCompare(a.path, 'en', { numeric: true })
+                    : b.name.localeCompare(a.name, 'en', { numeric: true });
             } else if (plugin.settings.sortFilesBy === 'last-update') {
                 return b.stat.mtime - a.stat.mtime;
             } else if (plugin.settings.sortFilesBy === 'created') {
@@ -209,11 +215,22 @@ export function FileComponent(props: FilesProps) {
         });
 
         sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('File Name (Z to A)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('name-rev');
+            });
+        });
+
+        sortMenu.addSeparator();
+
+        sortMenu.addItem((menuItem) => {
             menuItem.setTitle('Created (New to Old)');
             menuItem.onClick((ev: MouseEvent) => {
                 changeSortSettingTo('created');
             });
         });
+
+        sortMenu.addSeparator();
 
         sortMenu.addItem((menuItem) => {
             menuItem.setTitle('File Size (Big to Small)');
@@ -221,6 +238,8 @@ export function FileComponent(props: FilesProps) {
                 changeSortSettingTo('file-size');
             });
         });
+
+        sortMenu.addSeparator();
 
         sortMenu.addItem((menuItem) => {
             menuItem.setTitle('Last Update (New to Old)');
@@ -497,6 +516,11 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     const FileIcon = useMemo(() => getFileIcon(), [plugin.settings.iconBeforeFileName]);
 
+    const fileDisplayName = useMemo(() => {
+        let displayName = plugin.settings.showFileNameAsFullPath ? file.path : file.name;
+        return Util.getFileNameAndExtension(displayName).fileName;
+    }, [plugin.settings.showFileNameAsFullPath, file.path]);
+
     return (
         <div
             className={'oz-nav-file' + (activeFile === file ? ' is-active' : '')}
@@ -511,7 +535,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             <div className="oz-nav-file-title" data-path={file.path}>
                 <div className="oz-nav-file-title-content">
                     {plugin.settings.iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
-                    {Util.getFileNameAndExtension(file.name).fileName}
+                    {fileDisplayName}
                 </div>
                 {pinnedFiles.contains(file) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
                 {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
