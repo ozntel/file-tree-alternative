@@ -237,6 +237,9 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                     }
                     // If the file renamed or deleted or modified is in the current view, it will be updated
                     let fileInCurrentView = currentFileList.some((f) => f.path === file.path);
+                    let fileInCurrentFolder =
+                        currentActiveFolderPath === file.parent.path ||
+                        (plugin.settings.showFilesFromSubFolders && file.parent.path.startsWith(currentActiveFolderPath));
                     if (fileInCurrentView) {
                         if (changeType === 'delete') {
                             setFileList(
@@ -255,6 +258,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                                 ...(file.parent.path === currentActiveFolderPath ? [file] : []),
                             ]);
                         }
+                    }
+                    // File is no in current view but parent folder is and should be included
+                    else if (fileInCurrentFolder && !fileInCurrentView) {
+                        setFileList([...currentFileList, file]);
                     }
                 } else if (changeType === 'create') {
                     let fileIsCreatedUnderActiveFolder = file.path.match(new RegExp(currentActiveFolderPath + '.*'));
