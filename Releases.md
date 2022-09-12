@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.2.1
+
+-   FIX: Moving file into the current folder view is captured now
+-   NEW: Sorting option by Z to A
+-   NEW: File names can be displayed by full path
+
 ## Version 2.2.0
 
 -   Style changes (Mostly inspired by Prism Theme)
