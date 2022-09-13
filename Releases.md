@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.2.2
+
+-   Removing box shadow from file/folder headers
+
 ## Version 2.2.1
 
 -   FIX: Moving file into the current folder view is captured now
