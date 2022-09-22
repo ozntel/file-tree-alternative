@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.2.3
+
+-   File delete issue solution if the file is in the view
+
 ## Version 2.2.2
 
 -   Removing box shadow from file/folder headers
