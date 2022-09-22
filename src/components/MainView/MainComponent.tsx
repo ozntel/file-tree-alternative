@@ -236,10 +236,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                         }
                     }
                     // If the file renamed or deleted or modified is in the current view, it will be updated
+                    let parentFolderPath = file.path.substring(0, file.path.lastIndexOf('/'));
                     let fileInCurrentView = currentFileList.some((f) => f.path === file.path);
                     let fileInCurrentFolder =
-                        currentActiveFolderPath === file.parent.path ||
-                        (plugin.settings.showFilesFromSubFolders && file.parent.path.startsWith(currentActiveFolderPath));
+                        currentActiveFolderPath === parentFolderPath ||
+                        (plugin.settings.showFilesFromSubFolders && parentFolderPath.startsWith(currentActiveFolderPath));
                     if (fileInCurrentView) {
                         if (changeType === 'delete') {
                             setFileList(
