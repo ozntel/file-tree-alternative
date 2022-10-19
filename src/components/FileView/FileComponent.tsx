@@ -90,26 +90,20 @@ export function FileComponent(props: FilesProps) {
                 return -1;
             } else if (!pinnedFiles.contains(a) && pinnedFiles.contains(b)) {
                 return 1;
-            } else if (plugin.settings.sortFilesBy === 'name') {
+            }
+            if (plugin.settings.sortReverse) {
+                [a, b] = [b, a];
+            }
+            if (plugin.settings.sortFilesBy === 'name') {
                 return plugin.settings.showFileNameAsFullPath
                     ? a.path.localeCompare(b.path, 'en', { numeric: true })
                     : a.name.localeCompare(b.name, 'en', { numeric: true });
-            } else if (plugin.settings.sortFilesBy === 'name-rev') {
-                return plugin.settings.showFileNameAsFullPath
-                    ? b.path.localeCompare(a.path, 'en', { numeric: true })
-                    : b.name.localeCompare(a.name, 'en', { numeric: true });
             } else if (plugin.settings.sortFilesBy === 'last-update') {
                 return b.stat.mtime - a.stat.mtime;
-            } else if (plugin.settings.sortFilesBy === 'last-update-rev') {
-                return a.stat.mtime - b.stat.mtime;
             } else if (plugin.settings.sortFilesBy === 'created') {
                 return b.stat.ctime - a.stat.ctime;
-            } else if (plugin.settings.sortFilesBy === 'created-rev') {
-                return a.stat.ctime - b.stat.ctime;
             } else if (plugin.settings.sortFilesBy === 'file-size') {
                 return b.stat.size - a.stat.size;
-            } else if (plugin.settings.sortFilesBy === 'file-size-rev') {
-                return a.stat.size - b.stat.size;
             }
         });
         return sortedfileList;
@@ -117,7 +111,8 @@ export function FileComponent(props: FilesProps) {
 
     const filesToList: TFile[] = useMemo(
         () => customFiles(fileList),
-        [excludedFolders, excludedExtensions, pinnedFiles, fileList, plugin.settings.sortFilesBy]
+        [excludedFolders, excludedExtensions, pinnedFiles, fileList,
+            plugin.settings.sortFilesBy, plugin.settings.sortReverse]
     );
 
     // Go Back Button - Sets Main Component View to Folder
@@ -236,65 +231,29 @@ export function FileComponent(props: FilesProps) {
             forceUpdate();
         };
 
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('File Name (A to Z)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('name');
+        const addMenuItem = (label: string, low: string, high: string, value: SortType) => {
+            sortMenu.addItem((menuItem) => {
+                const order = plugin.settings.sortReverse ? `${high} to ${low}` : `${low} to ${high}`;
+                menuItem.setTitle(`${label} (${order})`);
+                menuItem.setIcon(value === plugin.settings.sortFilesBy ? 'checkmark' : 'space');
+                menuItem.onClick(() => changeSortSettingTo(value));
             });
-        });
-
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('File Name (Z to A)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('name-rev');
-            });
-        });
+        };
+        
+        addMenuItem('File Name', 'A', 'Z', 'name');
+        addMenuItem('Created', 'New', 'Old', 'created');
+        addMenuItem('File Size', 'Big', 'Small', 'file-size');
+        addMenuItem('Last Update', 'New', 'Old', 'last-update');
 
         sortMenu.addSeparator();
 
         sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('Created (New to Old)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('created');
-            });
-        });
-
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('Created (Old to New)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('created-rev');
-            });
-        });
-
-        sortMenu.addSeparator();
-
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('File Size (Big to Small)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('file-size');
-            });
-        });
-
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('File Size (Small to Big)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('file-size-rev');
-            });
-        });
-
-        sortMenu.addSeparator();
-
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('Last Update (New to Old)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('last-update');
-            });
-        });
-
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('Last Update (Old to New)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('last-update-rev');
+            menuItem.setTitle('Reverse Order');
+            menuItem.setIcon(plugin.settings.sortReverse ? 'checkmark' : 'space');
+            menuItem.onClick(() => {
+                plugin.settings.sortReverse = !plugin.settings.sortReverse;
+                plugin.saveSettings();
+                forceUpdate();
             });
         });
 

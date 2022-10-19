@@ -3,7 +3,7 @@ import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
-export type SortType = 'name' | 'name-rev' | 'last-update' | 'last-update-rev' | 'created' | 'created-rev' | 'file-size' | 'file-size-rev';
+export type SortType = 'name' | 'last-update' | 'created' | 'file-size';
 export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 
@@ -25,6 +25,7 @@ export interface FileTreeAlternativePluginSettings {
     filePreviewOnHover: boolean;
     iconBeforeFileName: boolean;
     sortFilesBy: SortType;
+    sortReverse: boolean;
     sortFoldersBy: FolderSortType;
     fixedHeaderInFileList: boolean;
     createdYaml: boolean;
@@ -52,6 +53,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     filePreviewOnHover: false,
     iconBeforeFileName: true,
     sortFilesBy: 'name',
+    sortReverse: false,
     sortFoldersBy: 'name',
     fixedHeaderInFileList: true,
     createdYaml: false,

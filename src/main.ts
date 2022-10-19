@@ -30,6 +30,8 @@ export default class FileTreeAlternativePlugin extends Plugin {
         addIcon('zoomOutIcon', ZoomOutIcon);
         addIcon('zoomOutDoubleIcon', ZoomOutDoubleIcon);
         addIcon('locationIcon', LocationIcon);
+        // blank icon for padding
+        addIcon("space", `<circle cx="50" cy="50" r="50" fill="transparent" />`);
 
         // Load Settings
         this.addSettingTab(new FileTreeAlternativePluginSettingsTab(this.app, this));
