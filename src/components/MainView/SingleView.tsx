@@ -66,3 +66,67 @@ export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
         </div>
     );
 };
+
+export const SingleViewHorizontal = (props: { plugin: FileTreeAlternativePlugin }) => {
+    let { plugin } = props;
+
+    const [dividerOnMove, setDividerOnMove] = useState<boolean>(false);
+    const [folderPaneWidth, setFolderPaneWidth] = useState<number>(null);
+    const [clientX, setClientX] = useState<number>(null);
+
+    let folderPaneRef = useRef<HTMLDivElement>();
+    let dividerRef = useRef<HTMLDivElement>();
+
+    let widthSetting = localStorage.getItem(plugin.keys.customWidthKey);
+
+    useEffect(() => {
+        if (folderPaneWidth) {
+            localStorage.setItem(plugin.keys.customWidthKey, folderPaneWidth.toString());
+        }
+    }, [folderPaneWidth]);
+
+    function touchMouseStart(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.preventDefault();
+        setDividerOnMove(true);
+        let width = dividerRef.current.offsetLeft - folderPaneRef.current.offsetLeft;
+        setFolderPaneWidth(width);
+        setClientX(e.nativeEvent.clientX);
+    }
+
+    function touchMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.preventDefault();
+        if (!dividerOnMove) return;
+        setFolderPaneWidth(folderPaneWidth + (e.nativeEvent.clientX - clientX));
+        setClientX(e.nativeEvent.clientX);
+    }
+
+    function touchMouseEnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        e.preventDefault();
+        setDividerOnMove(false);
+        setClientX(e.nativeEvent.clientX);
+    }
+
+    return (
+        // Register Move & End Events for All File Tree Leaf
+        <div className="file-tree-container-horizontal" onMouseMove={(e) => touchMouseMove(e)} onMouseUp={(e) => touchMouseEnd(e)}>
+            <div
+                className="oz-folder-pane-horizontal"
+                ref={folderPaneRef}
+                style={{ width: folderPaneWidth ? `${folderPaneWidth}px` : widthSetting && widthSetting !== '' ? `${widthSetting}px` : '50%' }}>
+                <MainFolder plugin={plugin} />
+            </div>
+
+            {/* Mouse Down Event only For Divider */}
+            <div
+                id="file-tree-divider-horizontal"
+                ref={dividerRef}
+                onClick={(e) => e.preventDefault()}
+                onMouseDown={(e) => touchMouseStart(e)}
+                className={dividerOnMove ? 'active-divider' : ''}></div>
+
+            <div className="oz-file-list-pane-horizontal">
+                <FileComponent plugin={plugin} />
+            </div>
+        </div>
+    );
+};

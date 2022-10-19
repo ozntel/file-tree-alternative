@@ -22,6 +22,7 @@ export interface FileTreeAlternativePluginSettings {
     folderCount: boolean;
     folderCountOption: string;
     evernoteView: boolean;
+    evernoteViewHorizontal: boolean;
     filePreviewOnHover: boolean;
     iconBeforeFileName: boolean;
     sortFilesBy: SortType;
@@ -49,6 +50,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     folderCount: true,
     folderCountOption: 'notes',
     evernoteView: true,
+    evernoteViewHorizontal: false,
     filePreviewOnHover: false,
     iconBeforeFileName: true,
     sortFilesBy: 'name',
@@ -112,6 +114,17 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.evernoteView).onChange((value) => {
                     this.plugin.settings.evernoteView = value;
+                    this.plugin.saveSettings();
+                    this.refreshView();
+                })
+            );
+        
+        new Setting(containerEl)
+            .setName('Evernote View Vertical Layout')
+            .setDesc('Turn on if you want to see the folders and files in Evernote View side-by-side instead of on top of each other.')
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.evernoteViewHorizontal).onChange((value) => {
+                    this.plugin.settings.evernoteViewHorizontal = value;
                     this.plugin.saveSettings();
                     this.refreshView();
                 })
@@ -413,6 +426,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     .setButtonText('Click for Clearing the Cache')
                     .onClick(async () => {
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.customHeightKey });
+                        lsh.removeFromLocalStorage({ key: this.plugin.keys.customWidthKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.openFoldersKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.activeFolderPathKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.focusedFolder });

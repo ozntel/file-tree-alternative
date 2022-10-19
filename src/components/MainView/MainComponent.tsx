@@ -2,7 +2,7 @@ import { TAbstractFile, TFile, TFolder, Notice } from 'obsidian';
 import React, { useEffect } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
-import { SingleView } from 'components/MainView/SingleView';
+import { SingleView, SingleViewHorizontal } from 'components/MainView/SingleView';
 import { FileTreeView } from 'FileTreeView';
 import FileTreeAlternativePlugin, { eventTypes } from 'main';
 import * as FileTreeUtils from 'utils/Utils';
@@ -363,6 +363,8 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             {view === 'folder' ? (
                 <MainFolder plugin={plugin} />
             ) : plugin.settings.evernoteView ? (
+                plugin.settings.evernoteViewHorizontal ? 
+                <SingleViewHorizontal plugin={plugin} /> :
                 <SingleView plugin={plugin} />
             ) : (
                 <FileComponent plugin={plugin} />
