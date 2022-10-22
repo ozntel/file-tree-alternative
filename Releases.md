@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.2.4
+
+-   Open a file in a new tab or open to right options
+-   Ctrl/Cmd + Click is to Open in a new tab
+-   Ctrl/Cmd + Shift/Alt + Click is to Open to right
+
 ## Version 2.2.3
 
 -   File delete issue solution if the file is in the view
