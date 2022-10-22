@@ -391,7 +391,12 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
     const openFile = (file: TFile, e: React.MouseEvent) => {
-        Util.openFile({ file: file, app: plugin.app, newLeaf: e.ctrlKey || e.metaKey });
+        Util.openFile({
+            file: file,
+            app: plugin.app,
+            newLeaf: (e.ctrlKey || e.metaKey) && !(e.shiftKey || e.altKey),
+            leafBySplit: (e.ctrlKey || e.metaKey) && (e.shiftKey || e.altKey),
+        });
         setActiveFile(file);
     };
 
@@ -443,9 +448,18 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
         // Open in a New Pane
         fileMenu.addItem((menuItem) => {
             menuItem.setIcon('go-to-file');
-            menuItem.setTitle('Open in a new pane');
+            menuItem.setTitle('Open in a new tab');
             menuItem.onClick((ev: MouseEvent) => {
-                Util.openFileInNewPane(plugin.app, file);
+                Util.openFileInNewTab(plugin.app, file);
+            });
+        });
+
+        // Open in a New Pane
+        fileMenu.addItem((menuItem) => {
+            menuItem.setIcon('go-to-file');
+            menuItem.setTitle('Open to right');
+            menuItem.onClick((ev: MouseEvent) => {
+                Util.openFileInNewTabGroup(plugin.app, file);
             });
         });
 
@@ -501,7 +515,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     // --> AuxClick (Mouse Wheel Button Action)
     const onAuxClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (e.button === 1) Util.openFileInNewPane(plugin.app, file);
+        if (e.button === 1) Util.openFileInNewTab(plugin.app, file);
     };
 
     const getFileIcon = () => {
