@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.2.5
+
+-   #124 Folders Expand fix in case Counts are not enabled
+
 ## Version 2.2.4
 
 -   Open a file in a new tab or open to right options
