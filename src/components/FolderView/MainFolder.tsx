@@ -10,6 +10,7 @@ import { VaultChangeModal } from 'modals';
 import * as Icons from 'utils/icons';
 import { FolderSortType } from 'settings';
 import useForceUpdate from 'hooks/ForceUpdate';
+import { FolderTree } from 'utils/types';
 
 interface FolderProps {
     plugin: FileTreeAlternativePlugin;
@@ -80,12 +81,19 @@ export function MainFolder(props: FolderProps) {
 
     const explandAllFolders = () => {
         let newOpenFolders: string[] = [];
-        Object.keys(folderFileCountMap).forEach((key) => {
-            let folder = plugin.app.vault.getAbstractFileByPath(key);
-            if (folder && folder instanceof TFolder && folder.children.some((f) => f instanceof TFolder)) {
-                newOpenFolders.push(folder.path);
+
+        newOpenFolders.push(folderTree.folder.path);
+
+        const recursiveFx = (folderTreeChildren: FolderTree[]) => {
+            for (let folderTreeChild of folderTreeChildren) {
+                newOpenFolders.push(folderTreeChild.folder.path);
+                if (folderTreeChild.children.length > 0) {
+                    recursiveFx(folderTreeChild.children);
+                }
             }
-        });
+        };
+
+        recursiveFx(folderTree.children);
         setOpenFolders(newOpenFolders);
     };
 
