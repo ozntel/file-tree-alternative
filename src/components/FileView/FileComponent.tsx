@@ -385,9 +385,20 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
     const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
 
+    const [hoverActive, setHoverActive] = useState<boolean>(false);
+
     const longPressEvents = useLongPress((e: React.TouchEvent) => {
         triggerContextMenu(file, e);
     }, 500);
+
+    useEffect(() => {
+        if (hoverActive) {
+            document.addEventListener('keydown', handleKeyDownEvent);
+            return () => {
+                document.removeEventListener('keydown', handleKeyDownEvent);
+            };
+        }
+    }, [hoverActive]);
 
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
     const openFile = (file: TFile, e: React.MouseEvent) => {
@@ -495,10 +506,22 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
         return false;
     };
 
+    const handleKeyDownEvent = (e: KeyboardEvent) => {
+        if (e.key === 'Control' || e.key === 'Meta') {
+            let el = document.querySelector(`.oz-nav-file-title[data-path="${file.path}"]`);
+            if (el) plugin.app.workspace.trigger('link-hover', {}, el, file.path, file.path);
+        }
+    };
+
     const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
+        setHoverActive(true);
         if (plugin.settings.filePreviewOnHover && (e.ctrlKey || e.metaKey)) {
             plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
         }
+    };
+
+    const mouseLeftFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
+        setHoverActive(false);
     };
 
     // --> Dragging for File
@@ -545,6 +568,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             onAuxClick={onAuxClick}
             onContextMenu={(e) => triggerContextMenu(file, e)}
             onMouseEnter={(e) => mouseEnteredOnFile(e, file)}
+            onMouseLeave={(e) => mouseLeftFile(e, file)}
             {...longPressEvents}>
             <div className="oz-nav-file-title" data-path={file.path}>
                 <div className="oz-nav-file-title-content">
