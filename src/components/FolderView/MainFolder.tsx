@@ -113,12 +113,14 @@ export function MainFolder(props: FolderProps) {
             });
         });
 
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('Item Numbers (Bigger to Smaller)');
-            menuItem.onClick((ev: MouseEvent) => {
-                changeSortSettingTo('item-number');
+        if (plugin.settings.folderCount) {
+            sortMenu.addItem((menuItem) => {
+                menuItem.setTitle('Item Numbers (Bigger to Smaller)');
+                menuItem.onClick((ev: MouseEvent) => {
+                    changeSortSettingTo('item-number');
+                });
             });
-        });
+        }
 
         // Trigger
         plugin.app.workspace.trigger('sort-menu', sortMenu);

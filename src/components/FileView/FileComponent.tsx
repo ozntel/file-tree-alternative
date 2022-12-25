@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
 import { TFile, Menu } from 'obsidian';
 import * as Icons from 'utils/icons';
-import { VaultChangeModal, MoveSuggestionModal } from 'modals';
+import { VaultChangeModal, MoveSuggestionModal, ConfirmationModal } from 'modals';
 import FileTreeAlternativePlugin, { eventTypes } from 'main';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
@@ -445,14 +445,21 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             menuItem.setTitle('Delete');
             menuItem.setIcon('trash');
             menuItem.onClick((ev: MouseEvent) => {
-                let deleteOption = plugin.settings.deleteFileOption;
-                if (deleteOption === 'permanent') {
-                    plugin.app.vault.delete(file, true);
-                } else if (deleteOption === 'system-trash') {
-                    plugin.app.vault.trash(file, true);
-                } else if (deleteOption === 'trash') {
-                    plugin.app.vault.trash(file, false);
-                }
+                let confirmationModal = new ConfirmationModal(
+                    plugin,
+                    `Are you sure you want to delete the file "${file.basename}${file.extension === 'md' ? '' : file.extension}"?`,
+                    function () {
+                        let deleteOption = plugin.settings.deleteFileOption;
+                        if (deleteOption === 'permanent') {
+                            plugin.app.vault.delete(file, true);
+                        } else if (deleteOption === 'system-trash') {
+                            plugin.app.vault.trash(file, true);
+                        } else if (deleteOption === 'trash') {
+                            plugin.app.vault.trash(file, false);
+                        }
+                    }
+                );
+                confirmationModal.open();
             });
         });
 

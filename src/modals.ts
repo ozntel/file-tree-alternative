@@ -4,6 +4,57 @@ import { getFileCreateString, createNewMarkdownFile } from 'utils/Utils';
 
 type Action = 'rename' | 'create folder' | 'create note';
 
+export class ConfirmationModal extends Modal {
+    // Constructor Variables
+    confirmationNote: string;
+    callBackAfterConfirmation: Function;
+    plugin: FileTreeAlternativePlugin;
+
+    // Local Global Variables
+    confirmButton: HTMLButtonElement;
+    onConfirmClickAction: (e: MouseEvent) => void;
+
+    constructor(plugin: FileTreeAlternativePlugin, confirmationNote: string, callBackAfterConfirmation: Function) {
+        super(plugin.app);
+        this.confirmationNote = confirmationNote;
+        this.callBackAfterConfirmation = callBackAfterConfirmation;
+        this.plugin = plugin;
+    }
+
+    onOpen(): void {
+        let { contentEl } = this;
+        let confirmationModal = this;
+
+        const headerEl = contentEl.createEl('div', { text: this.confirmationNote });
+        headerEl.addClass('modal-title');
+
+        this.confirmButton = contentEl.createEl('button', { text: 'Confirm' });
+        const cancelButton = contentEl.createEl('button', { text: 'Cancel' });
+
+        cancelButton.style.cssText = 'float: right;';
+        cancelButton.addEventListener('click', () => {
+            confirmationModal.close();
+        });
+
+        // Create Button Action and Assign to the Global Variable of the class
+        this.onConfirmClickAction = (e: MouseEvent) => {
+            console.log(this.callBackAfterConfirmation);
+            console.log(typeof this.callBackAfterConfirmation);
+            this.callBackAfterConfirmation();
+            this.close();
+        };
+
+        // Assign the event listener
+        this.confirmButton.addEventListener('click', this.onConfirmClickAction);
+    }
+
+    onClose(): void {
+        let { contentEl } = this;
+        contentEl.empty();
+        this.confirmButton.removeEventListener('click', this.onConfirmClickAction);
+    }
+}
+
 export class VaultChangeModal extends Modal {
     file: TFolder | TFile | TAbstractFile;
     action: Action;

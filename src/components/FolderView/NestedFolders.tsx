@@ -6,7 +6,7 @@ import Tree from 'components/FolderView/treeComponent/TreeComponent';
 import { useRecoilState } from 'recoil';
 import * as recoilState from 'recoil/pluginState';
 import * as Util from 'utils/Utils';
-import { VaultChangeModal, MoveSuggestionModal } from 'modals';
+import { VaultChangeModal, MoveSuggestionModal, ConfirmationModal } from 'modals';
 
 interface NestedFoldersProps {
     plugin: FileTreeAlternativePlugin;
@@ -90,18 +90,25 @@ export function NestedFolders(props: NestedFoldersProps) {
                 .setTitle('Delete')
                 .setIcon('trash')
                 .onClick((ev: MouseEvent) => {
-                    let deleteOption = plugin.settings.deleteFileOption;
-                    if (deleteOption === 'permanent') {
-                        plugin.app.vault.delete(folder, true);
-                    } else if (deleteOption === 'system-trash') {
-                        plugin.app.vault.trash(folder, true);
-                    } else if (deleteOption === 'trash') {
-                        plugin.app.vault.trash(folder, false);
-                    }
-                    if (activeFolderPath === folder.path) {
-                        setActiveFolderPath('');
-                        setView('folder');
-                    }
+                    let confirmationModal = new ConfirmationModal(
+                        plugin,
+                        `Are you sure you want to delete folder "${folder.name}" and all folders & files under it?`,
+                        () => {
+                            let deleteOption = plugin.settings.deleteFileOption;
+                            if (deleteOption === 'permanent') {
+                                plugin.app.vault.delete(folder, true);
+                            } else if (deleteOption === 'system-trash') {
+                                plugin.app.vault.trash(folder, true);
+                            } else if (deleteOption === 'trash') {
+                                plugin.app.vault.trash(folder, false);
+                            }
+                            if (activeFolderPath === folder.path) {
+                                setActiveFolderPath('');
+                                setView('folder');
+                            }
+                        }
+                    );
+                    confirmationModal.open();
                 });
         });
 
