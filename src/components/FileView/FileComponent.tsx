@@ -392,7 +392,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     }, 500);
 
     useEffect(() => {
-        if (hoverActive) {
+        if (hoverActive && plugin.settings.filePreviewOnHover) {
             document.addEventListener('keydown', handleKeyDownEvent);
             return () => {
                 document.removeEventListener('keydown', handleKeyDownEvent);
