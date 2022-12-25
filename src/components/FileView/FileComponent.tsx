@@ -11,6 +11,7 @@ import { SortType } from 'settings';
 import { ObsidianVaultConfig } from 'utils/types';
 import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress, { isMouseEvent } from 'hooks/useLongPress';
+import { ICON } from 'FileTreeView';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -560,14 +561,19 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     // --> Dragging for File
     const dragStarted = (e: React.DragEvent<HTMLDivElement>, file: TFile) => {
-        // @ts-ignore
-        const obsidianConfig = plugin.app.vault.config as ObsidianVaultConfig;
-        const linkText = ['absolute', 'relative'].contains(obsidianConfig.newLinkFormat) ? file.parent.path + '/' + file.basename : file.basename;
-        const link = obsidianConfig.useMarkdownLinks ? `[${file.basename}](${encodeURI(linkText + '.' + file.extension)})` : `[[${linkText}]]`;
-        // text to drag file to editor
-        e.dataTransfer.setData('text/plain', link);
         // json to move file to folder
         e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
+
+        // Obsidian Internal Dragmanager
+        (plugin.app as any).dragManager.onDragStart(e, {
+            icon: ICON,
+            source: undefined,
+            title: file.name,
+            type: 'file',
+            file: file,
+        });
+
+        (plugin.app as any).dragManager.dragFile(e, file, true);
     };
 
     // --> AuxClick (Mouse Wheel Button Action)
