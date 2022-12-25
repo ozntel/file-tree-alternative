@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.2.7
+
+-   #123 Additional File Sorting Options
+-   #122 Obsidian Internal Drag Manager usage
+
 ## Version 2.2.6
 
 -   #77 Delete Confirmation Modal
