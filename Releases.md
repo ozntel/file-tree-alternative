@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.2.6
+
+-   #77 Delete Confirmation Modal
+-   Folder Count sort only if counts are enabled
+-   Ctrl/Cmd key press capture during hover on file name
+
 ## Version 2.2.5
 
 -   #124 Folders Expand fix in case Counts are not enabled
