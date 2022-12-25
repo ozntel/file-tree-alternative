@@ -3,7 +3,7 @@ import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 import { LocalStorageHandler } from '@ozntel/local-storage-handler';
 
 type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
-export type SortType = 'name' | 'name-rev' | 'last-update' | 'created' | 'file-size';
+export type SortType = 'name' | 'name-rev' | 'last-update' | 'last-update-rev' | 'created' | 'created-rev' | 'file-size' | 'file-size-rev';
 export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 

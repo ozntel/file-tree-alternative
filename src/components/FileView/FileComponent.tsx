@@ -99,10 +99,16 @@ export function FileComponent(props: FilesProps) {
                     : b.name.localeCompare(a.name, 'en', { numeric: true });
             } else if (plugin.settings.sortFilesBy === 'last-update') {
                 return b.stat.mtime - a.stat.mtime;
+            } else if (plugin.settings.sortFilesBy === 'last-update-rev') {
+                return a.stat.mtime - b.stat.mtime;
             } else if (plugin.settings.sortFilesBy === 'created') {
                 return b.stat.ctime - a.stat.ctime;
+            } else if (plugin.settings.sortFilesBy === 'created-rev') {
+                return a.stat.ctime - b.stat.ctime;
             } else if (plugin.settings.sortFilesBy === 'file-size') {
                 return b.stat.size - a.stat.size;
+            } else if (plugin.settings.sortFilesBy === 'file-size-rev') {
+                return a.stat.size - b.stat.size;
             }
         });
         return sortedfileList;
@@ -230,6 +236,13 @@ export function FileComponent(props: FilesProps) {
             });
         });
 
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('Created (Old to New)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('created-rev');
+            });
+        });
+
         sortMenu.addSeparator();
 
         sortMenu.addItem((menuItem) => {
@@ -239,12 +252,26 @@ export function FileComponent(props: FilesProps) {
             });
         });
 
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('File Size (Small to Big)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('file-size-rev');
+            });
+        });
+
         sortMenu.addSeparator();
 
         sortMenu.addItem((menuItem) => {
             menuItem.setTitle('Last Update (New to Old)');
             menuItem.onClick((ev: MouseEvent) => {
                 changeSortSettingTo('last-update');
+            });
+        });
+
+        sortMenu.addItem((menuItem) => {
+            menuItem.setTitle('Last Update (Old to New)');
+            menuItem.onClick((ev: MouseEvent) => {
+                changeSortSettingTo('last-update-rev');
             });
         });
 
