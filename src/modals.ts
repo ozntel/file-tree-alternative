@@ -38,8 +38,6 @@ export class ConfirmationModal extends Modal {
 
         // Create Button Action and Assign to the Global Variable of the class
         this.onConfirmClickAction = (e: MouseEvent) => {
-            console.log(this.callBackAfterConfirmation);
-            console.log(typeof this.callBackAfterConfirmation);
             this.callBackAfterConfirmation();
             this.close();
         };
