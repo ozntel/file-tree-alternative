@@ -174,33 +174,38 @@ export function FileComponent(props: FilesProps) {
         return filteredFiles;
     };
 
+    const getFileTags = (mdFile: TFile): string[] => {
+        let fileCache = plugin.app.metadataCache.getFileCache(mdFile);
+        let fileTags: string[] = [];
+        if (fileCache.tags) {
+            for (let fileTag of fileCache.tags) {
+                fileTags.push(fileTag.tag);
+            }
+        }
+        if (fileCache.frontmatter && fileCache.frontmatter['tags']) {
+            let tagsFM = fileCache.frontmatter['tags'];
+            if (typeof tagsFM === 'string') {
+                let fileFMTags = tagsFM.split(',');
+                for (let i = 0; i < fileFMTags.length; i++) {
+                    fileTags.push(fileFMTags[i]);
+                }
+            } else if (Array.isArray(tagsFM)) {
+                for (let i = 0; i < tagsFM.length; i++) {
+                    fileTags.push(tagsFM[i]);
+                }
+            }
+        }
+        return fileTags;
+    };
+
     const getFilesWithTag = (searchTag: string): Set<TFile> => {
         let filesWithTag: Set<TFile> = new Set();
         let mdFiles = Util.getFilesUnderPath(plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/', plugin, true);
         for (let mdFile of mdFiles) {
-            let fileCache = plugin.app.metadataCache.getFileCache(mdFile);
-            if (fileCache.tags) {
-                for (let fileTag of fileCache.tags) {
-                    if (fileTag.tag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
-                        if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
-                    }
-                }
-            }
-            if (fileCache.frontmatter && fileCache.frontmatter['tags']) {
-                let tagsFM = fileCache.frontmatter['tags'];
-                if (typeof tagsFM === 'string') {
-                    let fileFMTags = tagsFM.split(',');
-                    for (let i = 0; i < fileFMTags.length; i++) {
-                        if (fileFMTags[i].toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
-                            if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
-                        }
-                    }
-                } else if (Array.isArray(tagsFM)) {
-                    for (let i = 0; i < tagsFM.length; i++) {
-                        if (tagsFM[i].toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
-                            if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
-                        }
-                    }
+            let fileTags = getFileTags(mdFile);
+            for (let fileTag of fileTags) {
+                if (fileTag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
+                    if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
                 }
             }
         }
