@@ -186,6 +186,23 @@ export function FileComponent(props: FilesProps) {
                     }
                 }
             }
+            if (fileCache.frontmatter && fileCache.frontmatter['tags']) {
+                let tagsFM = fileCache.frontmatter['tags'];
+                if (typeof tagsFM === 'string') {
+                    let fileFMTags = tagsFM.split(',');
+                    for (let i = 0; i < fileFMTags.length; i++) {
+                        if (fileFMTags[i].toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
+                            if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
+                        }
+                    }
+                } else if (Array.isArray(tagsFM)) {
+                    for (let i = 0; i < tagsFM.length; i++) {
+                        if (tagsFM[i].toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
+                            if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
+                        }
+                    }
+                }
+            }
         }
         return filesWithTag;
     };
