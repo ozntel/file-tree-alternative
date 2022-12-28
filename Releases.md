@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.2.8
+
+-   #111 YAML Tags to be included in the tag search results
+
 ## Version 2.2.7
 
 -   #123 Additional File Sorting Options
