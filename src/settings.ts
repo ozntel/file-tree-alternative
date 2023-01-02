@@ -108,7 +108,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Evernote View')
-            .setDesc('Turn on if you want to see the folders and files in a single view without switching between views. Similar experience to Evernote.')
+            .setDesc('Show the folders and files in a single view without switching between views. Similar experience to Evernote.')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.evernoteView).onChange((value) => {
                     this.plugin.settings.evernoteView = value;
@@ -119,7 +119,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Ribbon Icon')
-            .setDesc('Turn on if you want Ribbon Icon for activating the File Tree.')
+            .setDesc('Enables a ribbon icon for activating the file tree')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.ribbonIcon).onChange((value) => {
                     this.plugin.settings.ribbonIcon = value;
@@ -130,7 +130,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Open on Start')
-            .setDesc("Turn off if you don't want file tree view to be opened automatically during vault start")
+            .setDesc("Open the file tree view automatically during vault start")
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.openViewOnStart).onChange((value) => {
                     this.plugin.settings.openViewOnStart = value;
@@ -144,7 +144,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Folder Icons')
-            .setDesc('Change the default folder icons your preferred option')
+            .setDesc('Change the default folder icons to your preferred option')
             .addDropdown((dropdown) => {
                 dropdown
                     .addOption('default', 'Default')
@@ -162,7 +162,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Show Root Folder')
-            .setDesc(`Turn on if you want your Root Folder "${this.plugin.app.vault.getName()}" to be visible in the file tree`)
+            .setDesc(`Make your Root Folder "${this.plugin.app.vault.getName()}" visible in the file tree`)
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.showRootFolder).onChange((value) => {
                     this.plugin.settings.showRootFolder = value;
@@ -173,7 +173,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Folder Count')
-            .setDesc('Turn on if you want see the number of notes/files under file tree.')
+            .setDesc('Show the number of notes/files under the file tree')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.folderCount).onChange((value) => {
                     this.plugin.settings.folderCount = value;
@@ -184,7 +184,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Folder Count Details')
-            .setDesc('Select which files you want to be included into count')
+            .setDesc('Select which files you want to be included in the count')
             .addDropdown((dropdown) => {
                 dropdown.addOption('notes', 'Notes');
                 dropdown.addOption('files', 'All Files');
@@ -199,8 +199,8 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Folder Note')
             .setDesc(
-                `Turn this option on if you want to create Folder Note same as Folder Note Plugin. 
-                By default, Click will open the list of files. You need to use "Shift+Click" to open the folder note. If folder has a folder note, 
+                `Enables the creation of folder notes, similar to the Folder Note plugin. 
+                By default, Click will open the list of files. You need to use Shift+Click to open the folder note. If folder has a folder note, 
                 you will see an arrow icon on the right side of folder. The note created as a folder note is hidden in the file list.`
             )
             .addToggle((toggle) => {
@@ -215,8 +215,8 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         containerEl.createEl('h2', { text: 'File Pane Settings' });
 
         new Setting(containerEl)
-            .setName('Include Files From Subfolders to the File List')
-            .setDesc(`Turn on this option if you want to see the list of files from all subfolders in addition to the selected folder`)
+            .setName('Include Files from Subfolders in the File List')
+            .setDesc(`Show the list of files from all subfolders in addition to those from the selected folder`)
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.showFilesFromSubFolders).onChange((value) => {
                     this.plugin.settings.showFilesFromSubFolders = value;
@@ -227,7 +227,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Toggle Button for Include Files from Subfolders')
-            .setDesc(`Turn on this option if you want to have an additional button on the top of the file list to toggle "Include Files From Subfolders"`)
+            .setDesc(`Provides an additional button at the top of the file list to toggle "Include Files From Subfolders"`)
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.showFilesFromSubFoldersButton).onChange((value) => {
                     this.plugin.settings.showFilesFromSubFoldersButton = value;
@@ -237,9 +237,9 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName('Reveal Active File in File Tree Button')
+            .setName('Button for Reveal Active File in File Tree')
             .setDesc(
-                `Turn on this option if you want to have an additional button to reveal the active file in the file tree. It will set the folder and file pane accordingly.`
+                `Provides an additional button to reveal the active file in the file tree. The folder and file pane will be set accordingly.`
             )
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.revealActiveFileButton).onChange((value) => {
@@ -251,7 +251,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Search in File List')
-            .setDesc(`Turn on this option if you want to enable search function to filter files by name.`)
+            .setDesc(`Enable a search function to filter files by name`)
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.searchFunction).onChange((value) => {
                     this.plugin.settings.searchFunction = value;
@@ -263,7 +263,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('All & Tag Search only in Focused Folder')
             .setDesc(
-                `"all:" and "tag:" searches by default looks for all files in your vault. Turn on this option if you want search only in Focused Folder`
+                `Make "all:" and "tag:" searches only look in the focused folder, rather than your whole vault`
             )
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.allSearchOnlyInFocusedFolder).onChange((value) => {
@@ -274,7 +274,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Icon Before File Name')
-            .setDesc('Turn on if you want to file icon before the file name in the file list.')
+            .setDesc('Show a file icon before the file name in the file list')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.iconBeforeFileName).onChange((value) => {
                     this.plugin.settings.iconBeforeFileName = value;
@@ -285,7 +285,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Preview File on Hover')
-            .setDesc('Turn on if you want to preview the files once you hover on them within the file list holding Ctrl/Cmd button.')
+            .setDesc('Enable previews of files by hovering over them within the file list (by holding Ctrl/Cmd)')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.filePreviewOnHover).onChange((value) => {
                     this.plugin.settings.filePreviewOnHover = value;
@@ -295,7 +295,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Fixed Buttons and Header in File Pane')
-            .setDesc('Turn on if you want buttons and header to be not scrolled within the file list.')
+            .setDesc('Buttons and headers will not be scrolled with the file list')
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.fixedHeaderInFileList).onChange((value) => {
                     this.plugin.settings.fixedHeaderInFileList = value;
@@ -305,8 +305,8 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             );
 
         new Setting(containerEl)
-            .setName('Show file names as full path')
-            .setDesc('Turn on if you want to see the full path within the file name list rather than only file name')
+            .setName('Show File Names as Full Path')
+            .setDesc('Show the full path within the file name list rather than only file name')
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.showFileNameAsFullPath).onChange((value) => {
                     this.plugin.settings.showFileNameAsFullPath = value;
@@ -330,13 +330,13 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             });
 
         /* ------------- Exclusion Settings ------------- */
-        containerEl.createEl('h2', { text: 'File Creation' });
+        containerEl.createEl('h2', { text: 'File Creation Settings' });
 
-        containerEl.createEl('p', { text: 'The settings below are only applicable if the plus (+) button within the file pane of the plugin is used.' });
+        containerEl.createEl('p', { text: 'The settings below are only enforced when files are created using the plus (+) button within the file pane of the plugin' });
 
         new Setting(containerEl)
             .setName('Created information in YAML')
-            .setDesc('Turn on if you want plugin to include created YAML key with the time of creation')
+            .setDesc('Include a created YAML key with the time of creation')
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.createdYaml).onChange((value) => {
                     this.plugin.settings.createdYaml = value;
@@ -346,7 +346,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Set File Name as Header 1')
-            .setDesc('Turn on if you want plugin to add the initial file name as main header in the created file.')
+            .setDesc('Add the file name as the main header in the created file')
             .addToggle((toggle) => {
                 toggle.setValue(this.plugin.settings.fileNameIsHeader).onChange((value) => {
                     this.plugin.settings.fileNameIsHeader = value;
@@ -361,8 +361,8 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Excluded File Extensions')
             .setDesc(
-                `Provide extension of files, which you want to exclude from listing in file tree, divided by comma. i.e. 'png, pdf, jpeg'.
-            You need to reload the vault or use "Reload File Tree" button below to make changes effective.`
+                `Provide extensions of files which you want to exclude from listing in the file tree, separated by commas (e.g. "png, pdf, jpeg").
+            You need to reload the vault or use the "Reload File Tree" button below to make changes effective.`
             )
             .addTextArea((text) =>
                 text.setValue(this.plugin.settings.excludedExtensions).onChange((value) => {
@@ -374,8 +374,9 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Excluded Folder Paths')
             .setDesc(
-                `Provide full path of folders, which you want to exclude from listing in file tree, divided by comma. i.e. 'Personal/Attachments, Work/Documents/Folders'.
-            All subfolders are going to be excluded, as well. You need to reload the vault or use "Reload File Tree" button below to make changes effective.`
+                `Provide full path of folders which you want to exclude from listing in file tree, separated by commas (e.g. "Personal/Attachments, Work/Documents/Folders
+).
+            All subfolders will be excluded as well. You need to reload the vault or use the "Reload File Tree" button below to make changes effective.`
             )
             .addTextArea((text) =>
                 text.setValue(this.plugin.settings.excludedFolders).onChange((value) => {
@@ -404,34 +405,34 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Clear All Cache Data')
             .setDesc(
-                `This button will clear the following cache data: "Last position of the divider" & "List of expanded folders in the folder pane", 
-                & "Last active folder path". It will not touch your settings above and list of pinned files. It is recommended to do this clearing once in a while.`
+                `Use this button to clear the following cache data: "Last position of the divider", "List of expanded folders in the folder pane", 
+                & "Last active folder path". It will not change the settings above nor the list of pinned files. It is recommended to do this once in a while.`
             )
             .addButton((button) => {
                 let b = button
                     .setTooltip('Click here to clear the cache data')
-                    .setButtonText('Click for Clearing the Cache')
+                    .setButtonText('Clear Cache')
                     .onClick(async () => {
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.customHeightKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.openFoldersKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.activeFolderPathKey });
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.focusedFolder });
                         this.plugin.refreshTreeLeafs();
-                        new Notice('The plugin cache is cleared...');
+                        new Notice('The plugin cache is cleared');
                     });
             });
 
         new Setting(containerEl)
             .setName('Clear Pinned Files')
-            .setDesc(`This button will clear the pinned files in the file list pane.`)
+            .setDesc(`Use this button to clear the pinned files in the file list pane`)
             .addButton((button) => {
                 let b = button
                     .setTooltip('Click here to clear the pinned files')
-                    .setButtonText('Click for Clearing the Pinned files')
+                    .setButtonText('Clear Pinned Files')
                     .onClick(async () => {
                         lsh.removeFromLocalStorage({ key: this.plugin.keys.pinnedFilesKey });
                         this.plugin.refreshTreeLeafs();
-                        new Notice('The pinned files are cleared...');
+                        new Notice('The pinned files are cleared');
                     });
             });
     }
