@@ -3,7 +3,7 @@ import FileTreeAlternativePlugin from 'main';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { FileComponent } from 'components/FileView/FileComponent';
 
-export const SingleView = (props: { plugin: FileTreeAlternativePlugin }) => {
+export const SingleViewVertical = (props: { plugin: FileTreeAlternativePlugin }) => {
     let { plugin } = props;
 
     const [dividerOnMove, setDividerOnMove] = useState<boolean>(false);
