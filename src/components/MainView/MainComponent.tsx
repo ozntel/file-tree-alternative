@@ -2,7 +2,7 @@ import { TAbstractFile, TFile, TFolder, Notice } from 'obsidian';
 import React, { useEffect } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
-import { SingleView } from 'components/MainView/SingleView';
+import { SingleViewVertical, SingleViewHorizontal } from 'components/MainView/SingleView';
 import { FileTreeView } from 'FileTreeView';
 import FileTreeAlternativePlugin, { eventTypes } from 'main';
 import * as FileTreeUtils from 'utils/Utils';
@@ -43,7 +43,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     };
 
     const setInitialActiveFolderPath = () => {
-        if (plugin.settings.evernoteView) {
+        if (['Horizontal', 'Vertical'].includes(plugin.settings.evernoteView)) {
             let previousActiveFolder = localStorage.getItem(plugin.keys.activeFolderPathKey);
             if (previousActiveFolder) {
                 let folder = plugin.app.vault.getAbstractFileByPath(previousActiveFolder);
@@ -362,8 +362,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         <React.Fragment>
             {view === 'folder' ? (
                 <MainFolder plugin={plugin} />
-            ) : plugin.settings.evernoteView ? (
-                <SingleView plugin={plugin} />
+            ) : plugin.settings.evernoteView === 'Horizontal' ? (
+                <SingleViewHorizontal plugin={plugin} />
+            ) : plugin.settings.evernoteView === 'Vertical' ? (
+                <SingleViewVertical plugin={plugin} />
             ) : (
                 <FileComponent plugin={plugin} />
             )}

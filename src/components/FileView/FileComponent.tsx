@@ -324,7 +324,7 @@ export function FileComponent(props: FilesProps) {
                             <div className={`oz-file-tree-header-wrapper${plugin.settings.fixedHeaderInFileList ? ' file-tree-header-fixed' : ''}`}>
                                 <div className="oz-flex-container">
                                     <div className="oz-nav-action-button" style={{ marginLeft: '0px' }}>
-                                        {plugin.settings.evernoteView ? (
+                                        {['Horizontal', 'Vertical'].includes(plugin.settings.evernoteView) ? (
                                             <Icons.IoIosCloseCircleOutline
                                                 onClick={(e) => handleGoBack(e)}
                                                 size={topIconSize}

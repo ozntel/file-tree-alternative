@@ -296,6 +296,46 @@ div#file-tree-divider.active-divider {
     background-color: var(--text-muted);
 }
 
+.file-tree-container-horizontal {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    max-width: 100%;
+}
+
+.oz-folder-pane-horizontal {
+    display: block;
+    width: 50%;
+    overflow-y: auto;
+    height: 100%;
+    resize: horizontal;
+}
+
+.oz-file-list-pane-horizontal {
+    display: block;
+    height: 100%;
+    overflow-y: auto;
+    flex: 1;
+}
+
+#file-tree-divider-horizontal {
+    margin-left: 5px;
+    width: 3.8px;
+    opacity: 0.3;
+    cursor: col-resize;
+    margin-right: 3px;
+    border-right: 3px solid var(--text-muted);
+}
+
+div#file-tree-divider-horizontal.active-divider {
+    background-color: var(--interactive-accent);
+    border-bottom: 0.5px solid var(--interactive-accent);
+}
+
+#file-tree-divider-horizontal:hover {
+    background-color: var(--text-muted);
+}
+
 .is-folder-active {
     color: var(--text-normal);
     font-weight: bold;
