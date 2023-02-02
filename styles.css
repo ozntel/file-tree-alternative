@@ -319,10 +319,11 @@ div#file-tree-divider.active-divider {
 }
 
 #file-tree-divider-horizontal {
+    margin-left: 5px;
     width: 3.8px;
     opacity: 0.3;
     cursor: col-resize;
-    margin-right: 5px;
+    margin-right: 3px;
     border-right: 3px solid var(--text-muted);
 }
 

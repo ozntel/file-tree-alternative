@@ -6,6 +6,7 @@ type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg'
 export type SortType = 'name' | 'name-rev' | 'last-update' | 'last-update-rev' | 'created' | 'created-rev' | 'file-size' | 'file-size-rev';
 export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
+export type EvernoteViewOption = 'Disabled' | 'Horizontal' | 'Vertical';
 
 export interface FileTreeAlternativePluginSettings {
     openViewOnStart: boolean;
@@ -21,8 +22,7 @@ export interface FileTreeAlternativePluginSettings {
     folderIcon: FolderIcon;
     folderCount: boolean;
     folderCountOption: string;
-    evernoteView: boolean;
-    evernoteViewHorizontal: boolean;
+    evernoteView: EvernoteViewOption;
     filePreviewOnHover: boolean;
     iconBeforeFileName: boolean;
     sortFilesBy: SortType;
@@ -49,8 +49,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     folderIcon: 'default',
     folderCount: true,
     folderCountOption: 'notes',
-    evernoteView: true,
-    evernoteViewHorizontal: false,
+    evernoteView: 'Horizontal',
     filePreviewOnHover: false,
     iconBeforeFileName: true,
     sortFilesBy: 'name',
@@ -111,24 +110,18 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Evernote View')
             .setDesc('Turn on if you want to see the folders and files in a single view without switching between views. Similar experience to Evernote.')
-            .addToggle((toggle) =>
-                toggle.setValue(this.plugin.settings.evernoteView).onChange((value) => {
-                    this.plugin.settings.evernoteView = value;
-                    this.plugin.saveSettings();
-                    this.refreshView();
-                })
-            );
-        
-        new Setting(containerEl)
-            .setName('Evernote View Vertical Layout')
-            .setDesc('Turn on if you want to see the folders and files in Evernote View side-by-side instead of on top of each other.')
-            .addToggle((toggle) =>
-                toggle.setValue(this.plugin.settings.evernoteViewHorizontal).onChange((value) => {
-                    this.plugin.settings.evernoteViewHorizontal = value;
-                    this.plugin.saveSettings();
-                    this.refreshView();
-                })
-            );
+            .addDropdown((dropdown) => {
+                dropdown
+                    .addOption('Disabled', 'Disabled')
+                    .addOption('Horizontal', 'Horizontal')
+                    .addOption('Vertical', 'Vertical')
+                    .setValue(this.plugin.settings.evernoteView)
+                    .onChange((value: EvernoteViewOption) => {
+                        this.plugin.settings.evernoteView = value;
+                        this.plugin.saveSettings();
+                        this.refreshView();
+                    });
+            });
 
         new Setting(containerEl)
             .setName('Ribbon Icon')

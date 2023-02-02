@@ -362,10 +362,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         <React.Fragment>
             {view === 'folder' ? (
                 <MainFolder plugin={plugin} />
-            ) : plugin.settings.evernoteView ? (
-                plugin.settings.evernoteViewHorizontal ? 
-                <SingleViewHorizontal plugin={plugin} /> :
+            ) : plugin.settings.evernoteView === 'Horizontal' ? (
                 <SingleView plugin={plugin} />
+            ) : plugin.settings.evernoteView === 'Vertical' ? (
+                <SingleViewHorizontal plugin={plugin} />
             ) : (
                 <FileComponent plugin={plugin} />
             )}
