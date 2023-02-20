@@ -111,8 +111,7 @@ export function FileComponent(props: FilesProps) {
 
     const filesToList: TFile[] = useMemo(
         () => customFiles(fileList),
-        [excludedFolders, excludedExtensions, pinnedFiles, fileList,
-            plugin.settings.sortFilesBy, plugin.settings.sortReverse]
+        [excludedFolders, excludedExtensions, pinnedFiles, fileList, plugin.settings.sortFilesBy, plugin.settings.sortReverse]
     );
 
     // Go Back Button - Sets Main Component View to Folder
@@ -235,11 +234,11 @@ export function FileComponent(props: FilesProps) {
             sortMenu.addItem((menuItem) => {
                 const order = plugin.settings.sortReverse ? `${high} to ${low}` : `${low} to ${high}`;
                 menuItem.setTitle(`${label} (${order})`);
-                menuItem.setIcon(value === plugin.settings.sortFilesBy ? 'checkmark' : 'space');
+                menuItem.setIcon(value === plugin.settings.sortFilesBy ? 'checkmark' : 'spaceIcon');
                 menuItem.onClick(() => changeSortSettingTo(value));
             });
         };
-        
+
         addMenuItem('File Name', 'A', 'Z', 'name');
         addMenuItem('Created', 'New', 'Old', 'created');
         addMenuItem('File Size', 'Big', 'Small', 'file-size');
@@ -249,7 +248,7 @@ export function FileComponent(props: FilesProps) {
 
         sortMenu.addItem((menuItem) => {
             menuItem.setTitle('Reverse Order');
-            menuItem.setIcon(plugin.settings.sortReverse ? 'checkmark' : 'space');
+            menuItem.setIcon(plugin.settings.sortReverse ? 'checkmark' : 'spaceIcon');
             menuItem.onClick(() => {
                 plugin.settings.sortReverse = !plugin.settings.sortReverse;
                 plugin.saveSettings();
@@ -258,9 +257,7 @@ export function FileComponent(props: FilesProps) {
         });
 
         // Trigger
-        plugin.app.workspace.trigger('sort-menu', sortMenu);
         sortMenu.showAtPosition({ x: e.pageX, y: e.pageY });
-        return false;
     };
 
     const topIconSize = 19;
