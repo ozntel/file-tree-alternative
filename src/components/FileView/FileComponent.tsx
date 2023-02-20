@@ -8,7 +8,6 @@ import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import { SortType } from 'settings';
-import { ObsidianVaultConfig } from 'utils/types';
 import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress, { isMouseEvent } from 'hooks/useLongPress';
 import { ICON } from 'FileTreeView';
