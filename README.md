@@ -3,29 +3,20 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/ozntel/file-tree-alternative?style=for-the-badge)
 ![GitHub all releases](https://img.shields.io/github/downloads/ozntel/file-tree-alternative/total?style=for-the-badge)
 
-This Obsidian Plugin allows users to have a different file explorer experience.
+The default file explorer of Obsidian has all files and folders in a single view. The File Tree Alternative plugin helps you to have separate views for folders and files.
 
-You can find all release details under the [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
-
-## Sample Record
-
-<a href="https://youtu.be/fbz8IZtXuUE" target=“_blank”>
-    <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 300px;" /> 
-</a>
-
-You can also checkout the Youtube video created by Antone Heyward explaining the functionalities of the plugin:
-<a href="https://youtu.be/KBzE_BT0rtQ" target="_blank">Enhance The File Explorer File Tree Alternative Plugin</a>
+The plugin is updated quiet regularly. You can see the details of each release using the following link [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
 
 ## Plugin Features
 
 ### General
 
--   You can use `Evernote` view, which shows folders and file list at the same time. Or simply turn it off to have separate views.
+-   You can use `Evernote` view, which shows folders and file list at the same time. Or simply turn it off to have separate views. The plugin supports splitting the view `horizontally` or `vertically`. Make sure that you adjust the plugin settings accordingly.
 -   You can use `Ribbon Icon` to activate the `File Tree Leaf` in case you close by mistake. You can turn off `ribbon icon` from the plugin settings. It will only work if you closed the plugin view accidentaly or on purpose to build it back.
 
-### Folder Pane
+### Folder Pane Features
 
--   You can see the `number of notes` under each folder within the `folders` view. You have an option if you want to see the number for notes or total files. You can also turn this function off completely.
+-   You can see the `number of notes` under each folder within the `folders` view. You have an option if you want to see the number for notes or `number of all files`. You can also turn this function off completely to remove counts from the display.
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/number-of-notes.png" width="180"></img>
 
@@ -38,13 +29,15 @@ You can also checkout the Youtube video created by Antone Heyward explaining the
 -   The plugin remembers `last expanded folders` and `last focused folder` state to load for the following session in case you relaunch your vault.
 -   You can define certain `folder paths` in plugin settings to exclude from main folder list. All subfolders are going to be excluded, as well.
 -   You can turn on/off `root folder` within the file tree.
--   You can also customize the `folder icons`. Check the available options from plugin settings:
+-   You can customize the `folder icons`. Check the available options from plugin settings:
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/folder-icons.png" width="300"></img>
 
-### File List Pane
+-   You can expand/collapse all folders using the navigation buttons on the top.
 
--   The plugin lists all files including the `files under sub-folders`. You can turn off this option from plugin settings if you want to see only the files under the folder you selected. You can also turn on `toggle button` from the plugin settings and it'll include an additional button (looks like an eye) to toggle `files under sub-folders`
+### File List Pane Features
+
+-   The plugin lists all files including the `files under sub-folders`. You can turn off this option from plugin settings if you want to see only the files under the folder you selected. You can also turn on `toggle button` from the plugin settings and it'll include an additional button (looks like an eye) to toggle `files under sub-folders`. You can also toggle viewing direct or all files under a folder.
 -   The plugin allows you to `Pin` your favorite files to the top. They are saved for the following sessions.
 -   You can define certain `file extensions` in plugin settings to exclude from listing in file explorer.
 -   You can `star`/`unstar` your files in case you have `Starred` plugin turned on.
@@ -56,6 +49,8 @@ You can also checkout the Youtube video created by Antone Heyward explaining the
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/fixed-top-files.png" width="180"></img>
 
+-   You can sort your files depending on your needs. Current options are `File Name`, `File Size`, `Creation Time` and `Update Time`. You can sort from both sides using `Reverse Order` button.
+
 ## Sample Images
 
 -   Single Folder View:
@@ -65,6 +60,15 @@ You can also checkout the Youtube video created by Antone Heyward explaining the
 -   Pin to Top:
 
       <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/files-pinned.png" style="width: 400px;" />
+
+## Sample Record
+
+<a href="https://youtu.be/fbz8IZtXuUE" target=“_blank”>
+    <img src="https://github.com/ozntel/file-tree-alternative/raw/main/images/obsidian-plugin.png" style="width: 300px;" /> 
+</a>
+
+You can also checkout the Youtube video created by Antone Heyward explaining the functionalities of the plugin:
+<a href="https://youtu.be/KBzE_BT0rtQ" target="_blank">Enhance The File Explorer File Tree Alternative Plugin</a>
 
 ## Contact
 
