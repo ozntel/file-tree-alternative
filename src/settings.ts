@@ -50,7 +50,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     folderIcon: 'default',
     folderCount: true,
     folderCountOption: 'notes',
-    evernoteView: 'Horizontal',
+    evernoteView: 'Vertical',
     filePreviewOnHover: false,
     iconBeforeFileName: true,
     sortFilesBy: 'name',
