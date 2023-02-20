@@ -1,6 +1,6 @@
 import { Plugin, addIcon, TAbstractFile } from 'obsidian';
 import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
-import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon } from './utils/icons';
+import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon, SpaceIcon } from './utils/icons';
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
 import { VaultChange } from 'utils/types';
 
@@ -31,6 +31,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
         addIcon('zoomOutIcon', ZoomOutIcon);
         addIcon('zoomOutDoubleIcon', ZoomOutDoubleIcon);
         addIcon('locationIcon', LocationIcon);
+        addIcon('spaceIcon', SpaceIcon);
 
         // Load Settings
         this.addSettingTab(new FileTreeAlternativePluginSettingsTab(this.app, this));
