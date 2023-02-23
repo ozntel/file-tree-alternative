@@ -51,6 +51,10 @@ The plugin is updated quiet regularly. You can see the details of each release u
 
 -   You can sort your files depending on your needs. Current options are `File Name`, `File Size`, `Creation Time` and `Update Time`. You can sort from both sides using `Reverse Order` button.
 
+# Style Settings
+
+As of version 2.3.2, the plugin supports Custom Style Setings. To be able to use it, you need to install <a href="https://github.com/mgmeyers/obsidian-style-settings">Style Settings</a> plugin. You can customize the size, colors etc.
+
 ## Sample Images
 
 -   Single Folder View:
