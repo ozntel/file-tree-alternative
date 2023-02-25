@@ -138,8 +138,10 @@ export default class FileTreeAlternativePlugin extends Plugin {
             await leaf.setViewState({ type: VIEW_TYPE });
             if (showAfterAttach) this.app.workspace.revealLeaf(leaf);
         } else {
-            // Already mounted - needs to be revealed
-            leafs.forEach((leaf) => this.app.workspace.revealLeaf(leaf));
+            // Already mounted - show if only selected showAfterAttach
+            if (showAfterAttach) {
+                leafs.forEach((leaf) => this.app.workspace.revealLeaf(leaf));
+            }
         }
     };
 
