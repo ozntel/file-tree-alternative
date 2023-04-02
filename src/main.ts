@@ -56,6 +56,18 @@ export default class FileTreeAlternativePlugin extends Plugin {
             callback: async () => await this.openFileTreeLeaf(true),
         });
 
+        // Dispatch a revealFile event whenever a file is opened
+        this.registerEvent(this.app.workspace.on('file-open', () => {
+            if (this.settings.autoReveal) {
+                let event = new CustomEvent(eventTypes.revealFile, {
+                    detail: {
+                        file: this.app.workspace.getActiveFile(),
+                    },
+                });
+                window.dispatchEvent(event);
+            }
+        }));
+
         // Add Command to Reveal Active File
         this.addCommand({
             id: 'reveal-active-file',
