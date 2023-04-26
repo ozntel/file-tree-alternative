@@ -60,13 +60,24 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         window.addEventListener(eventTypes.activeFileChange, changeActiveFile);
         window.addEventListener(eventTypes.refreshView, forceUpdate);
         window.addEventListener(eventTypes.revealFile, handleRevealFileEvent);
+        window.addEventListener(eventTypes.createNewNote, handleCreateNewNoteEvent);
         return () => {
             window.removeEventListener(eventTypes.vaultChange, vaultChangeEvent);
             window.removeEventListener(eventTypes.activeFileChange, changeActiveFile);
             window.removeEventListener(eventTypes.refreshView, forceUpdate);
             window.removeEventListener(eventTypes.revealFile, handleRevealFileEvent);
+            window.removeEventListener(eventTypes.revealFile, handleCreateNewNoteEvent);
         };
     }, []);
+
+    const handleCreateNewNoteEvent = () => {
+        let currentActiveFolderPath = '/';
+        setActiveFolderPath((activeFolderPath) => {
+            currentActiveFolderPath = activeFolderPath;
+            return activeFolderPath;
+        });
+        FileTreeUtils.createNewFile(null, currentActiveFolderPath, plugin);
+    };
 
     const vaultChangeEvent = (evt: CustomVaultChangeEvent) => {
         handleVaultChanges(evt.detail.file, evt.detail.changeType, evt.detail.oldPath);

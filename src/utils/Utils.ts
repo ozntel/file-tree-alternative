@@ -167,7 +167,7 @@ export const platformIsMobile = () => {
     return Platform.isMobile;
 };
 
-export const createNewFile = async (e: React.MouseEvent, folderPath: string, plugin: FileTreeAlternativePlugin) => {
+export const createNewFile = async (e: React.MouseEvent | null, folderPath: string, plugin: FileTreeAlternativePlugin) => {
     let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
     if (!targetFolder) return;
     let modal = new VaultChangeModal(plugin, targetFolder, 'create note');

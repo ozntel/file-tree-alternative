@@ -9,6 +9,7 @@ export const eventTypes = {
     refreshView: 'fta-refresh-view',
     revealFile: 'fta-reveal-file',
     vaultChange: 'fta-vault-change',
+    createNewNote: 'fta-create-new-note',
 };
 
 export default class FileTreeAlternativePlugin extends Plugin {
@@ -72,6 +73,18 @@ export default class FileTreeAlternativePlugin extends Plugin {
                     detail: {
                         file: this.app.workspace.getActiveFile(),
                     },
+                });
+                window.dispatchEvent(event);
+            },
+        });
+
+        // Add Command to create a new file under active folder path
+        this.addCommand({
+            id: ' create-new-note',
+            name: 'Create a New Note',
+            callback: () => {
+                let event = new CustomEvent(eventTypes.createNewNote, {
+                    detail: {},
                 });
                 window.dispatchEvent(event);
             },
