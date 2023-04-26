@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.3.4
+
+-   Create a new note command
+
 ## Version 2.3.3
 
 -   Reveal Leaf during initial vault load fix
