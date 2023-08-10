@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.3.5
+
+-   Folder Note Rename Handle - Rename also the file name under folder
+
 ## Version 2.3.4
 
 -   Create a new note command
