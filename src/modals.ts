@@ -122,6 +122,12 @@ export class VaultChangeModal extends Modal {
             if (this.action === 'rename') {
                 // Manual Rename Handler For md Files
                 if (this.file.name.endsWith('.md')) newName = newName + '.md';
+                // Folder Note files to be updated
+                if (this.file instanceof TFolder && this.plugin.settings.folderNote) {
+                    let folderNoteFile = this.app.vault.getAbstractFileByPath(this.file.path + '/' + this.file.name + '.md');
+                    if (folderNoteFile) this.app.fileManager.renameFile(folderNoteFile, this.file.path + '/' + newName + '.md');
+                }
+                // Rename the destination file/folder name
                 this.app.fileManager.renameFile(this.file, this.file.parent.path + '/' + newName);
             } else if (this.action === 'create folder') {
                 this.app.vault.createFolder(this.file.path + '/' + newName);
