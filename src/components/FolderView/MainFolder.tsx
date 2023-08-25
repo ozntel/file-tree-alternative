@@ -27,7 +27,6 @@ export function MainFolder(props: FolderProps) {
     const [folderTree] = useRecoilState(recoilState.folderTree);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
     const [_openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
-    const [folderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
 
     // Force Update
     const forceUpdate = useForceUpdate();
@@ -128,6 +127,10 @@ export function MainFolder(props: FolderProps) {
         return false;
     };
 
+    const handleFolderNameDoubleClick = (folder: TFolder) => {
+        if (!folder.isRoot()) setFocusedFolder(folder.parent);
+    };
+
     let folderActionItemSize = 22;
 
     return (
@@ -169,6 +172,7 @@ export function MainFolder(props: FolderProps) {
                             isRootFolder={focusedFolder.isRoot()}
                             style={treeStyles}
                             onClick={() => setActiveFolderPath(focusedFolder.path)}
+                            onDoubleClick={() => handleFolderNameDoubleClick(focusedFolder)}
                             folder={focusedFolder}
                             onContextMenu={(e: MouseEvent) => handleRootFolderContextMenu(e, focusedFolder)}>
                             {children}

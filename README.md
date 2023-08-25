@@ -20,11 +20,13 @@ The plugin is updated quiet regularly. You can see the details of each release u
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/number-of-notes.png" width="180"></img>
 
--   You can also `focus in and out` to a certain folder, which will help you to save space in the folder pane:
+-   You can also `focus in and out` to a certain folder, which will help you to save space in the folder pane by either double clicking the folder name or using the context menu items:
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/focus-in-folder.png" width="180"></img>
 
     <img src="https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/focus-out-from-folder.png" width="180"></img>
+
+Double Clicking again on the focused folder name will move focus to the parent folder.
 
 -   The plugin remembers `last expanded folders` and `last focused folder` state to load for the following session in case you relaunch your vault.
 -   You can define certain `folder paths` in plugin settings to exclude from main folder list. All subfolders are going to be excluded, as well.

@@ -28,6 +28,10 @@ export function NestedFolders(props: NestedFoldersProps) {
 
     const handleFolderNameClick = (folderPath: string) => setActiveFolderPath(folderPath);
 
+    const handleFolderNameDoubleClick = (folder: TFolder) => {
+        setFocusedFolder(folder);
+    };
+
     const getSortedFolderTree = (folderTree: FolderTree[]) => {
         let newTree: FolderTree[] = folderTree;
         if (excludedFolders.length > 0) {
@@ -226,6 +230,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                                     content={child.folder.name}
                                     open={openFolders.contains(child.folder.path)}
                                     onClick={() => handleFolderNameClick(child.folder.path)}
+                                    onDoubleClick={() => handleFolderNameDoubleClick(child.folder)}
                                     onContextMenu={(e: MouseEvent | TouchEvent) =>
                                         handleFolderContextMenu({
                                             event: e,
@@ -240,6 +245,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                                     plugin={plugin}
                                     content={child.folder.name}
                                     onClick={() => handleFolderNameClick(child.folder.path)}
+                                    onDoubleClick={() => handleFolderNameDoubleClick(child.folder)}
                                     onContextMenu={(e: MouseEvent) =>
                                         handleFolderContextMenu({
                                             event: e,
