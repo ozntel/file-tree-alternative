@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.3.6
+
+-   Double Click Focus Feature
+-   Focus now also activates the folder in the file pane
+
 ## Version 2.3.5
 
 -   Folder Note Rename Handle - Rename also the file name under folder
