@@ -6,7 +6,7 @@ import typescript from '@rollup/plugin-typescript';
 import million from 'million/compiler';
 import { env } from 'process';
 
-const isProd = env.NODE_ENV == 'prod';
+const isProd = env.NODE_ENV === 'production';
 
 export default {
     context: 'window',
@@ -15,7 +15,7 @@ export default {
         file: isProd ? 'dist/main.js' : 'main.js',
         format: 'cjs',
         exports: 'default',
-        sourceMap: true,
+        sourcemap: !isProd,
     },
     external: ['obsidian', 'fs', 'os', 'path'],
     plugins: [

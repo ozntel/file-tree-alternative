@@ -4,8 +4,8 @@
     "description": "This plugin allows you to have an alternative file tree view.",
     "main": "main.js",
     "scripts": {
-        "dev": "rollup -c -w --bundleConfigAsCjs NODE_ENV=prod",
-        "build": "cross-env BUILD=production obsidian-plugin build src/main.ts"
+        "dev": "rollup -c -w --bundleConfigAsCjs",
+        "build": "NODE_ENV=production rollup -c --bundleConfigAsCjs"
     },
     "keywords": [],
     "author": "",
