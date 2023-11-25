@@ -116,7 +116,9 @@ export const openFile = (props: { file: TFile; app: App; newLeaf: boolean; leafB
     const { file, app, newLeaf, leafBySplit } = props;
     let leaf = app.workspace.getLeaf(newLeaf);
     if (leafBySplit) leaf = app.workspace.createLeafBySplit(leaf, 'vertical');
-    app.workspace.setActiveLeaf(leaf, false);
+    app.workspace.setActiveLeaf(leaf, {
+        focus: false,
+    });
     leaf.openFile(file, { eState: { focus: true } });
 };
 
