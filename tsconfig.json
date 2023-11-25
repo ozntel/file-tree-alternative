@@ -3,8 +3,6 @@
         "jsx": "react",
         "esModuleInterop": true,
         "baseUrl": "src",
-        "inlineSourceMap": true,
-        "inlineSources": true,
         "isolatedModules": true,
         "module": "ESNext",
         "target": "es6",

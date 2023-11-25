@@ -2,15 +2,7 @@ import { Plugin, addIcon, TAbstractFile } from 'obsidian';
 import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
 import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon, SpaceIcon } from './utils/icons';
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
-import { VaultChange } from 'utils/types';
-
-export const eventTypes = {
-    activeFileChange: 'fta-active-file-change',
-    refreshView: 'fta-refresh-view',
-    revealFile: 'fta-reveal-file',
-    vaultChange: 'fta-vault-change',
-    createNewNote: 'fta-create-new-note',
-};
+import { VaultChange, eventTypes } from 'utils/types';
 
 export default class FileTreeAlternativePlugin extends Plugin {
     settings: FileTreeAlternativePluginSettings;

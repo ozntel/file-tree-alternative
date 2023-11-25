@@ -27,3 +27,11 @@ export class CustomVaultChangeEvent extends Event {
         oldPath: string;
     };
 }
+
+export const eventTypes = {
+    activeFileChange: 'fta-active-file-change',
+    refreshView: 'fta-refresh-view',
+    revealFile: 'fta-reveal-file',
+    vaultChange: 'fta-vault-change',
+    createNewNote: 'fta-create-new-note',
+};

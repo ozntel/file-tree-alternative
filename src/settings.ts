@@ -1,6 +1,7 @@
-import FileTreeAlternativePlugin, { eventTypes } from './main';
+import FileTreeAlternativePlugin from './main';
 import { PluginSettingTab, Setting, App, Notice } from 'obsidian';
 import { LocalStorageHandler } from '@ozntel/local-storage-handler';
+import { eventTypes } from 'utils/types';
 
 type FolderIcon = 'default' | 'box-folder' | 'icomoon' | 'typicon' | 'circle-gg';
 export type SortType = 'name' | 'last-update' | 'created' | 'file-size';

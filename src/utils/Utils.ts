@@ -1,9 +1,8 @@
 import { TFile, TFolder, App, Keymap, Platform } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
-import { FolderFileCountMap, FolderTree } from 'utils/types';
+import { FolderFileCountMap, FolderTree, eventTypes } from 'utils/types';
 import { stripIndents } from 'common-tags';
 import dayjs from 'dayjs';
-import { eventTypes } from 'main';
 import { VaultChangeModal } from 'modals';
 
 // Helper Function To Get List of Files

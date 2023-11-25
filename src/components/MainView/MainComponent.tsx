@@ -4,12 +4,12 @@ import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
 import { SingleViewVertical, SingleViewHorizontal } from 'components/MainView/SingleView';
 import { FileTreeView } from 'FileTreeView';
-import FileTreeAlternativePlugin, { eventTypes } from 'main';
+import FileTreeAlternativePlugin from 'main';
 import * as FileTreeUtils from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import useForceUpdate from 'hooks/ForceUpdate';
-import { CustomVaultChangeEvent, VaultChange } from 'utils/types';
+import { CustomVaultChangeEvent, VaultChange, eventTypes } from 'utils/types';
 
 interface MainTreeComponentProps {
     fileTreeView: FileTreeView;
