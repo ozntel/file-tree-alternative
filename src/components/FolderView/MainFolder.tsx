@@ -42,7 +42,7 @@ export function MainFolder(props: FolderProps) {
         if (event === undefined) e = window.event as MouseEvent;
 
         // Menu Items
-        const folderMenu = new Menu(app);
+        const folderMenu = new Menu();
 
         folderMenu.addItem((menuItem) => {
             menuItem
@@ -97,7 +97,7 @@ export function MainFolder(props: FolderProps) {
     };
 
     const triggerFolderSortOptions = (e: React.MouseEvent) => {
-        const sortMenu = new Menu(plugin.app);
+        const sortMenu = new Menu();
 
         const changeSortSettingTo = (newValue: FolderSortType) => {
             plugin.settings.sortFoldersBy = newValue;

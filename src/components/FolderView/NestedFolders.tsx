@@ -57,7 +57,7 @@ export function NestedFolders(props: NestedFoldersProps) {
         if (event === undefined) e = window.event as MouseEvent;
 
         // Menu Items
-        const folderMenu = new Menu(plugin.app);
+        const folderMenu = new Menu();
 
         // Focus Items
         if (Util.hasChildFolder(folder)) {

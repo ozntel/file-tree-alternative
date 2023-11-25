@@ -221,7 +221,7 @@ export function FileComponent(props: FilesProps) {
     };
 
     const sortClicked = (e: React.MouseEvent) => {
-        const sortMenu = new Menu(plugin.app);
+        const sortMenu = new Menu();
 
         const changeSortSettingTo = (newValue: SortType) => {
             plugin.settings.sortFilesBy = newValue;
@@ -418,7 +418,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     // Handle Right Click Event on File - Custom Menu
     const triggerContextMenu = (file: TFile, e: React.MouseEvent | React.TouchEvent) => {
-        const fileMenu = new Menu(plugin.app);
+        const fileMenu = new Menu();
 
         // Pin - Unpin Item
         fileMenu.addItem((menuItem) => {
