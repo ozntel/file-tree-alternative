@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.3.7
+
+-   Minor fixes to adjust the plugin to the latest API
+-   Rollup and Million for bundling
+-   React Upgrade
+
 ## Version 2.3.6
 
 -   Double Click Focus Feature
