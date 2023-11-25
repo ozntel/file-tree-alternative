@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { Root, createRoot } from 'react-dom/client';
 import FileTreeAlternativePlugin from './main';
 import MainTreeComponent from './components/MainView/MainComponent';
 import { RecoilRoot } from 'recoil';
@@ -12,6 +12,7 @@ export const ICON = 'sheets-in-box';
 export class FileTreeView extends ItemView {
     plugin: FileTreeAlternativePlugin;
     currentFolderPath: string;
+    root: Root;
 
     // @ Temp Fix for Opening New File
     navigation = false;
@@ -38,7 +39,7 @@ export class FileTreeView extends ItemView {
     }
 
     destroy() {
-        ReactDOM.unmountComponentAtNode(this.contentEl);
+        if (this.root) this.root.unmount();
     }
 
     async onOpen(): Promise<void> {
@@ -48,13 +49,13 @@ export class FileTreeView extends ItemView {
 
     constructFileTree(folderPath: string, vaultChange: string) {
         this.destroy();
-        ReactDOM.render(
+        this.root = createRoot(this.contentEl);
+        this.root.render(
             <div className="file-tree-plugin-view">
                 <RecoilRoot>
                     <MainTreeComponent fileTreeView={this} plugin={this.plugin} />
                 </RecoilRoot>
-            </div>,
-            this.contentEl
+            </div>
         );
     }
 }
