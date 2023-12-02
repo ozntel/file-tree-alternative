@@ -3,7 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import replace from '@rollup/plugin-replace';
 import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-import million from 'million/compiler';
+// import million from 'million/compiler';
 import { env } from 'process';
 
 const isProd = env.NODE_ENV === 'production';
@@ -33,6 +33,6 @@ export default {
             compact: true,
         }),
         commonjs(),
-        million.rollup({ auto: true }),
+        // million.rollup({ auto: true }),
     ],
 };
