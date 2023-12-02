@@ -1,6 +1,7 @@
-import { Modal, App, TFolder, TFile, TAbstractFile, FuzzySuggestModal } from 'obsidian';
+import { Modal, App, TFolder, TAbstractFile, FuzzySuggestModal } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { getFileCreateString, createNewMarkdownFile } from 'utils/Utils';
+import { OZFile } from 'utils/types';
 
 type Action = 'rename' | 'create folder' | 'create note';
 
@@ -54,11 +55,11 @@ export class ConfirmationModal extends Modal {
 }
 
 export class VaultChangeModal extends Modal {
-    file: TFolder | TFile | TAbstractFile;
+    file: TFolder | OZFile | TAbstractFile;
     action: Action;
     plugin: FileTreeAlternativePlugin;
 
-    constructor(plugin: FileTreeAlternativePlugin, file: TFolder | TFile | TAbstractFile, action: Action) {
+    constructor(plugin: FileTreeAlternativePlugin, file: TFolder | OZFile | TAbstractFile, action: Action) {
         super(plugin.app);
         this.file = file;
         this.action = action;
@@ -89,10 +90,18 @@ export class VaultChangeModal extends Modal {
         inputEl.style.cssText = 'width: 100%; height: 2.5em; margin-bottom: 15px;';
         if (this.action === 'rename') {
             // Manual Rename Handler For md Files
-            if (this.file.name.endsWith('.md')) {
-                inputEl.value = this.file.name.substring(0, this.file.name.lastIndexOf('.'));
+            if (this.file.path.endsWith('.md')) {
+                if (this.file instanceof TFolder || this.file instanceof TAbstractFile) {
+                    inputEl.value = this.file.name.substring(0, this.file.name.lastIndexOf('.'));
+                } else {
+                    inputEl.value = this.file.basename;
+                }
             } else {
-                inputEl.value = this.file.name;
+                if (this.file instanceof TFolder || this.file instanceof TAbstractFile) {
+                    inputEl.value = this.file.name;
+                } else {
+                    inputEl.value = this.file.basename;
+                }
             }
         }
 
@@ -121,14 +130,19 @@ export class VaultChangeModal extends Modal {
             let newName = inputEl.value;
             if (this.action === 'rename') {
                 // Manual Rename Handler For md Files
-                if (this.file.name.endsWith('.md')) newName = newName + '.md';
+                if (this.file.path.endsWith('.md')) newName = newName + '.md';
                 // Folder Note files to be updated
                 if (this.file instanceof TFolder && this.plugin.settings.folderNote) {
                     let folderNoteFile = this.app.vault.getAbstractFileByPath(this.file.path + '/' + this.file.name + '.md');
                     if (folderNoteFile) this.app.fileManager.renameFile(folderNoteFile, this.file.path + '/' + newName + '.md');
                 }
                 // Rename the destination file/folder name
-                this.app.fileManager.renameFile(this.file, this.file.parent.path + '/' + newName);
+                this.app.fileManager.renameFile(
+                    this.file instanceof TFolder || this.file instanceof TAbstractFile
+                        ? this.file
+                        : this.plugin.app.vault.getAbstractFileByPath(this.file.path),
+                    this.file.parent.path + '/' + newName
+                );
             } else if (this.action === 'create folder') {
                 this.app.vault.createFolder(this.file.path + '/' + newName);
             } else if (this.action === 'create note') {
@@ -157,9 +171,9 @@ export class VaultChangeModal extends Modal {
 
 export class MoveSuggestionModal extends FuzzySuggestModal<TFolder> {
     app: App;
-    fileOrFolderToMove: TFile | TFolder;
+    fileOrFolderToMove: OZFile | TFolder;
 
-    constructor(app: App, fileOrFolderToMove: TFile | TFolder) {
+    constructor(app: App, fileOrFolderToMove: OZFile | TFolder) {
         super(app);
         this.fileOrFolderToMove = fileOrFolderToMove;
     }
@@ -173,7 +187,10 @@ export class MoveSuggestionModal extends FuzzySuggestModal<TFolder> {
     }
 
     onChooseItem(item: TFolder, evt: MouseEvent | KeyboardEvent) {
-        this.app.vault.rename(this.fileOrFolderToMove, item.path + '/' + this.fileOrFolderToMove.name);
+        let fileToRename = this.app.vault.getAbstractFileByPath(item.path);
+        if (fileToRename) {
+            this.app.vault.rename(fileToRename, item.path + '/' + fileToRename.name);
+        }
     }
 }
 

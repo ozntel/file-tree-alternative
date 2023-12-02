@@ -9,7 +9,7 @@ import * as FileTreeUtils from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import useForceUpdate from 'hooks/ForceUpdate';
-import { CustomVaultChangeEvent, VaultChange, eventTypes } from 'utils/types';
+import { CustomVaultChangeEvent, VaultChange, eventTypes, OZFile } from 'utils/types';
 
 interface MainTreeComponentProps {
     fileTreeView: FileTreeView;
@@ -26,8 +26,8 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // --> Plugin States
     const [view, setView] = useRecoilState(recoilState.view);
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
-    const [fileList, setFileList] = useRecoilState(recoilState.fileList);
-    const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
+    const [ozFileList, setOzFileList] = useRecoilState(recoilState.ozFileList);
+    const [ozPinnedFiles, setOzPinnedFiles] = useRecoilState(recoilState.ozPinnedFileList);
     const [openFolders, setOpenFolders] = useRecoilState(recoilState.openFolders);
     const [_folderTree, setFolderTree] = useRecoilState(recoilState.folderTree);
     const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
@@ -35,11 +35,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     const [_excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [_showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
-    const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
+    const [activeOZFile, setActiveOzFile] = useRecoilState(recoilState.activeOZFile);
 
     const setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : activeFolderPath;
-        setFileList(FileTreeUtils.getFilesUnderPath(filesPath, plugin));
+        setOzFileList(FileTreeUtils.getFilesUnderPath(filesPath, plugin));
     };
 
     const setInitialActiveFolderPath = () => {
@@ -87,7 +87,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         // @ts-ignore
         let filePath: string = evt.detail.filePath;
         let file = plugin.app.vault.getAbstractFileByPath(filePath);
-        if (file) setActiveFile(file as TFile);
+        if (file) setActiveOzFile(FileTreeUtils.TFile2OZFile(file as TFile));
     };
 
     // Initial Load
@@ -95,7 +95,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         setInitialFocusedFolder();
         setExcludedFolders(getExcludedFolders());
         setExcludedExtensions(getExcludedExtensions());
-        setPinnedFiles(getPinnedFilesFromSettings());
+        setOzPinnedFiles(getPinnedFilesFromSettings());
         setOpenFolders(getOpenFoldersFromSettings());
         setShowSubFolders(plugin.settings.showFilesFromSubFolders);
         setInitialActiveFolderPath();
@@ -124,7 +124,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     };
 
     // State Change Handlers
-    useEffect(() => savePinnedFilesToSettings(), [pinnedFiles]);
+    useEffect(() => savePinnedFilesToSettings(), [ozPinnedFiles]);
     useEffect(() => saveOpenFoldersToSettings(), [openFolders]);
     useEffect(() => saveExcludedFoldersToSettings(), [excludedFolders]);
 
@@ -174,14 +174,14 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     }
 
     // Load The String List anad Set Pinned Files State
-    function getPinnedFilesFromSettings(): TFile[] {
-        let pinnedFiles: TFile[] = [];
+    function getPinnedFilesFromSettings(): OZFile[] {
+        let pinnedFiles: OZFile[] = [];
         let localStoragePinnedFiles = localStorage.getItem(plugin.keys.pinnedFilesKey);
         if (localStoragePinnedFiles) {
             localStoragePinnedFiles = JSON.parse(localStoragePinnedFiles);
             for (let file of localStoragePinnedFiles) {
-                let pinnedFile = plugin.app.vault.getAbstractFileByPath(file);
-                if (pinnedFile) pinnedFiles.push(pinnedFile as TFile);
+                let pinnedFile = plugin.app.vault.getAbstractFileByPath(file) as TFile;
+                if (pinnedFile) pinnedFiles.push(FileTreeUtils.TFile2OZFile(pinnedFile));
             }
         }
         return pinnedFiles;
@@ -199,7 +199,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // Get The Pinned Files State and Save in Data as String Array
     function savePinnedFilesToSettings() {
         let pinnedFilesToSave: string[] = [];
-        for (let file of pinnedFiles) {
+        for (let file of ozPinnedFiles) {
             pinnedFilesToSave.push(file.path);
         }
         localStorage.setItem(plugin.keys.pinnedFilesKey, JSON.stringify(pinnedFilesToSave));
@@ -217,7 +217,8 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         let currentFocusedFolder: TFolder = null;
         let currentActiveFolderPath: string = '';
         let currentView: string = '';
-        let currentFileList: TFile[] = [];
+        let currentFileList: OZFile[] = [];
+        let currentActiveOZFile: OZFile = null;
 
         setFocusedFolder((focusedFolder) => {
             currentFocusedFolder = focusedFolder;
@@ -231,9 +232,13 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             currentView = view;
             return view;
         });
-        setFileList((fileList) => {
+        setOzFileList((fileList) => {
             currentFileList = fileList;
             return fileList;
+        });
+        setActiveOzFile((activeOZFile) => {
+            currentActiveOZFile = activeOZFile;
+            return activeOZFile;
         });
 
         // File Event Handlers
@@ -249,13 +254,15 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                     }
                     // If the file renamed or deleted or modified is in the current view, it will be updated
                     let parentFolderPath = file.path.substring(0, file.path.lastIndexOf('/'));
-                    let fileInCurrentView = currentFileList.some((f) => f.path === file.path);
+                    let fileInCurrentView = currentFileList.some((f) => {
+                        return changeType === 'rename' ? f.path === oldPathBeforeRename : f.path === file.path;
+                    });
                     let fileInCurrentFolder =
                         currentActiveFolderPath === parentFolderPath ||
                         (plugin.settings.showFilesFromSubFolders && parentFolderPath.startsWith(currentActiveFolderPath));
                     if (fileInCurrentView) {
                         if (changeType === 'delete') {
-                            setFileList(
+                            setOzFileList(
                                 currentFileList.filter((f) => {
                                     return f.path !== file.path;
                                 })
@@ -264,24 +271,29 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                             changeType === 'rename' ||
                             (changeType === 'modify' && (sortFilesBy === 'last-update' || sortFilesBy === 'file-size'))
                         ) {
-                            setFileList([
+                            setOzFileList([
                                 ...currentFileList.filter((f) => {
-                                    return f.path !== file.path;
+                                    return changeType === 'rename' ? f.path !== oldPathBeforeRename : f.path !== file.path;
                                 }),
-                                ...(file.parent.path === currentActiveFolderPath ? [file] : []),
+                                // Include any file that roles up to the current active folder, not only the direct ones
+                                ...(file.parent.path.startsWith(currentActiveFolderPath) ? [FileTreeUtils.TFile2OZFile(file)] : []),
                             ]);
+                            // If active file is renamed, change the active file
+                            if (changeType === 'rename' && currentActiveOZFile && currentActiveOZFile.path === oldPathBeforeRename) {
+                                setActiveOzFile(FileTreeUtils.TFile2OZFile(file));
+                            }
                         }
                     }
                     // File is no in current view but parent folder is and should be included
                     else if (fileInCurrentFolder && !fileInCurrentView) {
-                        setFileList([...currentFileList, file]);
+                        setOzFileList([...currentFileList, FileTreeUtils.TFile2OZFile(file)]);
                     }
                 } else if (changeType === 'create') {
                     let fileIsCreatedUnderActiveFolder = file.path.match(new RegExp(currentActiveFolderPath + '.*'));
                     if (fileIsCreatedUnderActiveFolder) {
                         // If file is not already in the list, add into view
                         if (!currentFileList.some((f) => f.path === file.path)) {
-                            setFileList([...currentFileList, file]);
+                            setOzFileList([...currentFileList, FileTreeUtils.TFile2OZFile(file)]);
                         }
                     }
                 }
@@ -306,22 +318,22 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // ******** REVEAL ACTIVE FILE FUNCTIONS ******** //
     // --> During file list change, it will scroll to the active file element
     useEffect(() => {
-        if (activeFile && fileList.length > 0) scrollToFile(activeFile);
-    }, [fileList]);
+        if (activeOZFile && ozFileList.length > 0) scrollToFile(activeOZFile);
+    }, [ozFileList]);
 
     // Custom Event Handler Function
     function handleRevealFileEvent(evt: Event) {
         // @ts-ignore
         const file: TFile = evt.detail.file;
         if (file && file instanceof TFile) {
-            revealFileInFileTree(file);
+            revealFileInFileTree(FileTreeUtils.TFile2OZFile(file));
         } else {
             new Notice('No active file');
         }
     }
 
     // Scrolling Functions
-    function scrollToFile(fileToScroll: TFile) {
+    function scrollToFile(fileToScroll: OZFile) {
         const selector = `div.oz-file-tree-files div.oz-nav-file-title[data-path="${fileToScroll.path}"]`;
         const fileTitleElement = document.querySelector(selector);
         if (fileTitleElement) fileTitleElement.scrollIntoView(false);
@@ -334,7 +346,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     }
 
     // --> Handle Reveal Active File Button
-    function revealFileInFileTree(fileToReveal: TFile) {
+    function revealFileInFileTree(fileToReveal: OZFile) {
         // Get parent folder
         const parentFolder = fileToReveal.parent;
 
@@ -342,13 +354,14 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         if (focusedFolder && focusedFolder.path !== '/') setFocusedFolder(plugin.app.vault.getRoot());
 
         // Obtain all folders that needs to be opened
-        const getAllFoldersToOpen = (fileToReveal: TFile) => {
+        const getAllFoldersToOpen = (fileToReveal: OZFile) => {
             let foldersToOpen: string[] = [];
+            let TFileToReveal = plugin.app.vault.getAbstractFileByPath(fileToReveal.path);
             const recursiveFx = (folder: TFolder) => {
                 foldersToOpen.push(folder.path);
                 if (folder.parent) recursiveFx(folder.parent);
             };
-            recursiveFx(fileToReveal.parent);
+            recursiveFx(TFileToReveal.parent);
             return foldersToOpen;
         };
 
@@ -358,7 +371,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             setActiveFolderPath(parentFolder.path);
 
             // Set active file to show in the list
-            setActiveFile(fileToReveal);
+            setActiveOzFile(fileToReveal);
 
             // Set openfolders to expand in the folder list
             const foldersToOpen = getAllFoldersToOpen(fileToReveal);

@@ -4,7 +4,7 @@ import { TFile, Menu } from 'obsidian';
 import * as Icons from 'utils/icons';
 import { VaultChangeModal, MoveSuggestionModal, ConfirmationModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
-import { eventTypes } from 'utils/types';
+import { OZFile, eventTypes } from 'utils/types';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
@@ -23,8 +23,8 @@ export function FileComponent(props: FilesProps) {
 
     // States Coming From Main Component
     const [_view, setView] = useRecoilState(recoilState.view);
-    const [fileList, setFileList] = useRecoilState(recoilState.fileList);
-    const [pinnedFiles] = useRecoilState(recoilState.pinnedFiles);
+    const [ozFileList, setOzFileList] = useRecoilState(recoilState.ozFileList);
+    const [ozPinnedFiles] = useRecoilState(recoilState.ozPinnedFileList);
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [excludedFolders] = useRecoilState(recoilState.excludedFolders);
@@ -45,7 +45,7 @@ export function FileComponent(props: FilesProps) {
 
     // File List Update once showSubFolders change
     useEffect(() => {
-        setFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
+        setOzFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
     }, [showSubFolders]);
 
     // To focus on Search box if visible set
@@ -63,8 +63,8 @@ export function FileComponent(props: FilesProps) {
     };
 
     // Sort - Filter Files Depending on Preferences
-    const customFiles = (fileList: TFile[]) => {
-        let sortedfileList: TFile[];
+    const customFiles = (fileList: OZFile[]) => {
+        let sortedfileList: OZFile[];
         // Remove Files with Excluded Extensions
         if (excludedExtensions.length > 0) {
             sortedfileList = fileList.filter((file) => !excludedExtensions.contains(file.extension));
@@ -82,13 +82,13 @@ export function FileComponent(props: FilesProps) {
         }
         // Remove Files for Folder Note (If file name is same as parent folder name)
         if (plugin.settings.folderNote) {
-            sortedfileList = sortedfileList.filter((f) => f.basename !== f.parent.name);
+            sortedfileList = sortedfileList.filter((f) => !f.isFolderNote);
         }
         // Sort File by Name or Last Content Update, moving pinned files to the front
         sortedfileList = sortedfileList.sort((a, b) => {
-            if (pinnedFiles.contains(a) && !pinnedFiles.contains(b)) {
+            if (ozPinnedFiles.contains(a) && !ozPinnedFiles.contains(b)) {
                 return -1;
-            } else if (!pinnedFiles.contains(a) && pinnedFiles.contains(b)) {
+            } else if (!ozPinnedFiles.contains(a) && ozPinnedFiles.contains(b)) {
                 return 1;
             }
             if (plugin.settings.sortReverse) {
@@ -97,7 +97,7 @@ export function FileComponent(props: FilesProps) {
             if (plugin.settings.sortFilesBy === 'name') {
                 return plugin.settings.showFileNameAsFullPath
                     ? a.path.localeCompare(b.path, 'en', { numeric: true })
-                    : a.name.localeCompare(b.name, 'en', { numeric: true });
+                    : a.basename.localeCompare(b.basename, 'en', { numeric: true });
             } else if (plugin.settings.sortFilesBy === 'last-update') {
                 return b.stat.mtime - a.stat.mtime;
             } else if (plugin.settings.sortFilesBy === 'created') {
@@ -109,9 +109,9 @@ export function FileComponent(props: FilesProps) {
         return sortedfileList;
     };
 
-    const filesToList: TFile[] = useMemo(
-        () => customFiles(fileList),
-        [excludedFolders, excludedExtensions, pinnedFiles, fileList, plugin.settings.sortFilesBy, plugin.settings.sortReverse]
+    const filesToList: OZFile[] = useMemo(
+        () => customFiles(ozFileList),
+        [excludedFolders, excludedExtensions, ozPinnedFiles, ozFileList, plugin.settings.sortFilesBy, plugin.settings.sortReverse]
     );
 
     // Go Back Button - Sets Main Component View to Folder
@@ -124,7 +124,7 @@ export function FileComponent(props: FilesProps) {
     const toggleSearchBox = () => {
         setSearchPhrase('');
         setSearchBoxVisible(!searchBoxVisible);
-        setFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
+        setOzFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
     };
 
     // Search Function
@@ -140,10 +140,10 @@ export function FileComponent(props: FilesProps) {
         if (tagRegexMatch) {
             setTreeHeader('Files with Tag');
             if (tagRegexMatch[1] === undefined || tagRegexMatch[1].replace(/\s/g, '').length === 0) {
-                setFileList([]);
+                setOzFileList([]);
                 return;
             }
-            setFileList([...getFilesWithTag(tagRegexMatch[1])]);
+            setOzFileList([...getFilesWithTag(tagRegexMatch[1])]);
             return;
         }
 
@@ -159,16 +159,18 @@ export function FileComponent(props: FilesProps) {
 
         let getAllFiles = allRegexMatch ? true : false;
         let filteredFiles = getFilesWithName(searchPhrase, searchFolder, getAllFiles);
-        setFileList(filteredFiles);
+        setOzFileList(filteredFiles);
     };
 
-    const getFilesWithName = (searchPhrase: string, searchFolder: string, getAllFiles?: boolean): TFile[] => {
-        var files: TFile[] = Util.getFilesUnderPath(searchFolder, plugin, getAllFiles);
-        var filteredFiles = files.filter((file) => file.name.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
+    const getFilesWithName = (searchPhrase: string, searchFolder: string, getAllFiles?: boolean): OZFile[] => {
+        var files: OZFile[] = Util.getFilesUnderPath(searchFolder, plugin, getAllFiles);
+        var filteredFiles = files.filter((file) => file.basename.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
         return filteredFiles;
     };
 
-    const getFileTags = (mdFile: TFile): string[] => {
+    const getFileTags = (f: OZFile): string[] => {
+        let mdFile = plugin.app.vault.getAbstractFileByPath(f.path) as TFile;
+        if (!mdFile) return [];
         let fileCache = plugin.app.metadataCache.getFileCache(mdFile);
         let fileTags: string[] = [];
         if (fileCache.tags) {
@@ -192,14 +194,14 @@ export function FileComponent(props: FilesProps) {
         return fileTags;
     };
 
-    const getFilesWithTag = (searchTag: string): Set<TFile> => {
-        let filesWithTag: Set<TFile> = new Set();
-        let mdFiles = Util.getFilesUnderPath(plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/', plugin, true);
-        for (let mdFile of mdFiles) {
-            let fileTags = getFileTags(mdFile);
+    const getFilesWithTag = (searchTag: string): Set<OZFile> => {
+        let filesWithTag: Set<OZFile> = new Set();
+        let ozFiles = Util.getFilesUnderPath(plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/', plugin, true);
+        for (let ozFile of ozFiles) {
+            let fileTags = getFileTags(ozFile);
             for (let fileTag of fileTags) {
                 if (fileTag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
-                    if (!filesWithTag.has(mdFile)) filesWithTag.add(mdFile);
+                    if (!filesWithTag.has(ozFile)) filesWithTag.add(ozFile);
                 }
             }
         }
@@ -385,11 +387,11 @@ export function FileComponent(props: FilesProps) {
 
 /* ----------- SINGLE NAVFILE ELEMENT ----------- */
 
-const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
+const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => {
     const { file, plugin } = props;
 
-    const [pinnedFiles, setPinnedFiles] = useRecoilState(recoilState.pinnedFiles);
-    const [activeFile, setActiveFile] = useRecoilState(recoilState.activeFile);
+    const [ozPinnedFiles, setOzPinnedFiles] = useRecoilState(recoilState.ozPinnedFileList);
+    const [activeOzFile, setActiveOzFile] = useRecoilState(recoilState.activeOZFile);
 
     const [hoverActive, setHoverActive] = useState<boolean>(false);
 
@@ -407,31 +409,31 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     }, [hoverActive]);
 
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
-    const openFile = (file: TFile, e: React.MouseEvent) => {
+    const openFile = (file: OZFile, e: React.MouseEvent) => {
         Util.openFile({
             file: file,
             app: plugin.app,
             newLeaf: (e.ctrlKey || e.metaKey) && !(e.shiftKey || e.altKey),
             leafBySplit: (e.ctrlKey || e.metaKey) && (e.shiftKey || e.altKey),
         });
-        setActiveFile(file);
+        setActiveOzFile(file);
     };
 
     // Handle Right Click Event on File - Custom Menu
-    const triggerContextMenu = (file: TFile, e: React.MouseEvent | React.TouchEvent) => {
+    const triggerContextMenu = (file: OZFile, e: React.MouseEvent | React.TouchEvent) => {
         const fileMenu = new Menu();
 
         // Pin - Unpin Item
         fileMenu.addItem((menuItem) => {
             menuItem.setIcon('pin');
-            if (pinnedFiles.contains(file)) menuItem.setTitle('Unpin');
+            if (ozPinnedFiles.contains(file)) menuItem.setTitle('Unpin');
             else menuItem.setTitle('Pin to Top');
             menuItem.onClick((ev: MouseEvent) => {
-                if (pinnedFiles.contains(file)) {
-                    let newPinnedFiles = pinnedFiles.filter((pinnedFile) => pinnedFile !== file);
-                    setPinnedFiles(newPinnedFiles);
+                if (ozPinnedFiles.contains(file)) {
+                    let newPinnedFiles = ozPinnedFiles.filter((pinnedFile) => pinnedFile !== file);
+                    setOzPinnedFiles(newPinnedFiles);
                 } else {
-                    setPinnedFiles([...pinnedFiles, file]);
+                    setOzPinnedFiles([...ozPinnedFiles, file]);
                 }
             });
         });
@@ -456,12 +458,14 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
                     `Are you sure you want to delete the file "${file.basename}${file.extension === 'md' ? '' : file.extension}"?`,
                     function () {
                         let deleteOption = plugin.settings.deleteFileOption;
+                        let fileToDelete = plugin.app.vault.getAbstractFileByPath(file.path);
+                        if (!fileToDelete) return;
                         if (deleteOption === 'permanent') {
-                            plugin.app.vault.delete(file, true);
+                            plugin.app.vault.delete(fileToDelete, true);
                         } else if (deleteOption === 'system-trash') {
-                            plugin.app.vault.trash(file, true);
+                            plugin.app.vault.trash(fileToDelete, true);
                         } else if (deleteOption === 'trash') {
-                            plugin.app.vault.trash(file, false);
+                            plugin.app.vault.trash(fileToDelete, false);
                         }
                     }
                 );
@@ -492,7 +496,10 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
             menuItem.setTitle('Make a copy');
             menuItem.setIcon('documents');
             menuItem.onClick((ev: MouseEvent) => {
-                plugin.app.vault.copy(file, `${file.parent.path}/${file.basename} 1.${file.extension}`);
+                let fileToCopy = plugin.app.vault.getAbstractFileByPath(file.path);
+                if (fileToCopy) {
+                    plugin.app.vault.copy(fileToCopy as TFile, `${file.parent.path}/${file.basename} 1.${file.extension}`);
+                }
             });
         });
 
@@ -526,19 +533,19 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
         }
     };
 
-    const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
+    const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: OZFile) => {
         setHoverActive(true);
         if (plugin.settings.filePreviewOnHover && (e.ctrlKey || e.metaKey)) {
             plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
         }
     };
 
-    const mouseLeftFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: TFile) => {
+    const mouseLeftFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: OZFile) => {
         setHoverActive(false);
     };
 
     // --> Dragging for File
-    const dragStarted = (e: React.DragEvent<HTMLDivElement>, file: TFile) => {
+    const dragStarted = (e: React.DragEvent<HTMLDivElement>, file: OZFile) => {
         // json to move file to folder
         e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
 
@@ -546,7 +553,7 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
         (plugin.app as any).dragManager.onDragStart(e, {
             icon: ICON,
             source: undefined,
-            title: file.name,
+            title: file.basename + '.' + file.extension,
             type: 'file',
             file: file,
         });
@@ -572,13 +579,12 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
     const FileIcon = useMemo(() => getFileIcon(), [plugin.settings.iconBeforeFileName]);
 
     const fileDisplayName = useMemo(() => {
-        let displayName = plugin.settings.showFileNameAsFullPath ? file.path : file.name;
-        return Util.getFileNameAndExtension(displayName).fileName;
+        return plugin.settings.showFileNameAsFullPath ? Util.getFileNameAndExtension(file.path).fileName : file.basename;
     }, [plugin.settings.showFileNameAsFullPath, file.path]);
 
     return (
         <div
-            className={'oz-nav-file' + (activeFile === file ? ' is-active' : '')}
+            className={'oz-nav-file' + (activeOzFile && activeOzFile.path === file.path ? ' is-active' : '')}
             key={file.path}
             draggable
             onDragStart={(e) => dragStarted(e, file)}
@@ -593,10 +599,8 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
                     {plugin.settings.iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
                     {fileDisplayName}
                 </div>
-                {pinnedFiles.contains(file) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
-                {Util.getFileNameAndExtension(file.name).extension !== 'md' && (
-                    <span className="oz-nav-file-tag">{Util.getFileNameAndExtension(file.name).extension}</span>
-                )}
+                {ozPinnedFiles.contains(file) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
+                {file.extension !== 'md' && <span className="oz-nav-file-tag">{file.extension}</span>}
             </div>
         </div>
     );

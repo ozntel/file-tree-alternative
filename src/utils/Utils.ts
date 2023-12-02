@@ -1,25 +1,48 @@
 import { TFile, TFolder, App, Keymap, Platform } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
-import { FolderFileCountMap, FolderTree, eventTypes } from 'utils/types';
+import { FolderFileCountMap, FolderTree, eventTypes, OZFile } from 'utils/types';
 import { stripIndents } from 'common-tags';
 import dayjs from 'dayjs';
 import { VaultChangeModal } from 'modals';
 
 // Helper Function To Get List of Files
-export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): TFile[] => {
-    var filesUnderPath: TFile[] = [];
+export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): OZFile[] => {
+    var filesUnderPath: OZFile[] = [];
     var showFilesFromSubFolders = getAllFiles ? true : plugin.settings.showFilesFromSubFolders;
     var folderObj = plugin.app.vault.getAbstractFileByPath(path);
     recursiveFx(folderObj as TFolder, plugin.app);
     function recursiveFx(folderObj: TFolder, app: App) {
         if (folderObj instanceof TFolder && folderObj.children) {
             for (let child of folderObj.children) {
-                if (child instanceof TFile) filesUnderPath.push(child);
+                if (child instanceof TFile) filesUnderPath.push(TFile2OZFile(child));
                 if (child instanceof TFolder && showFilesFromSubFolders) recursiveFx(child, app);
             }
         }
     }
     return filesUnderPath;
+};
+
+// Converted from TFile to OZFile
+export const TFile2OZFile = (t: TFile): OZFile => {
+    return {
+        path: t.path,
+        basename: t.basename,
+        extension: t.extension,
+        stat: {
+            mtime: t.stat.mtime,
+            ctime: t.stat.ctime,
+            size: t.stat.size,
+        },
+        parent: {
+            path: t.parent.path,
+        },
+        isFolderNote: isFolderNote(t),
+    };
+};
+
+// Check if the file is a folder note
+export const isFolderNote = (t: TFile) => {
+    return t.basename === t.parent.name;
 };
 
 // Helper Function to Create Folder Tree
@@ -111,25 +134,27 @@ export const internalPluginLoaded = (pluginName: string, app: App) => {
     return app.internalPlugins.plugins[pluginName]?._loaded;
 };
 
-export const openFile = (props: { file: TFile; app: App; newLeaf: boolean; leafBySplit?: boolean }) => {
+export const openFile = (props: { file: OZFile; app: App; newLeaf: boolean; leafBySplit?: boolean }) => {
     const { file, app, newLeaf, leafBySplit } = props;
+    let fileToOpen = app.vault.getAbstractFileByPath(file.path);
+    if (!fileToOpen) return;
     let leaf = app.workspace.getLeaf(newLeaf);
     if (leafBySplit) leaf = app.workspace.createLeafBySplit(leaf, 'vertical');
     app.workspace.setActiveLeaf(leaf, {
         focus: false,
     });
-    leaf.openFile(file, { eState: { focus: true } });
+    leaf.openFile(fileToOpen as TFile, { eState: { focus: true } });
 };
 
 export const openInternalLink = (event: React.MouseEvent<Element, MouseEvent>, link: string, app: App) => {
     app.workspace.openLinkText(link, '/', Keymap.isModifier(event as unknown as MouseEvent, 'Mod') || 1 === event.button);
 };
 
-export const openFileInNewTab = (app: App, file: TFile) => {
+export const openFileInNewTab = (app: App, file: OZFile) => {
     openFile({ file: file, app: app, newLeaf: true });
 };
 
-export const openFileInNewTabGroup = (app: App, file: TFile) => {
+export const openFileInNewTabGroup = (app: App, file: OZFile) => {
     openFile({ file: file, app: app, newLeaf: false, leafBySplit: true });
 };
 

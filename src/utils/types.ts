@@ -1,5 +1,20 @@
 import { TFolder, TFile } from 'obsidian';
 
+export interface OZFile {
+    path: string;
+    basename: string;
+    extension: string;
+    stat: {
+        mtime: number;
+        ctime: number;
+        size: number;
+    };
+    parent: {
+        path: string;
+    };
+    isFolderNote: boolean;
+}
+
 export interface FolderFileCountMap {
     [key: string]: {
         open: number;

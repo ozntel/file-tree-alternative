@@ -1,6 +1,6 @@
 import { TFile, TFolder } from 'obsidian';
 import { atom } from 'recoil';
-import { FolderTree, FolderFileCountMap } from 'utils/types';
+import { FolderTree, FolderFileCountMap, OZFile } from 'utils/types';
 
 export const view = atom({
     key: 'fileTreeViewState',
@@ -12,10 +12,9 @@ export const activeFolderPath = atom({
     default: '',
 });
 
-export const activeFile = atom({
-    key: 'fileTreeActiveFile',
-    default: null as TFile,
-    dangerouslyAllowMutability: true,
+export const activeOZFile = atom({
+    key: 'fileTreeActiveOZFile',
+    default: null as OZFile,
 });
 
 export const excludedFolders = atom({
@@ -39,16 +38,14 @@ export const folderTree = atom({
     dangerouslyAllowMutability: true,
 });
 
-export const fileList = atom({
-    key: 'fileTreeFileListState',
-    default: [] as TFile[],
-    dangerouslyAllowMutability: true,
+export const ozFileList = atom({
+    key: 'fileTreeOzFileListState',
+    default: [] as OZFile[],
 });
 
-export const pinnedFiles = atom({
-    key: 'fileTreePinnedFilesState',
-    default: [] as TFile[],
-    dangerouslyAllowMutability: true,
+export const ozPinnedFileList = atom({
+    key: 'fileTreeOzPinnedFilesState',
+    default: [] as OZFile[],
 });
 
 export const openFolders = atom({
