@@ -9,13 +9,13 @@ import { VaultChangeModal } from 'modals';
 export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): TFile[] => {
     var filesUnderPath: TFile[] = [];
     var showFilesFromSubFolders = getAllFiles ? true : plugin.settings.showFilesFromSubFolders;
-    recursiveFx(path, plugin.app);
-    function recursiveFx(path: string, app: App) {
-        var folderObj = app.vault.getAbstractFileByPath(path);
+    var folderObj = plugin.app.vault.getAbstractFileByPath(path);
+    recursiveFx(folderObj as TFolder, plugin.app);
+    function recursiveFx(folderObj: TFolder, app: App) {
         if (folderObj instanceof TFolder && folderObj.children) {
             for (let child of folderObj.children) {
                 if (child instanceof TFile) filesUnderPath.push(child);
-                if (child instanceof TFolder && showFilesFromSubFolders) recursiveFx(child.path, app);
+                if (child instanceof TFolder && showFilesFromSubFolders) recursiveFx(child, app);
             }
         }
     }
