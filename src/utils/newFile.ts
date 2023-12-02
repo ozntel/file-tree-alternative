@@ -11,7 +11,7 @@ export const openFile = (props: { file: OZFile; app: App; newLeaf: boolean; leaf
     let leaf = app.workspace.getLeaf(newLeaf);
     if (leafBySplit) leaf = app.workspace.createLeafBySplit(leaf, 'vertical');
     app.workspace.setActiveLeaf(leaf, {
-        focus: false,
+        focus: true,
     });
     leaf.openFile(fileToOpen as TFile, { eState: { focus: true } });
 };
