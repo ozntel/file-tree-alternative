@@ -12,6 +12,7 @@ import { SortType } from 'settings';
 import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress, { isMouseEvent } from 'hooks/useLongPress';
 import { ICON } from 'FileTreeView';
+import * as newFileUtils from 'utils/newFile';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -410,7 +411,7 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
 
     // Handle Click Event on File - Allows Open with Cmd/Ctrl
     const openFile = (file: OZFile, e: React.MouseEvent) => {
-        Util.openFile({
+        newFileUtils.openFile({
             file: file,
             app: plugin.app,
             newLeaf: (e.ctrlKey || e.metaKey) && !(e.shiftKey || e.altKey),
@@ -478,7 +479,7 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
             menuItem.setIcon('go-to-file');
             menuItem.setTitle('Open in a new tab');
             menuItem.onClick((ev: MouseEvent) => {
-                Util.openFileInNewTab(plugin.app, file);
+                newFileUtils.openFileInNewTab(plugin.app, file);
             });
         });
 
@@ -487,7 +488,7 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
             menuItem.setIcon('go-to-file');
             menuItem.setTitle('Open to right');
             menuItem.onClick((ev: MouseEvent) => {
-                Util.openFileInNewTabGroup(plugin.app, file);
+                newFileUtils.openFileInNewTabGroup(plugin.app, file);
             });
         });
 
@@ -563,7 +564,7 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
 
     // --> AuxClick (Mouse Wheel Button Action)
     const onAuxClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (e.button === 1) Util.openFileInNewTab(plugin.app, file);
+        if (e.button === 1) newFileUtils.openFileInNewTab(plugin.app, file);
     };
 
     const getFileIcon = () => {

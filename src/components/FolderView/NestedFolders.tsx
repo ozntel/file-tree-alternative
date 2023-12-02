@@ -7,6 +7,7 @@ import { useRecoilState } from 'recoil';
 import * as recoilState from 'recoil/pluginState';
 import * as Util from 'utils/Utils';
 import { VaultChangeModal, MoveSuggestionModal, ConfirmationModal } from 'modals';
+import * as newFileUtils from 'utils/newFile';
 
 interface NestedFoldersProps {
     plugin: FileTreeAlternativePlugin;
@@ -195,7 +196,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                         .setTitle('Create Folder Note')
                         .setIcon('create-new')
                         .onClick(async (ev: MouseEvent) => {
-                            Util.createNewMarkdownFile(plugin, folder, folder.name, `# ${folder.name}`);
+                            newFileUtils.createNewMarkdownFile(plugin, folder, folder.name, `# ${folder.name}`);
                         });
                 });
             }

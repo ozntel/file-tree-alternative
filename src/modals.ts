@@ -1,6 +1,6 @@
 import { Modal, App, TFolder, TAbstractFile, FuzzySuggestModal } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
-import { getFileCreateString, createNewMarkdownFile } from 'utils/Utils';
+import { getFileCreateString, createNewMarkdownFile } from 'utils/newFile';
 import { OZFile } from 'utils/types';
 
 type Action = 'rename' | 'create folder' | 'create note';
