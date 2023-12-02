@@ -224,7 +224,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                 sortedFolderTree.map((child) => {
                     return (
                         <React.Fragment key={child.folder.path}>
-                            {(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
+                            {(child.folder as TFolder).children.some((child) => child instanceof TFolder && child.name !== plugin.settings.excludedAttachFolder) ? (
                                 <Tree
                                     plugin={plugin}
                                     content={child.folder.name}
