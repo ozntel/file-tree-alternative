@@ -5,17 +5,10 @@ import FileTreeAlternativePlugin from './main';
 import MainTreeComponent from './components/MainView/MainComponent';
 import { RecoilRoot } from 'recoil';
 
-export const VIEW_TYPE = 'file-tree-view';
-export const VIEW_DISPLAY_TEXT = 'File Tree';
-export const ICON = 'sheets-in-box';
-
 export class FileTreeView extends ItemView {
     plugin: FileTreeAlternativePlugin;
     currentFolderPath: string;
     root: Root;
-
-    // @ Temp Fix for Opening New File
-    navigation = false;
 
     constructor(leaf: WorkspaceLeaf, plugin: FileTreeAlternativePlugin) {
         super(leaf);
@@ -23,15 +16,15 @@ export class FileTreeView extends ItemView {
     }
 
     getViewType(): string {
-        return VIEW_TYPE;
+        return this.plugin?.VIEW_TYPE;
     }
 
     getDisplayText(): string {
-        return VIEW_DISPLAY_TEXT;
+        return this.plugin?.VIEW_DISPLAY_TEXT;
     }
 
     getIcon(): string {
-        return ICON;
+        return this.plugin?.ICON;
     }
 
     async onClose() {

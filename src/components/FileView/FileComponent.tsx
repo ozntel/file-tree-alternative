@@ -11,7 +11,6 @@ import { useRecoilState } from 'recoil';
 import { SortType } from 'settings';
 import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress, { isMouseEvent } from 'hooks/useLongPress';
-import { ICON } from 'FileTreeView';
 import * as newFileUtils from 'utils/newFile';
 
 interface FilesProps {
@@ -552,7 +551,7 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
 
         // Obsidian Internal Dragmanager
         (plugin.app as any).dragManager.onDragStart(e, {
-            icon: ICON,
+            icon: plugin.ICON,
             source: undefined,
             title: file.basename + '.' + file.extension,
             type: 'file',

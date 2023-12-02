@@ -1,5 +1,5 @@
 import { Plugin, addIcon, TAbstractFile } from 'obsidian';
-import { VIEW_TYPE, FileTreeView, ICON } from './FileTreeView';
+import { FileTreeView } from './FileTreeView';
 import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon, SpaceIcon } from './utils/icons';
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
 import { VaultChange, eventTypes } from 'utils/types';
@@ -17,6 +17,11 @@ export default class FileTreeAlternativePlugin extends Plugin {
         focusedFolder: 'fileTreePlugin-FocusedFolder',
     };
 
+    // File Tree View Variables
+    VIEW_TYPE = 'file-tree-view';
+    VIEW_DISPLAY_TEXT = 'File Tree';
+    ICON = 'sheets-in-box';
+
     async onload() {
         console.log('Loading Alternative File Tree Plugin');
 
@@ -31,7 +36,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
         await this.loadSettings();
 
         // Register File Tree View
-        this.registerView(VIEW_TYPE, (leaf) => {
+        this.registerView(this.VIEW_TYPE, (leaf) => {
             return new FileTreeView(leaf, this);
         });
 
@@ -55,7 +60,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
             name: 'Reveal Active File',
             callback: () => {
                 // Activate file tree pane
-                let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+                let leafs = this.app.workspace.getLeavesOfType(this.VIEW_TYPE);
                 if (leafs.length === 0) this.openFileTreeLeaf(true);
                 for (let leaf of leafs) {
                     this.app.workspace.revealLeaf(leaf);
@@ -129,18 +134,18 @@ export default class FileTreeAlternativePlugin extends Plugin {
     refreshIconRibbon = () => {
         this.ribbonIconEl?.remove();
         if (this.settings.ribbonIcon) {
-            this.ribbonIconEl = this.addRibbonIcon(ICON, 'File Tree Alternative Plugin', async () => {
+            this.ribbonIconEl = this.addRibbonIcon(this.ICON, 'File Tree Alternative Plugin', async () => {
                 await this.openFileTreeLeaf(true);
             });
         }
     };
 
     openFileTreeLeaf = async (showAfterAttach: boolean) => {
-        let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+        let leafs = this.app.workspace.getLeavesOfType(this.VIEW_TYPE);
         if (leafs.length == 0) {
             // Needs to be mounted
             let leaf = this.app.workspace.getLeftLeaf(false);
-            await leaf.setViewState({ type: VIEW_TYPE });
+            await leaf.setViewState({ type: this.VIEW_TYPE });
             if (showAfterAttach) this.app.workspace.revealLeaf(leaf);
         } else {
             // Already mounted - show if only selected showAfterAttach
@@ -151,7 +156,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
     };
 
     detachFileTreeLeafs = () => {
-        let leafs = this.app.workspace.getLeavesOfType(VIEW_TYPE);
+        let leafs = this.app.workspace.getLeavesOfType(this.VIEW_TYPE);
         for (let leaf of leafs) {
             (leaf.view as FileTreeView).destroy();
             leaf.detach();
