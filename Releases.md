@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.3.9
+
+-   Fix for file context menu
+-   Default file or folder name (Untitled) during a file/folder creation
+
 ## Version 2.3.8
 
 -   TFile to OZFile for less memory consumption and to break live updates
