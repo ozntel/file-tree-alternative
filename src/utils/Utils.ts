@@ -40,7 +40,7 @@ export const TFile2OZFile = (t: TFile): OZFile => {
 
 // Check if the file is a folder note
 export const isFolderNote = (t: TFile) => {
-    return t.basename === t.parent.name;
+    return t.extension === 'md' && t.basename === t.parent.name;
 };
 
 // Helper Function to Create Folder Tree
