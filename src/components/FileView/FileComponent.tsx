@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { TFile, Menu } from 'obsidian';
+import { Menu } from 'obsidian';
 import * as Icons from 'utils/icons';
-import { VaultChangeModal, MoveSuggestionModal, ConfirmationModal } from 'modals';
 import FileTreeAlternativePlugin from 'main';
-import { OZFile, eventTypes } from 'utils/types';
+import { OZFile } from 'utils/types';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import { SortType } from 'settings';
 import useForceUpdate from 'hooks/ForceUpdate';
-import useLongPress, { isMouseEvent } from 'hooks/useLongPress';
-import * as newFileUtils from 'utils/newFile';
+import useLongPress from 'hooks/useLongPress';
+import * as FileViewHandlers from 'components/FileView/handlers';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -53,64 +52,15 @@ export function FileComponent(props: FilesProps) {
         if (searchBoxVisible) searchInput.current.focus();
     }, [searchBoxVisible]);
 
-    // Function After an External File Dropped into Folder Name
-    const onDrop = (files: File[]) => {
-        files.map(async (file) => {
-            file.arrayBuffer().then((arrayBuffer) => {
-                plugin.app.vault.adapter.writeBinary(activeFolderPath + '/' + file.name, arrayBuffer);
-            });
-        });
-    };
-
-    // Sort - Filter Files Depending on Preferences
-    const customFiles = (fileList: OZFile[]) => {
-        let sortedfileList: OZFile[];
-        // Remove Files with Excluded Extensions
-        if (excludedExtensions.length > 0) {
-            sortedfileList = fileList.filter((file) => !excludedExtensions.contains(file.extension));
-        }
-        // Remove Files from Excluded Folders
-        if (excludedFolders.length > 0) {
-            sortedfileList = sortedfileList.filter((file) => {
-                for (let exc of excludedFolders) {
-                    if (file.path.startsWith(exc)) {
-                        return false;
-                    }
-                }
-                return true;
-            });
-        }
-        // Remove Files for Folder Note (If file name is same as parent folder name)
-        if (plugin.settings.folderNote) {
-            sortedfileList = sortedfileList.filter((f) => !f.isFolderNote);
-        }
-        // Sort File by Name or Last Content Update, moving pinned files to the front
-        sortedfileList = sortedfileList.sort((a, b) => {
-            if (ozPinnedFiles.contains(a) && !ozPinnedFiles.contains(b)) {
-                return -1;
-            } else if (!ozPinnedFiles.contains(a) && ozPinnedFiles.contains(b)) {
-                return 1;
-            }
-            if (plugin.settings.sortReverse) {
-                [a, b] = [b, a];
-            }
-            if (plugin.settings.sortFilesBy === 'name') {
-                return plugin.settings.showFileNameAsFullPath
-                    ? a.path.localeCompare(b.path, 'en', { numeric: true })
-                    : a.basename.localeCompare(b.basename, 'en', { numeric: true });
-            } else if (plugin.settings.sortFilesBy === 'last-update') {
-                return b.stat.mtime - a.stat.mtime;
-            } else if (plugin.settings.sortFilesBy === 'created') {
-                return b.stat.ctime - a.stat.ctime;
-            } else if (plugin.settings.sortFilesBy === 'file-size') {
-                return b.stat.size - a.stat.size;
-            }
-        });
-        return sortedfileList;
-    };
-
     const filesToList: OZFile[] = useMemo(
-        () => customFiles(ozFileList),
+        () =>
+            FileViewHandlers.customFiles({
+                fileList: ozFileList,
+                excludedExtensions: excludedExtensions,
+                excludedFolders: excludedFolders,
+                plugin: plugin,
+                ozPinnedFiles: ozPinnedFiles,
+            }),
         [excludedFolders, excludedExtensions, ozPinnedFiles, ozFileList, plugin.settings.sortFilesBy, plugin.settings.sortReverse]
     );
 
@@ -143,7 +93,13 @@ export function FileComponent(props: FilesProps) {
                 setOzFileList([]);
                 return;
             }
-            setOzFileList([...getFilesWithTag(tagRegexMatch[1])]);
+            setOzFileList([
+                ...FileViewHandlers.getFilesWithTag({
+                    searchTag: tagRegexMatch[1],
+                    plugin: plugin,
+                    focusedFolder: focusedFolder,
+                }),
+            ]);
             return;
         }
 
@@ -158,69 +114,19 @@ export function FileComponent(props: FilesProps) {
         }
 
         let getAllFiles = allRegexMatch ? true : false;
-        let filteredFiles = getFilesWithName(searchPhrase, searchFolder, getAllFiles);
+        let filteredFiles = FileViewHandlers.getFilesWithName({
+            searchPhrase,
+            searchFolder,
+            plugin,
+            getAllFiles,
+        });
         setOzFileList(filteredFiles);
-    };
-
-    const getFilesWithName = (searchPhrase: string, searchFolder: string, getAllFiles?: boolean): OZFile[] => {
-        var files: OZFile[] = Util.getFilesUnderPath(searchFolder, plugin, getAllFiles);
-        var filteredFiles = files.filter((file) => file.basename.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
-        return filteredFiles;
-    };
-
-    const getFileTags = (f: OZFile): string[] => {
-        let mdFile = plugin.app.vault.getAbstractFileByPath(f.path) as TFile;
-        if (!mdFile) return [];
-        let fileCache = plugin.app.metadataCache.getFileCache(mdFile);
-        let fileTags: string[] = [];
-        if (fileCache.tags) {
-            for (let fileTag of fileCache.tags) {
-                fileTags.push(fileTag.tag);
-            }
-        }
-        if (fileCache.frontmatter && fileCache.frontmatter['tags']) {
-            let tagsFM = fileCache.frontmatter['tags'];
-            if (typeof tagsFM === 'string') {
-                let fileFMTags = tagsFM.split(',');
-                for (let i = 0; i < fileFMTags.length; i++) {
-                    fileTags.push(fileFMTags[i]);
-                }
-            } else if (Array.isArray(tagsFM)) {
-                for (let i = 0; i < tagsFM.length; i++) {
-                    fileTags.push(tagsFM[i]);
-                }
-            }
-        }
-        return fileTags;
-    };
-
-    const getFilesWithTag = (searchTag: string): Set<OZFile> => {
-        let filesWithTag: Set<OZFile> = new Set();
-        let ozFiles = Util.getFilesUnderPath(plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/', plugin, true);
-        for (let ozFile of ozFiles) {
-            let fileTags = getFileTags(ozFile);
-            for (let fileTag of fileTags) {
-                if (fileTag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
-                    if (!filesWithTag.has(ozFile)) filesWithTag.add(ozFile);
-                }
-            }
-        }
-        return filesWithTag;
     };
 
     const toggleShowSubFolders = async () => {
         plugin.settings.showFilesFromSubFolders = !showSubFolders;
         await plugin.saveSettings();
         setShowSubFolders(!showSubFolders);
-    };
-
-    const handleRevealActiveFileButton = () => {
-        let event = new CustomEvent(eventTypes.revealFile, {
-            detail: {
-                file: plugin.app.workspace.getActiveFile(),
-            },
-        });
-        window.dispatchEvent(event);
     };
 
     const sortClicked = (e: React.MouseEvent) => {
@@ -267,7 +173,13 @@ export function FileComponent(props: FilesProps) {
     return (
         <React.Fragment>
             <Dropzone
-                onDrop={onDrop}
+                onDrop={(files) =>
+                    FileViewHandlers.handleOnDropFiles({
+                        files,
+                        activeFolderPath,
+                        plugin,
+                    })
+                }
                 noClick={true}
                 onDragEnter={() => setHighlight(true)}
                 onDragLeave={() => setHighlight(false)}
@@ -300,7 +212,7 @@ export function FileComponent(props: FilesProps) {
                                         {plugin.settings.revealActiveFileButton && (
                                             <div className="oz-nav-action-button">
                                                 <Icons.BiCurrentLocation
-                                                    onClick={handleRevealActiveFileButton}
+                                                    onClick={() => FileViewHandlers.handleRevealActiveFileButton({ plugin })}
                                                     size={topIconSize}
                                                     aria-label="Reveal Active File"
                                                 />
@@ -396,10 +308,23 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
     const [hoverActive, setHoverActive] = useState<boolean>(false);
 
     const longPressEvents = useLongPress((e: React.TouchEvent) => {
-        triggerContextMenu(file, e);
+        FileViewHandlers.triggerContextMenu({
+            file,
+            e,
+            plugin,
+            ozPinnedFiles,
+            setOzPinnedFiles,
+        });
     }, 500);
 
     useEffect(() => {
+        const handleKeyDownEvent = (e: KeyboardEvent) => {
+            if (e.key === 'Control' || e.key === 'Meta') {
+                let el = document.querySelector(`.oz-nav-file-title[data-path="${file.path}"]`);
+                if (el) plugin.app.workspace.trigger('link-hover', {}, el, file.path, file.path);
+            }
+        };
+
         if (hoverActive && plugin.settings.filePreviewOnHover) {
             document.addEventListener('keydown', handleKeyDownEvent);
             return () => {
@@ -408,175 +333,13 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
         }
     }, [hoverActive]);
 
-    // Handle Click Event on File - Allows Open with Cmd/Ctrl
-    const openFile = (file: OZFile, e: React.MouseEvent) => {
-        newFileUtils.openFile({
-            file: file,
-            app: plugin.app,
-            newLeaf: (e.ctrlKey || e.metaKey) && !(e.shiftKey || e.altKey),
-            leafBySplit: (e.ctrlKey || e.metaKey) && (e.shiftKey || e.altKey),
-        });
-        setActiveOzFile(file);
-    };
-
-    // Handle Right Click Event on File - Custom Menu
-    const triggerContextMenu = (file: OZFile, e: React.MouseEvent | React.TouchEvent) => {
-        const fileMenu = new Menu();
-
-        // Pin - Unpin Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setIcon('pin');
-            if (ozPinnedFiles.contains(file)) menuItem.setTitle('Unpin');
-            else menuItem.setTitle('Pin to Top');
-            menuItem.onClick((ev: MouseEvent) => {
-                if (ozPinnedFiles.contains(file)) {
-                    let newPinnedFiles = ozPinnedFiles.filter((pinnedFile) => pinnedFile !== file);
-                    setOzPinnedFiles(newPinnedFiles);
-                } else {
-                    setOzPinnedFiles([...ozPinnedFiles, file]);
-                }
-            });
-        });
-
-        // Rename Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setTitle('Rename');
-            menuItem.setIcon('pencil');
-            menuItem.onClick((ev: MouseEvent) => {
-                let vaultChangeModal = new VaultChangeModal(plugin, file, 'rename');
-                vaultChangeModal.open();
-            });
-        });
-
-        // Delete Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setTitle('Delete');
-            menuItem.setIcon('trash');
-            menuItem.onClick((ev: MouseEvent) => {
-                let confirmationModal = new ConfirmationModal(
-                    plugin,
-                    `Are you sure you want to delete the file "${file.basename}${file.extension === 'md' ? '' : file.extension}"?`,
-                    function () {
-                        let deleteOption = plugin.settings.deleteFileOption;
-                        let fileToDelete = plugin.app.vault.getAbstractFileByPath(file.path);
-                        if (!fileToDelete) return;
-                        if (deleteOption === 'permanent') {
-                            plugin.app.vault.delete(fileToDelete, true);
-                        } else if (deleteOption === 'system-trash') {
-                            plugin.app.vault.trash(fileToDelete, true);
-                        } else if (deleteOption === 'trash') {
-                            plugin.app.vault.trash(fileToDelete, false);
-                        }
-                    }
-                );
-                confirmationModal.open();
-            });
-        });
-
-        // Open in a New Pane
-        fileMenu.addItem((menuItem) => {
-            menuItem.setIcon('go-to-file');
-            menuItem.setTitle('Open in a new tab');
-            menuItem.onClick((ev: MouseEvent) => {
-                newFileUtils.openFileInNewTab(plugin.app, file);
-            });
-        });
-
-        // Open in a New Pane
-        fileMenu.addItem((menuItem) => {
-            menuItem.setIcon('go-to-file');
-            menuItem.setTitle('Open to right');
-            menuItem.onClick((ev: MouseEvent) => {
-                newFileUtils.openFileInNewTabGroup(plugin.app, file);
-            });
-        });
-
-        // Make a Copy Item
-        fileMenu.addItem((menuItem) => {
-            menuItem.setTitle('Make a copy');
-            menuItem.setIcon('documents');
-            menuItem.onClick((ev: MouseEvent) => {
-                let fileToCopy = plugin.app.vault.getAbstractFileByPath(file.path);
-                if (fileToCopy) {
-                    plugin.app.vault.copy(fileToCopy as TFile, `${file.parent.path}/${file.basename} 1.${file.extension}`);
-                }
-            });
-        });
-
-        // Move Item
-        if (!Util.internalPluginLoaded('file-explorer', plugin.app)) {
-            fileMenu.addItem((menuItem) => {
-                menuItem.setTitle('Move file to...');
-                menuItem.setIcon('paper-plane');
-                menuItem.onClick((ev: MouseEvent) => {
-                    let fileMoveSuggester = new MoveSuggestionModal(plugin.app, file);
-                    fileMoveSuggester.open();
-                });
-            });
-        }
-
-        // Trigger
-        plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
-        if (isMouseEvent(e)) {
-            fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
-        } else {
-            // @ts-ignore
-            fileMenu.showAtPosition({ x: e.nativeEvent.locationX, y: e.nativeEvent.locationY });
-        }
-        return false;
-    };
-
-    const handleKeyDownEvent = (e: KeyboardEvent) => {
-        if (e.key === 'Control' || e.key === 'Meta') {
-            let el = document.querySelector(`.oz-nav-file-title[data-path="${file.path}"]`);
-            if (el) plugin.app.workspace.trigger('link-hover', {}, el, file.path, file.path);
-        }
-    };
-
-    const mouseEnteredOnFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: OZFile) => {
-        setHoverActive(true);
-        if (plugin.settings.filePreviewOnHover && (e.ctrlKey || e.metaKey)) {
-            plugin.app.workspace.trigger('link-hover', {}, e.target, file.path, file.path);
-        }
-    };
-
-    const mouseLeftFile = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, file: OZFile) => {
-        setHoverActive(false);
-    };
-
-    // --> Dragging for File
-    const dragStarted = (e: React.DragEvent<HTMLDivElement>, file: OZFile) => {
-        // json to move file to folder
-        e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
-
-        // Obsidian Internal Dragmanager
-        (plugin.app as any).dragManager.onDragStart(e, {
-            icon: plugin.ICON,
-            source: undefined,
-            title: file.basename + '.' + file.extension,
-            type: 'file',
-            file: file,
-        });
-
-        (plugin.app as any).dragManager.dragFile(e, file, true);
-    };
-
-    // --> AuxClick (Mouse Wheel Button Action)
-    const onAuxClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        if (e.button === 1) newFileUtils.openFileInNewTab(plugin.app, file);
-    };
-
-    const getFileIcon = () => {
-        return file.extension === 'pdf'
-            ? Icons.AiFillFilePdf
-            : ['png', 'jpg', 'jpeg', 'svg'].contains(file.extension)
-            ? Icons.AiFillFileImage
-            : ['doc', 'docx'].contains(file.extension)
-            ? Icons.AiFillFileWord
-            : Icons.BiFile;
-    };
-
-    const FileIcon = useMemo(() => getFileIcon(), [plugin.settings.iconBeforeFileName]);
+    const FileIcon = useMemo(
+        () =>
+            FileViewHandlers.getFileIcon({
+                file,
+            }),
+        [plugin.settings.iconBeforeFileName]
+    );
 
     const fileDisplayName = useMemo(() => {
         return plugin.settings.showFileNameAsFullPath ? Util.getFileNameAndExtension(file.path).fileName : file.basename;
@@ -587,12 +350,40 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
             className={'oz-nav-file' + (activeOzFile && activeOzFile.path === file.path ? ' is-active' : '')}
             key={file.path}
             draggable
-            onDragStart={(e) => dragStarted(e, file)}
-            onClick={(e) => openFile(file, e)}
-            onAuxClick={onAuxClick}
-            onContextMenu={(e) => triggerContextMenu(file, e)}
-            onMouseEnter={(e) => mouseEnteredOnFile(e, file)}
-            onMouseLeave={(e) => mouseLeftFile(e, file)}
+            onDragStart={(e) =>
+                FileViewHandlers.dragStarted({
+                    e,
+                    file,
+                    plugin,
+                })
+            }
+            onClick={(e) =>
+                FileViewHandlers.openFile({
+                    e,
+                    file,
+                    plugin,
+                    setActiveOzFile,
+                })
+            }
+            onAuxClick={(e) => FileViewHandlers.onAuxClick({ e, plugin, file })}
+            onContextMenu={(e) =>
+                FileViewHandlers.triggerContextMenu({
+                    e,
+                    file,
+                    plugin,
+                    ozPinnedFiles,
+                    setOzPinnedFiles,
+                })
+            }
+            onMouseEnter={(e) =>
+                FileViewHandlers.mouseEnteredOnFile({
+                    e,
+                    file,
+                    plugin,
+                    setHoverActive,
+                })
+            }
+            onMouseLeave={(e) => FileViewHandlers.mouseLeftFile({ e, file, setHoverActive })}
             {...longPressEvents}>
             <div className="oz-nav-file-title" data-path={file.path}>
                 <div className="oz-nav-file-title-content">
