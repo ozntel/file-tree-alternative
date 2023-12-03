@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { Menu } from 'obsidian';
 import * as Icons from 'utils/icons';
 import FileTreeAlternativePlugin from 'main';
 import { OZFile } from 'utils/types';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
-import { SortType } from 'settings';
 import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress from 'hooks/useLongPress';
 import * as FileViewHandlers from 'components/FileView/handlers';
@@ -77,95 +75,10 @@ export function FileComponent(props: FilesProps) {
         setOzFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
     };
 
-    // Search Function
-    const searchAllRegex = new RegExp('all:(.*)?');
-    const searchTagRegex = new RegExp('tag:(.*)?');
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        var searchPhrase = e.target.value;
-        setSearchPhrase(searchPhrase);
-        var searchFolder = activeFolderPath;
-
-        // Check Tag Regex in Search Phrase
-        let tagRegexMatch = searchPhrase.match(searchTagRegex);
-        if (tagRegexMatch) {
-            setTreeHeader('Files with Tag');
-            if (tagRegexMatch[1] === undefined || tagRegexMatch[1].replace(/\s/g, '').length === 0) {
-                setOzFileList([]);
-                return;
-            }
-            setOzFileList([
-                ...FileViewHandlers.getFilesWithTag({
-                    searchTag: tagRegexMatch[1],
-                    plugin: plugin,
-                    focusedFolder: focusedFolder,
-                }),
-            ]);
-            return;
-        }
-
-        // Check All Regex in Search Phrase
-        let allRegexMatch = searchPhrase.match(searchAllRegex);
-        if (allRegexMatch) {
-            searchPhrase = allRegexMatch[1] ? allRegexMatch[1] : '';
-            searchFolder = plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/';
-            setTreeHeader('All Files');
-        } else {
-            setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app));
-        }
-
-        let getAllFiles = allRegexMatch ? true : false;
-        let filteredFiles = FileViewHandlers.getFilesWithName({
-            searchPhrase,
-            searchFolder,
-            plugin,
-            getAllFiles,
-        });
-        setOzFileList(filteredFiles);
-    };
-
     const toggleShowSubFolders = async () => {
         plugin.settings.showFilesFromSubFolders = !showSubFolders;
         await plugin.saveSettings();
         setShowSubFolders(!showSubFolders);
-    };
-
-    const sortClicked = (e: React.MouseEvent) => {
-        const sortMenu = new Menu();
-
-        const changeSortSettingTo = (newValue: SortType) => {
-            plugin.settings.sortFilesBy = newValue;
-            plugin.saveSettings();
-            forceUpdate();
-        };
-
-        const addMenuItem = (label: string, low: string, high: string, value: SortType) => {
-            sortMenu.addItem((menuItem) => {
-                const order = plugin.settings.sortReverse ? `${high} to ${low}` : `${low} to ${high}`;
-                menuItem.setTitle(`${label} (${order})`);
-                menuItem.setIcon(value === plugin.settings.sortFilesBy ? 'checkmark' : 'spaceIcon');
-                menuItem.onClick(() => changeSortSettingTo(value));
-            });
-        };
-
-        addMenuItem('File Name', 'A', 'Z', 'name');
-        addMenuItem('Created', 'New', 'Old', 'created');
-        addMenuItem('File Size', 'Big', 'Small', 'file-size');
-        addMenuItem('Last Update', 'New', 'Old', 'last-update');
-
-        sortMenu.addSeparator();
-
-        sortMenu.addItem((menuItem) => {
-            menuItem.setTitle('Reverse Order');
-            menuItem.setIcon(plugin.settings.sortReverse ? 'checkmark' : 'spaceIcon');
-            menuItem.onClick(() => {
-                plugin.settings.sortReverse = !plugin.settings.sortReverse;
-                plugin.saveSettings();
-                forceUpdate();
-            });
-        });
-
-        // Trigger
-        sortMenu.showAtPosition({ x: e.pageX, y: e.pageY });
     };
 
     const topIconSize = 19;
@@ -241,7 +154,13 @@ export function FileComponent(props: FilesProps) {
                                             </div>
                                         )}
                                         <div className="oz-nav-action-button">
-                                            <Icons.CgSortAz size={topIconSize + 2} onClick={sortClicked} aria-label="Sorting Options" />
+                                            <Icons.CgSortAz
+                                                size={topIconSize + 2}
+                                                onClick={(e) => {
+                                                    FileViewHandlers.sortFileListClickHandle({ e, plugin, forceUpdate });
+                                                }}
+                                                aria-label="Sorting Options"
+                                            />
                                         </div>
                                         <div className="oz-nav-action-button">
                                             <Icons.IoIosAddCircle
@@ -260,7 +179,17 @@ export function FileComponent(props: FilesProps) {
                                             placeholder="Search..."
                                             ref={searchInput}
                                             value={searchPhrase}
-                                            onChange={handleSearch}
+                                            onChange={(e) => {
+                                                FileViewHandlers.handleSearch({
+                                                    e,
+                                                    plugin,
+                                                    activeFolderPath,
+                                                    setSearchPhrase,
+                                                    setTreeHeader,
+                                                    setOzFileList,
+                                                    focusedFolder,
+                                                });
+                                            }}
                                             onKeyDown={(e) => {
                                                 if (e.key === 'Escape') {
                                                     e.preventDefault();

@@ -8,6 +8,7 @@ import { SetterOrUpdater } from 'recoil';
 import * as Icons from 'utils/icons';
 import { Menu } from 'obsidian';
 import { isMouseEvent } from 'hooks/useLongPress';
+import { SortType } from 'settings';
 
 // ----> FILE TREE COMPONENT HANDLERS <----- \\
 
@@ -21,12 +22,7 @@ export const handleOnDropFiles = (params: { files: File[]; activeFolderPath: str
     });
 };
 
-export const getFilesWithName = (params: {
-    searchPhrase: string;
-    searchFolder: string;
-    plugin: FileTreeAlternativePlugin;
-    getAllFiles?: boolean;
-}): OZFile[] => {
+const getFilesWithName = (params: { searchPhrase: string; searchFolder: string; plugin: FileTreeAlternativePlugin; getAllFiles?: boolean }): OZFile[] => {
     let { searchPhrase, searchFolder, plugin, getAllFiles } = params;
     var files: OZFile[] = Util.getFilesUnderPath(searchFolder, plugin, getAllFiles);
     var filteredFiles = files.filter((file) => file.basename.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
@@ -60,7 +56,7 @@ const getFileTags = (params: { f: OZFile; plugin: FileTreeAlternativePlugin }): 
     return fileTags;
 };
 
-export const getFilesWithTag = (params: { searchTag: string; plugin: FileTreeAlternativePlugin; focusedFolder: TFolder }): Set<OZFile> => {
+const getFilesWithTag = (params: { searchTag: string; plugin: FileTreeAlternativePlugin; focusedFolder: TFolder }): Set<OZFile> => {
     let { searchTag, plugin, focusedFolder } = params;
     let filesWithTag: Set<OZFile> = new Set();
     let ozFiles = Util.getFilesUnderPath(plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/', plugin, true);
@@ -140,6 +136,101 @@ export const customFiles = (params: {
         }
     });
     return sortedfileList;
+};
+
+export const sortFileListClickHandle = (params: { e: React.MouseEvent; plugin: FileTreeAlternativePlugin; forceUpdate: () => void }) => {
+    let { e, plugin, forceUpdate } = params;
+    const sortMenu = new Menu();
+
+    const changeSortSettingTo = (newValue: SortType) => {
+        plugin.settings.sortFilesBy = newValue;
+        plugin.saveSettings();
+        forceUpdate();
+    };
+
+    const addMenuItem = (label: string, low: string, high: string, value: SortType) => {
+        sortMenu.addItem((menuItem) => {
+            const order = plugin.settings.sortReverse ? `${high} to ${low}` : `${low} to ${high}`;
+            menuItem.setTitle(`${label} (${order})`);
+            menuItem.setIcon(value === plugin.settings.sortFilesBy ? 'checkmark' : 'spaceIcon');
+            menuItem.onClick(() => changeSortSettingTo(value));
+        });
+    };
+
+    addMenuItem('File Name', 'A', 'Z', 'name');
+    addMenuItem('Created', 'New', 'Old', 'created');
+    addMenuItem('File Size', 'Big', 'Small', 'file-size');
+    addMenuItem('Last Update', 'New', 'Old', 'last-update');
+
+    sortMenu.addSeparator();
+
+    sortMenu.addItem((menuItem) => {
+        menuItem.setTitle('Reverse Order');
+        menuItem.setIcon(plugin.settings.sortReverse ? 'checkmark' : 'spaceIcon');
+        menuItem.onClick(() => {
+            plugin.settings.sortReverse = !plugin.settings.sortReverse;
+            plugin.saveSettings();
+            forceUpdate();
+        });
+    });
+
+    // Trigger
+    sortMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+};
+
+// Search Function
+const searchAllRegex = new RegExp('all:(.*)?');
+const searchTagRegex = new RegExp('tag:(.*)?');
+export const handleSearch = (params: {
+    e: React.ChangeEvent<HTMLInputElement>;
+    activeFolderPath: string;
+    setSearchPhrase: React.Dispatch<React.SetStateAction<string>>;
+    setTreeHeader: React.Dispatch<React.SetStateAction<string>>;
+    setOzFileList: SetterOrUpdater<OZFile[]>;
+    plugin: FileTreeAlternativePlugin;
+    focusedFolder: TFolder;
+}) => {
+    let { e, activeFolderPath, setSearchPhrase, setOzFileList, setTreeHeader, plugin, focusedFolder } = params;
+    var searchPhrase = e.target.value;
+    setSearchPhrase(searchPhrase);
+    var searchFolder = activeFolderPath;
+
+    // Check Tag Regex in Search Phrase
+    let tagRegexMatch = searchPhrase.match(searchTagRegex);
+    if (tagRegexMatch) {
+        setTreeHeader('Files with Tag');
+        if (tagRegexMatch[1] === undefined || tagRegexMatch[1].replace(/\s/g, '').length === 0) {
+            setOzFileList([]);
+            return;
+        }
+        setOzFileList([
+            ...getFilesWithTag({
+                searchTag: tagRegexMatch[1],
+                plugin: plugin,
+                focusedFolder: focusedFolder,
+            }),
+        ]);
+        return;
+    }
+
+    // Check All Regex in Search Phrase
+    let allRegexMatch = searchPhrase.match(searchAllRegex);
+    if (allRegexMatch) {
+        searchPhrase = allRegexMatch[1] ? allRegexMatch[1] : '';
+        searchFolder = plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/';
+        setTreeHeader('All Files');
+    } else {
+        setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app));
+    }
+
+    let getAllFiles = allRegexMatch ? true : false;
+    let filteredFiles = getFilesWithName({
+        searchPhrase,
+        searchFolder,
+        plugin,
+        getAllFiles,
+    });
+    setOzFileList(filteredFiles);
 };
 
 // ----> NAV FILE COMPONENT HANDLERS <----- \\
