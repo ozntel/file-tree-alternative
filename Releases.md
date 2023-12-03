@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.3.8
+
+-   TFile to OZFile for less memory consumption and to break live updates
+-   Event Handler fix for File Name Update for Subfolder View (Disappering Files Solution)
+-   Further React Component Optimization
+
 ## Version 2.3.7
 
 -   Minor fixes to adjust the plugin to the latest API
