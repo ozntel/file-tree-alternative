@@ -313,6 +313,9 @@ export const triggerContextMenu = (params: {
 }) => {
     let { file, e, ozPinnedFiles, setOzPinnedFiles, plugin } = params;
     const fileMenu = new Menu();
+    let fileToTrigger = plugin.app.vault.getAbstractFileByPath(file.path);
+
+    if (!fileToTrigger) return;
 
     // Pin - Unpin Item
     fileMenu.addItem((menuItem) => {
@@ -407,7 +410,7 @@ export const triggerContextMenu = (params: {
     }
 
     // Trigger
-    plugin.app.workspace.trigger('file-menu', fileMenu, file, 'file-explorer');
+    plugin.app.workspace.trigger('file-menu', fileMenu, fileToTrigger, 'file-explorer');
     if (isMouseEvent(e)) {
         fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
     } else {
