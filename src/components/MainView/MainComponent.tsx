@@ -271,6 +271,9 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                             changeType === 'rename' ||
                             (changeType === 'modify' && (sortFilesBy === 'last-update' || sortFilesBy === 'file-size'))
                         ) {
+                            // Fix for Root Folder Path
+                            if(currentActiveFolderPath === "/") currentActiveFolderPath = "";
+                            // Set the file list
                             setOzFileList([
                                 ...currentFileList.filter((f) => {
                                     return changeType === 'rename' ? f.path !== oldPathBeforeRename : f.path !== file.path;
