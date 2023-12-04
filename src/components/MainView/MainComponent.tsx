@@ -66,7 +66,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             window.removeEventListener(eventTypes.activeFileChange, changeActiveFile);
             window.removeEventListener(eventTypes.refreshView, forceUpdate);
             window.removeEventListener(eventTypes.revealFile, handleRevealFileEvent);
-            window.removeEventListener(eventTypes.revealFile, handleCreateNewNoteEvent);
+            window.removeEventListener(eventTypes.createNewNote, handleCreateNewNoteEvent);
         };
     }, []);
 
@@ -272,7 +272,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                             (changeType === 'modify' && (sortFilesBy === 'last-update' || sortFilesBy === 'file-size'))
                         ) {
                             // Fix for Root Folder Path
-                            if(currentActiveFolderPath === "/") currentActiveFolderPath = "";
+                            if (currentActiveFolderPath === '/') currentActiveFolderPath = '';
                             // Set the file list
                             setOzFileList([
                                 ...currentFileList.filter((f) => {
@@ -349,7 +349,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     }
 
     // --> Handle Reveal Active File Button
-    function revealFileInFileTree(fileToReveal: OZFile) {
+    function revealFileInFileTree(ozFileToReveal: OZFile) {
+        const fileToReveal = plugin.app.vault.getAbstractFileByPath(ozFileToReveal.path) as TFile;
+        if (!fileToReveal) return;
+
         // Get parent folder
         const parentFolder = fileToReveal.parent;
 
@@ -357,14 +360,13 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         if (focusedFolder && focusedFolder.path !== '/') setFocusedFolder(plugin.app.vault.getRoot());
 
         // Obtain all folders that needs to be opened
-        const getAllFoldersToOpen = (fileToReveal: OZFile) => {
+        const getAllFoldersToOpen = (fileToReveal: TFile) => {
             let foldersToOpen: string[] = [];
-            let TFileToReveal = plugin.app.vault.getAbstractFileByPath(fileToReveal.path);
             const recursiveFx = (folder: TFolder) => {
                 foldersToOpen.push(folder.path);
                 if (folder.parent) recursiveFx(folder.parent);
             };
-            recursiveFx(TFileToReveal.parent);
+            recursiveFx(fileToReveal.parent);
             return foldersToOpen;
         };
 
@@ -374,14 +376,14 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             setActiveFolderPath(parentFolder.path);
 
             // Set active file to show in the list
-            setActiveOzFile(fileToReveal);
+            setActiveOzFile(FileTreeUtils.TFile2OZFile(fileToReveal));
 
             // Set openfolders to expand in the folder list
             const foldersToOpen = getAllFoldersToOpen(fileToReveal);
             let openFoldersSet = new Set([...openFolders, ...foldersToOpen]);
             setOpenFolders(Array.from(openFoldersSet));
 
-            scrollToFile(fileToReveal);
+            scrollToFile(FileTreeUtils.TFile2OZFile(fileToReveal));
             scrollToFolder(parentFolder);
         }
     }
