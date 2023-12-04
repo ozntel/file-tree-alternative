@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.2
+
+-   #181 Fix for Reveal Active File, Fix for Event Listener Removal
+
 ## Version 2.4.1
 
 -   Lazy load for File List to reduce Memory Consumption
