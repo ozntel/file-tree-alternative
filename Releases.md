@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.0
+
+-   Fix for #144 - Root folder doesn't get updated if the sort by is created time or updated time
+
 ## Version 2.3.9
 
 -   Fix for file context menu
