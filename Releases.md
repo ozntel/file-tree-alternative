@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.1
+
+-   Lazy load for File List to reduce Memory Consumption
+
 ## Version 2.4.0
 
 -   Fix for #144 - Root folder doesn't get updated if the sort by is created time or updated time
