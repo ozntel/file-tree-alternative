@@ -9,6 +9,7 @@ import { useRecoilState } from 'recoil';
 import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress from 'hooks/useLongPress';
 import * as FileViewHandlers from 'components/FileView/handlers';
+import LazyLoad from 'react-lazy-load';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -214,7 +215,11 @@ export function FileComponent(props: FilesProps) {
                                         : ''
                                 }`}>
                                 {filesToList.map((file) => {
-                                    return <NavFile file={file} plugin={plugin} key={file.path} />;
+                                    return (
+                                        <LazyLoad height={19}>
+                                            <NavFile file={file} plugin={plugin} key={file.path} />
+                                        </LazyLoad>
+                                    );
                                 })}
                             </div>
                             {/* End: File List */}
