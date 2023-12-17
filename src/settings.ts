@@ -35,6 +35,7 @@ export interface FileTreeAlternativePluginSettings {
     folderNote: boolean;
     deleteFileOption: DeleteFileOption;
     showFileNameAsFullPath: boolean;
+    hideFileOrderNumber: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -63,6 +64,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     folderNote: false,
     deleteFileOption: 'trash',
     showFileNameAsFullPath: false,
+    hideFileOrderNumber: false,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -389,6 +391,16 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addTextArea((text) =>
                 text.setValue(this.plugin.settings.excludedFolders).onChange((value) => {
                     this.plugin.settings.excludedFolders = value;
+                    this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Hide File Order Number')
+            .setDesc('Turn on if you want to hide numbers of file order plugin.')
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.hideFileOrderNumber).onChange((value) => {
+                    this.plugin.settings.hideFileOrderNumber = value;
                     this.plugin.saveSettings();
                 })
             );

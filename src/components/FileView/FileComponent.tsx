@@ -573,7 +573,8 @@ const NavFile = (props: { file: TFile; plugin: FileTreeAlternativePlugin }) => {
 
     const fileDisplayName = useMemo(() => {
         let displayName = plugin.settings.showFileNameAsFullPath ? file.path : file.name;
-        return Util.getFileNameAndExtension(displayName).fileName;
+        let displayFileName = Util.getFileNameAndExtension(displayName).fileName;
+        return plugin.settings.hideFileOrderNumber ? displayFileName.replace(/^\d{1,4}[- ]/, '') : displayFileName;
     }, [plugin.settings.showFileNameAsFullPath, file.path]);
 
     return (

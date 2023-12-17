@@ -218,6 +218,10 @@ export function NestedFolders(props: NestedFoldersProps) {
         [props.folderTree.children, excludedFolders, plugin.settings.sortFoldersBy]
     );
 
+    let getFolderName = (folder: TFolder) => {
+        return plugin.settings.hideFileOrderNumber ? folder.name.replace(/^\d{1,4}[- ]/, '') : folder.name;
+    }
+
     return (
         <React.Fragment>
             {Array.isArray(props.folderTree.children) &&
@@ -227,7 +231,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                             {(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
                                 <Tree
                                     plugin={plugin}
-                                    content={child.folder.name}
+                                    content={getFolderName(child.folder)}
                                     open={openFolders.contains(child.folder.path)}
                                     onClick={() => handleFolderNameClick(child.folder.path)}
                                     onDoubleClick={() => handleFolderNameDoubleClick(child.folder)}
@@ -243,7 +247,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                             ) : (
                                 <Tree
                                     plugin={plugin}
-                                    content={child.folder.name}
+                                    content={getFolderName(child.folder)}
                                     onClick={() => handleFolderNameClick(child.folder.path)}
                                     onDoubleClick={() => handleFolderNameDoubleClick(child.folder)}
                                     onContextMenu={(e: MouseEvent) =>
