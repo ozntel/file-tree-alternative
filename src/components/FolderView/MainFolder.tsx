@@ -31,6 +31,11 @@ export function MainFolder(props: FolderProps) {
     // Force Update
     const forceUpdate = useForceUpdate();
 
+    const focusOnFolder = (folder: TFolder) => {
+        setFocusedFolder(folder);
+        setActiveFolderPath(folder.path);
+    };
+
     const createFolder = (underFolder: TFolder) => {
         let vaultChangeModal = new VaultChangeModal(plugin, underFolder, 'create folder');
         vaultChangeModal.open();
@@ -56,7 +61,7 @@ export function MainFolder(props: FolderProps) {
                 menuItem
                     .setTitle('Focus Back to Root')
                     .setIcon('zoomOutDoubleIcon')
-                    .onClick(() => setFocusedFolder(rootFolder));
+                    .onClick(() => focusOnFolder(rootFolder));
             });
         }
 
@@ -65,7 +70,7 @@ export function MainFolder(props: FolderProps) {
                 menuItem
                     .setTitle('Focus to Parent Folder')
                     .setIcon('zoomOutIcon')
-                    .onClick(() => setFocusedFolder(folder.parent));
+                    .onClick(() => focusOnFolder(folder.parent));
             });
         }
 
@@ -128,7 +133,7 @@ export function MainFolder(props: FolderProps) {
     };
 
     const handleFolderNameDoubleClick = (folder: TFolder) => {
-        if (!folder.isRoot()) setFocusedFolder(folder.parent);
+        if (!folder.isRoot()) focusOnFolder(folder.parent);
     };
 
     let folderActionItemSize = 22;

@@ -107,7 +107,6 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         if (focusedFolder) {
             setFolderTree(FileTreeUtils.createFolderTree(focusedFolder));
             localStorage.setItem(plugin.keys.focusedFolder, focusedFolder.path);
-            setActiveFolderPath(focusedFolder.path);
         }
     }, [focusedFolder]);
 

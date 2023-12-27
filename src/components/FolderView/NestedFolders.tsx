@@ -29,8 +29,9 @@ export function NestedFolders(props: NestedFoldersProps) {
 
     const handleFolderNameClick = (folderPath: string) => setActiveFolderPath(folderPath);
 
-    const handleFolderNameDoubleClick = (folder: TFolder) => {
+    const focusOnFolder = (folder: TFolder) => {
         setFocusedFolder(folder);
+        setActiveFolderPath(folder.path);
     };
 
     const getSortedFolderTree = (folderTree: FolderTree[]) => {
@@ -66,7 +67,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                 menuItem
                     .setTitle('Focus on Folder')
                     .setIcon('zoomInIcon')
-                    .onClick(() => setFocusedFolder(folder));
+                    .onClick(() => focusOnFolder(folder));
             });
         }
 
@@ -75,7 +76,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                 menuItem
                     .setTitle('Focus Back to Root')
                     .setIcon('zoomOutIcon')
-                    .onClick(() => setFocusedFolder(rootFolder));
+                    .onClick(() => focusOnFolder(rootFolder));
             });
         }
 
@@ -231,7 +232,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                                     content={child.folder.name}
                                     open={openFolders.contains(child.folder.path)}
                                     onClick={() => handleFolderNameClick(child.folder.path)}
-                                    onDoubleClick={() => handleFolderNameDoubleClick(child.folder)}
+                                    onDoubleClick={() => focusOnFolder(child.folder)}
                                     onContextMenu={(e: MouseEvent | TouchEvent) =>
                                         handleFolderContextMenu({
                                             event: e,
@@ -246,7 +247,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                                     plugin={plugin}
                                     content={child.folder.name}
                                     onClick={() => handleFolderNameClick(child.folder.path)}
-                                    onDoubleClick={() => handleFolderNameDoubleClick(child.folder)}
+                                    onDoubleClick={() => focusOnFolder(child.folder)}
                                     onContextMenu={(e: MouseEvent) =>
                                         handleFolderContextMenu({
                                             event: e,
