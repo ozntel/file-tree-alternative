@@ -115,9 +115,9 @@ export const customFiles = (params: {
     }
     // Sort File by Name or Last Content Update, moving pinned files to the front
     sortedfileList = sortedfileList.sort((a, b) => {
-        if (ozPinnedFiles.contains(a) && !ozPinnedFiles.contains(b)) {
+        if (ozPinnedFiles.some((f) => f.path === a.path) && !ozPinnedFiles.some((f) => f.path === b.path)) {
             return -1;
-        } else if (!ozPinnedFiles.contains(a) && ozPinnedFiles.contains(b)) {
+        } else if (!ozPinnedFiles.some((f) => f.path === a.path) && ozPinnedFiles.some((f) => f.path === b.path)) {
             return 1;
         }
         if (plugin.settings.sortReverse) {

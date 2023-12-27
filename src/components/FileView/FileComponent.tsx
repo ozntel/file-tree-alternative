@@ -324,7 +324,7 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
                     {plugin.settings.iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
                     {fileDisplayName}
                 </div>
-                {ozPinnedFiles.contains(file) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
+                {ozPinnedFiles.some((f) => f.path === file.path) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
                 {file.extension !== 'md' && <span className="oz-nav-file-tag">{file.extension}</span>}
             </div>
         </div>
