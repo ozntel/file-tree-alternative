@@ -1,6 +1,6 @@
 {
     "name": "file-tree-alternative",
-    "version": "2.4.2",
+    "version": "2.4.3",
     "description": "This plugin allows you to have an alternative file tree view.",
     "main": "main.js",
     "scripts": {

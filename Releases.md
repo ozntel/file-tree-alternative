@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.4.3
+
+-   Fix for Pinned Files
+-   Fix for initial root folder and focused folder load from the local storage
+
 ## Version 2.4.2
 
 -   #181 Fix for Reveal Active File, Fix for Event Listener Removal
