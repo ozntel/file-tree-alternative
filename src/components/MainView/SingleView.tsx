@@ -30,6 +30,7 @@ export const SingleViewVertical = (props: { plugin: FileTreeAlternativePlugin })
     }
 
     function touchMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (e.type !== 'drag') return;
         e.preventDefault();
         if (!dividerOnMove) return;
         setFolderPaneHeight(folderPaneHeight + (e.nativeEvent.clientY - clientY));
@@ -37,6 +38,7 @@ export const SingleViewVertical = (props: { plugin: FileTreeAlternativePlugin })
     }
 
     function touchMouseEnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (e.type !== 'drag') return;
         e.preventDefault();
         setDividerOnMove(false);
         setClientY(e.nativeEvent.clientY);
@@ -94,6 +96,7 @@ export const SingleViewHorizontal = (props: { plugin: FileTreeAlternativePlugin 
     }
 
     function touchMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (e.type !== 'drag') return;
         e.preventDefault();
         if (!dividerOnMove) return;
         setFolderPaneWidth(folderPaneWidth + (e.nativeEvent.clientX - clientX));
@@ -101,6 +104,7 @@ export const SingleViewHorizontal = (props: { plugin: FileTreeAlternativePlugin 
     }
 
     function touchMouseEnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+        if (e.type !== 'drag') return;
         e.preventDefault();
         setDividerOnMove(false);
         setClientX(e.nativeEvent.clientX);
