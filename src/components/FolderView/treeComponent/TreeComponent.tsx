@@ -124,6 +124,10 @@ export default function Tree(props: TreeProps) {
 
     const onFolderDragStart = (e: React.DragEvent<HTMLDivElement>, folder: TFolder) => {
         e.dataTransfer.setData('application/json', JSON.stringify({ folderPath: folder.path }));
+
+        let dragManager = (props.plugin.app as any).dragManager;
+        const dragData = dragManager.dragFile(e.nativeEvent, folder);
+        dragManager.onDragStart(e.nativeEvent, dragData);
     };
 
     return (

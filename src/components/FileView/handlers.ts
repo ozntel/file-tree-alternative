@@ -261,19 +261,15 @@ export const getFileIcon = (params: { file: OZFile }) => {
 // --> Dragging for File
 export const dragStarted = (params: { e: React.DragEvent<HTMLDivElement>; file: OZFile; plugin: FileTreeAlternativePlugin }) => {
     let { e, file, plugin } = params;
+    let obsidianFile = plugin.app.vault.getAbstractFileByPath(file.path);
+    if (!obsidianFile) return;
+
     // json to move file to folder
     e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
 
-    // Obsidian Internal Dragmanager
-    (plugin.app as any).dragManager.onDragStart(e, {
-        icon: plugin.ICON,
-        source: undefined,
-        title: file.basename + '.' + file.extension,
-        type: 'file',
-        file: file,
-    });
-
-    (plugin.app as any).dragManager.dragFile(e, file, true);
+    let dragManager = (plugin.app as any).dragManager;
+    const dragData = dragManager.dragFile(e.nativeEvent, file);
+    dragManager.onDragStart(e.nativeEvent, dragData);
 };
 
 // --> AuxClick (Mouse Wheel Button Action)
