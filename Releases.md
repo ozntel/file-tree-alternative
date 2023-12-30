@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.4
+
+-   Drag Fix for Files and Folders
+
 ## Version 2.4.3
 
 -   Fix for Pinned Files
