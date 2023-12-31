@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.5
+
+-   Drag Manager Fix to display details during drag
+
 ## Version 2.4.4
 
 -   Drag Fix for Files and Folders
