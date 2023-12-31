@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.6
+
+-   Divider Move Fix (which was broken because of drag manager fix)
+
 ## Version 2.4.5
 
 -   Drag Manager Fix to display details during drag
