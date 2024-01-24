@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.7
+
+-   Handle Rename for not .md files correctly
+
 ## Version 2.4.6
 
 -   Divider Move Fix (which was broken because of drag manager fix)
