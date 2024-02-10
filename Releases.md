@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.8
+
+-   Rename Plugin to be compliant with Obsidian rules
+
 ## Version 2.4.7
 
 -   Handle Rename for not .md files correctly
