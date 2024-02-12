@@ -35,6 +35,7 @@ export interface FileTreeAlternativePluginSettings {
     folderNote: boolean;
     deleteFileOption: DeleteFileOption;
     showFileNameAsFullPath: boolean;
+    excludedAttachFolder: string;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -48,6 +49,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     revealActiveFileButton: false,
     excludedExtensions: '',
     excludedFolders: '',
+    excludedAttachFolder: 'images',
     folderIcon: 'default',
     folderCount: true,
     folderCountOption: 'notes',
@@ -389,6 +391,18 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addTextArea((text) =>
                 text.setValue(this.plugin.settings.excludedFolders).onChange((value) => {
                     this.plugin.settings.excludedFolders = value;
+                    this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Excluded Attachment Folder')
+            .setDesc(
+                `Provide attachment folder name, which you want to exclude from the folder being displayed as nested folder`
+            )
+            .addTextArea((text) =>
+                text.setValue(this.plugin.settings.excludedAttachFolder).onChange((value) => {
+                    this.plugin.settings.excludedAttachFolder = value;
                     this.plugin.saveSettings();
                 })
             );
