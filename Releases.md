@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.4.9
+
+-   Bookmarks Plugin Soft Implementation - Users need to click on file or folder bookmarks using shift button
+
 ## Version 2.4.8
 
 -   Rename Plugin to be compliant with Obsidian rules
