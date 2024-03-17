@@ -3,6 +3,7 @@ import { FileTreeView } from './FileTreeView';
 import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon, SpaceIcon } from './utils/icons';
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
 import { VaultChange, eventTypes } from 'utils/types';
+import { getBookmarkTitle } from 'utils/Utils';
 
 export default class FileTreeAlternativePlugin extends Plugin {
     settings: FileTreeAlternativePluginSettings;
@@ -52,6 +53,12 @@ export default class FileTreeAlternativePlugin extends Plugin {
             id: 'open-file-tree-view',
             name: 'Open File Tree View',
             callback: async () => await this.openFileTreeLeaf(true),
+        });
+
+        this.app.workspace.onLayoutReady(() => {
+            if (this.settings.bookmarksEvents) {
+                this.bookmarksAddEventListener();
+            }
         });
 
         // Add Command to Reveal Active File
@@ -114,6 +121,51 @@ export default class FileTreeAlternativePlugin extends Plugin {
     async saveSettings() {
         await this.saveData(this.settings);
     }
+
+    bookmarksEventHandler = (event: Event) => {
+        // Find the tree-item that includes the bookmarks plugin title
+        let treeItem: Element = (event.target as any).closest('.tree-item');
+        if (!treeItem) return;
+        // If it exists, get the title of the bookmark
+        let dataPath: string = treeItem.getAttribute('data-path');
+        if (!dataPath || dataPath === '') return;
+        // Find the bookmark from the items
+        let bookmarkItem = getBookmarkTitle(dataPath);
+        // Create Custom Menu only if Shift is Used
+        if ((event as any).shiftKey && bookmarkItem) {
+            if (bookmarkItem.type === 'file') {
+                event.stopImmediatePropagation();
+                // Dispatch Reveal File Event
+                let customEvent = new CustomEvent(eventTypes.revealFile, {
+                    detail: {
+                        file: this.app.vault.getAbstractFileByPath(bookmarkItem.path),
+                    },
+                });
+                window.dispatchEvent(customEvent);
+            } else if (bookmarkItem.type === 'folder') {
+                event.stopImmediatePropagation();
+                // Dispatch Reveal Folder Event
+                let customEvent = new CustomEvent(eventTypes.revealFolder, {
+                    detail: {
+                        folder: this.app.vault.getAbstractFileByPath(bookmarkItem.path),
+                    },
+                });
+                window.dispatchEvent(customEvent);
+            }
+        }
+    };
+
+    getBookmarksLeafElement = () => {
+        return document.querySelector('.workspace-leaf-content[data-type="bookmarks"]');
+    };
+
+    bookmarksAddEventListener = () => {
+        this.getBookmarksLeafElement().addEventListener('click', this.bookmarksEventHandler, true);
+    };
+
+    bookmarksRemoveEventListener = () => {
+        this.getBookmarksLeafElement().removeEventListener('click', this.bookmarksEventHandler, true);
+    };
 
     triggerVaultChangeEvent = (file: TAbstractFile, changeType: VaultChange, oldPath?: string) => {
         let event = new CustomEvent(eventTypes.vaultChange, {

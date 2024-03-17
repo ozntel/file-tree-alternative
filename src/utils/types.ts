@@ -47,6 +47,15 @@ export const eventTypes = {
     activeFileChange: 'fta-active-file-change',
     refreshView: 'fta-refresh-view',
     revealFile: 'fta-reveal-file',
+    revealFolder: 'fta-reveal-folder',
     vaultChange: 'fta-vault-change',
     createNewNote: 'fta-create-new-note',
 };
+
+export interface BookmarksPluginItem {
+    type: 'file' | 'group' | 'search' | 'folder';
+    ctime: number;
+    path: string;
+    title: string; // data-path from the element
+    items: BookmarksPluginItem[];
+}

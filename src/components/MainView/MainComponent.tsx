@@ -60,12 +60,14 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         window.addEventListener(eventTypes.activeFileChange, changeActiveFile);
         window.addEventListener(eventTypes.refreshView, forceUpdate);
         window.addEventListener(eventTypes.revealFile, handleRevealFileEvent);
+        window.addEventListener(eventTypes.revealFolder, handleRevealFolderEvent);
         window.addEventListener(eventTypes.createNewNote, handleCreateNewNoteEvent);
         return () => {
             window.removeEventListener(eventTypes.vaultChange, vaultChangeEvent);
             window.removeEventListener(eventTypes.activeFileChange, changeActiveFile);
             window.removeEventListener(eventTypes.refreshView, forceUpdate);
             window.removeEventListener(eventTypes.revealFile, handleRevealFileEvent);
+            window.removeEventListener(eventTypes.revealFolder, handleRevealFolderEvent);
             window.removeEventListener(eventTypes.createNewNote, handleCreateNewNoteEvent);
         };
     }, []);
@@ -330,7 +332,17 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         if (file && file instanceof TFile) {
             revealFileInFileTree(FileTreeUtils.TFile2OZFile(file));
         } else {
-            new Notice('No active file');
+            new Notice('File not found');
+        }
+    }
+
+    function handleRevealFolderEvent(evt: Event) {
+        // @ts-ignore
+        const folder: TFolder = evt.detail.folder;
+        if (folder && folder instanceof TFolder) {
+            revealFolderInFileTree(folder);
+        } else {
+            new Notice('Folder not found');
         }
     }
 
@@ -347,6 +359,27 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
         if (folderElement) folderElement.scrollIntoView(false);
     }
 
+    // Helper for Reveal Button: Obtain all folders that needs to be opened
+    const getAllFoldersToOpen = (fileToReveal: TFile | TFolder) => {
+        let foldersToOpen: string[] = [];
+        const recursiveFx = (folder: TFolder) => {
+            foldersToOpen.push(folder.path);
+            if (folder.parent) recursiveFx(folder.parent);
+        };
+        recursiveFx(fileToReveal instanceof TFile ? fileToReveal.parent : fileToReveal);
+        return foldersToOpen;
+    };
+
+    // --> Handle Reveal Folder Button
+    function revealFolderInFileTree(folderToReveal: TFolder) {
+        if (!folderToReveal) return;
+        setActiveFolderPath(folderToReveal.path);
+        const foldersToOpen = getAllFoldersToOpen(folderToReveal);
+        let openFoldersSet = new Set([...openFolders, ...foldersToOpen]);
+        setOpenFolders(Array.from(openFoldersSet));
+        scrollToFolder(folderToReveal);
+    }
+
     // --> Handle Reveal Active File Button
     function revealFileInFileTree(ozFileToReveal: OZFile) {
         const fileToReveal = plugin.app.vault.getAbstractFileByPath(ozFileToReveal.path) as TFile;
@@ -357,17 +390,6 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
         // Focused Folder needs to be root for the reveal
         if (focusedFolder && focusedFolder.path !== '/') setFocusedFolder(plugin.app.vault.getRoot());
-
-        // Obtain all folders that needs to be opened
-        const getAllFoldersToOpen = (fileToReveal: TFile) => {
-            let foldersToOpen: string[] = [];
-            const recursiveFx = (folder: TFolder) => {
-                foldersToOpen.push(folder.path);
-                if (folder.parent) recursiveFx(folder.parent);
-            };
-            recursiveFx(fileToReveal.parent);
-            return foldersToOpen;
-        };
 
         // Sanity check - Parent to be folder and set required component states
         if (parentFolder instanceof TFolder) {

@@ -35,6 +35,7 @@ export interface FileTreeAlternativePluginSettings {
     folderNote: boolean;
     deleteFileOption: DeleteFileOption;
     showFileNameAsFullPath: boolean;
+    bookmarksEvents: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -63,6 +64,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     folderNote: false,
     deleteFileOption: 'trash',
     showFileNameAsFullPath: false,
+    bookmarksEvents: false,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -143,6 +145,25 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.openViewOnStart).onChange((value) => {
                     this.plugin.settings.openViewOnStart = value;
+                    this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Bookmarks Event Listener (Shift + Click)')
+            .setDesc(
+                'This will enable to reveal file or folder from core bookmarks plugin.' +
+                    'Because there is no API yet to overwrite the default behaviour for Bookmarks plugin,' +
+                    'this will add an event to reveal file if you click on bookmark name using shift'
+            )
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.bookmarksEvents).onChange((value) => {
+                    this.plugin.settings.bookmarksEvents = value;
+                    if (value) {
+                        this.plugin.bookmarksAddEventListener();
+                    } else {
+                        this.plugin.bookmarksRemoveEventListener();
+                    }
                     this.plugin.saveSettings();
                 })
             );
