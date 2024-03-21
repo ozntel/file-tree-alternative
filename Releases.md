@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.5.0
+
+-   Bookmark Plugin event listener fix and remove listener during unload of the plugin automatically
+
 ## Version 2.4.9
 
 -   Bookmarks Plugin Soft Implementation - Users need to click on file or folder bookmarks using shift button
