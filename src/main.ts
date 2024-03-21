@@ -1,4 +1,4 @@
-import { Plugin, addIcon, TAbstractFile } from 'obsidian';
+import { Plugin, addIcon, TAbstractFile, Notice } from 'obsidian';
 import { FileTreeView } from './FileTreeView';
 import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon, SpaceIcon } from './utils/icons';
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
@@ -132,9 +132,10 @@ export default class FileTreeAlternativePlugin extends Plugin {
         // Find the bookmark from the items
         let bookmarkItem = getBookmarkTitle(dataPath);
         // Create Custom Menu only if Shift is Used
-        if ((event as any).shiftKey && bookmarkItem) {
+        if ((event as any).shiftKey) {
+            if (!bookmarkItem) return;
+            event.stopImmediatePropagation();
             if (bookmarkItem.type === 'file') {
-                event.stopImmediatePropagation();
                 // Dispatch Reveal File Event
                 let customEvent = new CustomEvent(eventTypes.revealFile, {
                     detail: {
@@ -151,6 +152,8 @@ export default class FileTreeAlternativePlugin extends Plugin {
                     },
                 });
                 window.dispatchEvent(customEvent);
+            } else {
+                new Notice('Not a file or folder');
             }
         }
     };
