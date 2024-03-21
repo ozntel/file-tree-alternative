@@ -112,6 +112,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
         this.app.vault.off('delete', this.onDelete);
         this.app.vault.off('modify', this.onModify);
         this.app.vault.off('rename', this.onRename);
+        this.bookmarksRemoveEventListener();
     }
 
     async loadSettings() {
