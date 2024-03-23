@@ -1,5 +1,12 @@
 # Release Updates
 
+## Version 2.5.1
+
+-   Exclude attachments folder, no matter where it is located
+-   File List and Folder List obtain method improvement
+-   Exclusions are respected within the "all" search
+-   Folder children check correction to avoid having expand button enabled for folders not having children
+
 ## Version 2.5.0
 
 -   Bookmark Plugin event listener fix and remove listener during unload of the plugin automatically
