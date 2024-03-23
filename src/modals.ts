@@ -105,6 +105,7 @@ export class VaultChangeModal extends Modal {
             }
         } else if (this.action === 'create note' || this.action === 'create folder') {
             inputEl.value = 'Untitled';
+            inputEl.select();
         }
 
         inputEl.focus();
