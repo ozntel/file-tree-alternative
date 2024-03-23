@@ -43,8 +43,15 @@ export function FileComponent(props: FilesProps) {
 
     // File List Update once showSubFolders change
     useEffect(() => {
-        setOzFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
-    }, [showSubFolders]);
+        setOzFileList(
+            Util.getFilesUnderPath({
+                path: activeFolderPath,
+                plugin: plugin,
+                excludedExtensions: excludedExtensions,
+                excludedFolders: excludedFolders,
+            })
+        );
+    }, [showSubFolders, excludedExtensions, excludedFolders]);
 
     // To focus on Search box if visible set
     useEffect(() => {
@@ -53,10 +60,8 @@ export function FileComponent(props: FilesProps) {
 
     const filesToList: OZFile[] = useMemo(
         () =>
-            FileViewHandlers.customFiles({
+            FileViewHandlers.sortedFiles({
                 fileList: ozFileList,
-                excludedExtensions: excludedExtensions,
-                excludedFolders: excludedFolders,
                 plugin: plugin,
                 ozPinnedFiles: ozPinnedFiles,
             }),
@@ -73,7 +78,14 @@ export function FileComponent(props: FilesProps) {
     const toggleSearchBox = () => {
         setSearchPhrase('');
         setSearchBoxVisible(!searchBoxVisible);
-        setOzFileList(Util.getFilesUnderPath(activeFolderPath, plugin));
+        setOzFileList(
+            Util.getFilesUnderPath({
+                path: activeFolderPath,
+                plugin: plugin,
+                excludedExtensions: excludedExtensions,
+                excludedFolders: excludedFolders,
+            })
+        );
     };
 
     const toggleShowSubFolders = async () => {
@@ -188,6 +200,8 @@ export function FileComponent(props: FilesProps) {
                                                     setSearchPhrase,
                                                     setTreeHeader,
                                                     setOzFileList,
+                                                    excludedExtensions,
+                                                    excludedFolders,
                                                     focusedFolder,
                                                 });
                                             }}

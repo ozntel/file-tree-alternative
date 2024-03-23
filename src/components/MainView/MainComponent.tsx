@@ -32,14 +32,21 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     const [_folderTree, setFolderTree] = useRecoilState(recoilState.folderTree);
     const [excludedFolders, setExcludedFolders] = useRecoilState(recoilState.excludedFolders);
     const [_folderFileCountMap, setFolderFileCountMap] = useRecoilState(recoilState.folderFileCountMap);
-    const [_excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
+    const [excludedExtensions, setExcludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [_showSubFolders, setShowSubFolders] = useRecoilState(recoilState.showSubFolders);
     const [focusedFolder, setFocusedFolder] = useRecoilState(recoilState.focusedFolder);
     const [activeOZFile, setActiveOzFile] = useRecoilState(recoilState.activeOZFile);
 
     const setNewFileList = (folderPath?: string) => {
         let filesPath = folderPath ? folderPath : activeFolderPath;
-        setOzFileList(FileTreeUtils.getFilesUnderPath(filesPath, plugin));
+        setOzFileList(
+            FileTreeUtils.getFilesUnderPath({
+                path: filesPath,
+                plugin: plugin,
+                excludedExtensions: excludedExtensions,
+                excludedFolders: excludedFolders,
+            })
+        );
     };
 
     const setInitialActiveFolderPath = () => {
@@ -107,7 +114,13 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // Each Focused Folder Change triggers new folder tree build
     useEffect(() => {
         if (focusedFolder) {
-            setFolderTree(FileTreeUtils.createFolderTree(focusedFolder));
+            setFolderTree(
+                FileTreeUtils.createFolderTree({
+                    startFolder: focusedFolder,
+                    plugin: plugin,
+                    excludedFolders: excludedFolders,
+                })
+            );
             localStorage.setItem(plugin.keys.focusedFolder, focusedFolder.path);
         }
     }, [focusedFolder]);
@@ -306,7 +319,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
         // Folder Event Handlers
         else if (file instanceof TFolder) {
-            setFolderTree(FileTreeUtils.createFolderTree(currentFocusedFolder));
+            setFolderTree(FileTreeUtils.createFolderTree({ startFolder: currentFocusedFolder, plugin: plugin, excludedFolders: excludedFolders }));
             // if active folder is renamed, activefolderpath needs to be refreshed
             if (changeType === 'rename' && oldPathBeforeRename && currentActiveFolderPath === oldPathBeforeRename) {
                 setActiveFolderPath(file.path);

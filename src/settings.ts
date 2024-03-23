@@ -20,6 +20,8 @@ export interface FileTreeAlternativePluginSettings {
     revealActiveFileButton: boolean;
     excludedExtensions: string;
     excludedFolders: string;
+    hideAttachments: boolean;
+    attachmentsFolderName: string;
     folderIcon: FolderIcon;
     folderCount: boolean;
     folderCountOption: string;
@@ -49,6 +51,8 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     revealActiveFileButton: false,
     excludedExtensions: '',
     excludedFolders: '',
+    hideAttachments: false,
+    attachmentsFolderName: 'attachments',
     folderIcon: 'default',
     folderCount: true,
     folderCountOption: 'notes',
@@ -387,6 +391,17 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         /* ------------- Exclusion Settings ------------- */
 
         containerEl.createEl('h2', { text: 'Exclude Settings' });
+
+        new Setting(containerEl)
+            .setName('Hide Attachments')
+            .setDesc(`It will hide "attachments" folder from the view and any file under this folder from the file list`)
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.hideAttachments).onChange((value) => {
+                    this.plugin.settings.hideAttachments = value;
+                    this.plugin.saveSettings();
+                    this.plugin.refreshTreeLeafs();
+                })
+            );
 
         new Setting(containerEl)
             .setName('Excluded File Extensions')

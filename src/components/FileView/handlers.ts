@@ -22,9 +22,22 @@ export const handleOnDropFiles = (params: { files: File[]; activeFolderPath: str
     });
 };
 
-const getFilesWithName = (params: { searchPhrase: string; searchFolder: string; plugin: FileTreeAlternativePlugin; getAllFiles?: boolean }): OZFile[] => {
-    let { searchPhrase, searchFolder, plugin, getAllFiles } = params;
-    var files: OZFile[] = Util.getFilesUnderPath(searchFolder, plugin, getAllFiles);
+const getFilesWithName = (params: {
+    searchPhrase: string;
+    searchFolder: string;
+    plugin: FileTreeAlternativePlugin;
+    excludedExtensions: string[];
+    excludedFolders: string[];
+    getAllFiles?: boolean;
+}): OZFile[] => {
+    let { searchPhrase, searchFolder, plugin, getAllFiles, excludedExtensions, excludedFolders } = params;
+    var files: OZFile[] = Util.getFilesUnderPath({
+        path: searchFolder,
+        plugin: plugin,
+        excludedExtensions: excludedExtensions,
+        excludedFolders: excludedFolders,
+        getAllFiles: getAllFiles,
+    });
     var filteredFiles = files.filter((file) => file.basename.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
     return filteredFiles;
 };
@@ -56,10 +69,22 @@ const getFileTags = (params: { f: OZFile; plugin: FileTreeAlternativePlugin }): 
     return fileTags;
 };
 
-const getFilesWithTag = (params: { searchTag: string; plugin: FileTreeAlternativePlugin; focusedFolder: TFolder }): Set<OZFile> => {
-    let { searchTag, plugin, focusedFolder } = params;
+const getFilesWithTag = (params: {
+    searchTag: string;
+    plugin: FileTreeAlternativePlugin;
+    focusedFolder: TFolder;
+    excludedExtensions: string[];
+    excludedFolders: string[];
+}): Set<OZFile> => {
+    let { searchTag, plugin, focusedFolder, excludedExtensions, excludedFolders } = params;
     let filesWithTag: Set<OZFile> = new Set();
-    let ozFiles = Util.getFilesUnderPath(plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/', plugin, true);
+    let ozFiles = Util.getFilesUnderPath({
+        path: plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/',
+        plugin: plugin,
+        excludedExtensions: excludedExtensions,
+        excludedFolders: excludedFolders,
+        getAllFiles: true,
+    });
     for (let ozFile of ozFiles) {
         let fileTags = getFileTags({
             f: ozFile,
@@ -85,30 +110,9 @@ export const handleRevealActiveFileButton = (params: { plugin: FileTreeAlternati
 };
 
 // Sort - Filter Files Depending on Preferences
-export const customFiles = (params: {
-    fileList: OZFile[];
-    excludedExtensions: string[];
-    excludedFolders: string[];
-    plugin: FileTreeAlternativePlugin;
-    ozPinnedFiles: OZFile[];
-}) => {
-    let { fileList, excludedExtensions, excludedFolders, plugin, ozPinnedFiles } = params;
-    let sortedfileList: OZFile[];
-    // Remove Files with Excluded Extensions
-    if (excludedExtensions.length > 0) {
-        sortedfileList = fileList.filter((file) => !excludedExtensions.contains(file.extension));
-    }
-    // Remove Files from Excluded Folders
-    if (excludedFolders.length > 0) {
-        sortedfileList = sortedfileList.filter((file) => {
-            for (let exc of excludedFolders) {
-                if (file.path.startsWith(exc)) {
-                    return false;
-                }
-            }
-            return true;
-        });
-    }
+export const sortedFiles = (params: { fileList: OZFile[]; plugin: FileTreeAlternativePlugin; ozPinnedFiles: OZFile[] }) => {
+    let { fileList, plugin, ozPinnedFiles } = params;
+    let sortedfileList: OZFile[] = fileList;
     // Remove Files for Folder Note (If file name is same as parent folder name)
     if (plugin.settings.folderNote) {
         sortedfileList = sortedfileList.filter((f) => !f.isFolderNote);
@@ -187,10 +191,12 @@ export const handleSearch = (params: {
     setSearchPhrase: React.Dispatch<React.SetStateAction<string>>;
     setTreeHeader: React.Dispatch<React.SetStateAction<string>>;
     setOzFileList: SetterOrUpdater<OZFile[]>;
+    excludedExtensions: string[];
+    excludedFolders: string[];
     plugin: FileTreeAlternativePlugin;
     focusedFolder: TFolder;
 }) => {
-    let { e, activeFolderPath, setSearchPhrase, setOzFileList, setTreeHeader, plugin, focusedFolder } = params;
+    let { e, activeFolderPath, setSearchPhrase, setOzFileList, setTreeHeader, plugin, focusedFolder, excludedExtensions, excludedFolders } = params;
     var searchPhrase = e.target.value;
     setSearchPhrase(searchPhrase);
     var searchFolder = activeFolderPath;
@@ -208,6 +214,8 @@ export const handleSearch = (params: {
                 searchTag: tagRegexMatch[1],
                 plugin: plugin,
                 focusedFolder: focusedFolder,
+                excludedExtensions: excludedExtensions,
+                excludedFolders: excludedFolders,
             }),
         ]);
         return;
@@ -228,6 +236,8 @@ export const handleSearch = (params: {
         searchPhrase,
         searchFolder,
         plugin,
+        excludedExtensions,
+        excludedFolders,
         getAllFiles,
     });
     setOzFileList(filteredFiles);

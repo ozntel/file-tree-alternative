@@ -4,7 +4,14 @@ import { FolderFileCountMap, FolderTree, OZFile, BookmarksPluginItem } from 'uti
 import { VaultChangeModal } from 'modals';
 
 // Helper Function To Get List of Files
-export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugin, getAllFiles?: boolean): OZFile[] => {
+export const getFilesUnderPath = (params: {
+    path: string;
+    plugin: FileTreeAlternativePlugin;
+    excludedExtensions: string[];
+    excludedFolders: string[];
+    getAllFiles?: boolean;
+}): OZFile[] => {
+    const { path, plugin, getAllFiles, excludedExtensions, excludedFolders } = params;
     var filesUnderPath: OZFile[] = [];
     var showFilesFromSubFolders = getAllFiles ? true : plugin.settings.showFilesFromSubFolders;
     var folderObj = plugin.app.vault.getAbstractFileByPath(path);
@@ -12,7 +19,15 @@ export const getFilesUnderPath = (path: string, plugin: FileTreeAlternativePlugi
     function recursiveFx(folderObj: TFolder, app: App) {
         if (folderObj instanceof TFolder && folderObj.children) {
             for (let child of folderObj.children) {
-                if (child instanceof TFile) filesUnderPath.push(TFile2OZFile(child));
+                if (child instanceof TFile) {
+                    if (
+                        excludedExtensions.includes(child.extension) ||
+                        (plugin.settings.hideAttachments && child.path.toLowerCase().includes(plugin.settings.attachmentsFolderName.toLowerCase())) ||
+                        excludedFolders.includes(child.parent.path)
+                    )
+                        continue;
+                    filesUnderPath.push(TFile2OZFile(child));
+                }
                 if (child instanceof TFolder && showFilesFromSubFolders) recursiveFx(child, app);
             }
         }
@@ -44,13 +59,20 @@ export const isFolderNote = (t: TFile) => {
 };
 
 // Helper Function to Create Folder Tree
-export const createFolderTree = (startFolder: TFolder): FolderTree => {
+export const createFolderTree = (params: { startFolder: TFolder; excludedFolders: string[]; plugin: FileTreeAlternativePlugin }): FolderTree => {
+    const { startFolder, excludedFolders, plugin } = params;
     let fileTree: { folder: TFolder; children: any } = { folder: startFolder, children: [] };
     function recursive(folder: TFolder, object: { folder: TFolder; children: any }) {
         if (!(folder && folder.children)) return;
         for (let child of folder.children) {
             if (child instanceof TFolder) {
                 let childFolder: TFolder = child as TFolder;
+                if (
+                    (plugin.settings.hideAttachments && childFolder.name === plugin.settings.attachmentsFolderName) ||
+                    (excludedFolders.length > 0 && excludedFolders.contains(child.path))
+                ) {
+                    continue;
+                }
                 let newObj: { folder: TFolder; children: any } = { folder: childFolder, children: [] };
                 object.children.push(newObj);
                 if (childFolder.children) recursive(childFolder, newObj);
