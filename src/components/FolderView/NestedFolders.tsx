@@ -36,9 +36,6 @@ export function NestedFolders(props: NestedFoldersProps) {
 
     const getSortedFolderTree = (folderTree: FolderTree[]) => {
         let newTree: FolderTree[] = folderTree;
-        if (excludedFolders.length > 0) {
-            newTree = newTree.filter((tree) => !excludedFolders.contains(tree.folder.path));
-        }
         newTree = newTree.sort((a, b) => {
             if (plugin.settings.sortFoldersBy === 'name') {
                 return a.folder.name.localeCompare(b.folder.name, 'en', { numeric: true });
@@ -226,7 +223,7 @@ export function NestedFolders(props: NestedFoldersProps) {
                 sortedFolderTree.map((child) => {
                     return (
                         <React.Fragment key={child.folder.path}>
-                            {(child.folder as TFolder).children.some((child) => child instanceof TFolder) ? (
+                            {child.children.length > 0 ? (
                                 <Tree
                                     plugin={plugin}
                                     content={child.folder.name}
