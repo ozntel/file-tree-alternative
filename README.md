@@ -5,14 +5,14 @@
 
 The default file explorer of Obsidian has all files and folders in a single view. The File Tree Alternative plugin helps you to have separate views for folders and files.
 
-The plugin is updated quiet regularly. You can see the details of each release using the following link [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
+The plugin is updated quite regularly. You can see the details of each release using the following link [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
 
 ## Plugin Features
 
 ### General
 
 -   You can use `Evernote` view, which shows folders and file list at the same time. Or simply turn it off to have separate views. The plugin supports splitting the view `horizontally` or `vertically`. Make sure that you adjust the plugin settings accordingly.
--   You can use `Ribbon Icon` to activate the `File Tree Leaf` in case you close by mistake. You can turn off `ribbon icon` from the plugin settings. It will only work if you closed the plugin view accidentaly or on purpose to build it back.
+-   You can use `Ribbon Icon` to activate the `File Tree Leaf` in case you close by mistake. You can turn off `ribbon icon` from the plugin settings. It will only work if you closed the plugin view accidentally or on purpose to build it back.
 
 ### Folder Pane Features
 
