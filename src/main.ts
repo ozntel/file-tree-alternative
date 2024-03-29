@@ -159,16 +159,22 @@ export default class FileTreeAlternativePlugin extends Plugin {
         }
     };
 
-    getBookmarksLeafElement = () => {
+    getBookmarksLeafElement = (): Element => {
         return document.querySelector('.workspace-leaf-content[data-type="bookmarks"]');
     };
 
     bookmarksAddEventListener = () => {
-        this.getBookmarksLeafElement().addEventListener('click', this.bookmarksEventHandler, true);
+        let bookmarkLeafElement = this.getBookmarksLeafElement();
+        if (bookmarkLeafElement) {
+            bookmarkLeafElement.addEventListener('click', this.bookmarksEventHandler, true);
+        }
     };
 
     bookmarksRemoveEventListener = () => {
-        this.getBookmarksLeafElement().removeEventListener('click', this.bookmarksEventHandler, true);
+        let bookmarkLeafElement = this.getBookmarksLeafElement();
+        if (bookmarkLeafElement) {
+            bookmarkLeafElement.removeEventListener('click', this.bookmarksEventHandler, true);
+        }
     };
 
     triggerVaultChangeEvent = (file: TAbstractFile, changeType: VaultChange, oldPath?: string) => {
