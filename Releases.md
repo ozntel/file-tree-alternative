@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.5.2
+
+-   Fix for event listener of bookmarks plugin
+
 ## Version 2.5.1
 
 -   Exclude attachments folder, no matter where it is located
