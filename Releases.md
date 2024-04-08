@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.5.3
+
+-   Rename folder fix
+
 ## Version 2.5.2
 
 -   Fix for event listener of bookmarks plugin
