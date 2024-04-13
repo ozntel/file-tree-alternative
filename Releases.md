@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.5.5
+
+-   Drag Manager Fix
+
 ## Version 2.5.4
 
 -   Instant update after Exclude Folder Context Menu
