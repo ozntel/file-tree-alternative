@@ -278,7 +278,7 @@ export const dragStarted = (params: { e: React.DragEvent<HTMLDivElement>; file: 
     e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
 
     let dragManager = (plugin.app as any).dragManager;
-    const dragData = dragManager.dragFile(e.nativeEvent, file);
+    const dragData = dragManager.dragFile(e.nativeEvent, obsidianFile);
     dragManager.onDragStart(e.nativeEvent, dragData);
 };
 
