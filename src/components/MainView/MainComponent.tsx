@@ -123,7 +123,7 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
             );
             localStorage.setItem(plugin.keys.focusedFolder, focusedFolder.path);
         }
-    }, [focusedFolder]);
+    }, [focusedFolder, excludedFolders]);
 
     const setInitialFocusedFolder = () => {
         let localFocusedFolder = localStorage.getItem(plugin.keys.focusedFolder);
