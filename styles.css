@@ -18,7 +18,7 @@ settings:
         title: Folder Pane | Folder Name Font Size
         description: Set folder pane font size in px
         type: variable-number
-        default: 13
+        default: 14
         format: px
     -
         id: oz-fta-folder-icon-color
@@ -56,7 +56,7 @@ settings:
         title: File Pane | File Name Font Size
         description: Set file pane font size in px
         type: variable-number
-        default: 12
+        default: 13
         format: px
     -
         id: oz-fta-file-pane-file-name-color
@@ -208,6 +208,10 @@ settings:
     text-overflow: ellipsis;
     vertical-align: middle;
     display: inline-block;
+}
+
+.oz-nav-file {
+    border-bottom: 1px solid var(--divider-color);
 }
 
 div.oz-nav-file.is-active,

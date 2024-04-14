@@ -230,7 +230,7 @@ export function FileComponent(props: FilesProps) {
                                 }`}>
                                 {filesToList.map((file, index) => {
                                     return (
-                                        <LazyLoad height={19} key={index}>
+                                        <LazyLoad height={22} key={index}>
                                             <NavFile file={file} plugin={plugin} />
                                         </LazyLoad>
                                     );
