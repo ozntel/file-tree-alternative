@@ -82,7 +82,7 @@ export default function Tree(props: TreeProps) {
     };
 
     // --> Icon
-    const Icon = useMemo(() => getFolderIcon(props.plugin, props.children, open), [open, props.children]);
+    const Icon = useMemo(() => getFolderIcon(props.plugin, props.children, open), [open, props.children, props.plugin.settings.folderIcon]);
 
     // --> Folder Count Map
     const folderCount = folderFileCountMap[props.folder.path];
