@@ -286,7 +286,7 @@ const NavFile = (props: { file: OZFile; plugin: FileTreeAlternativePlugin }) => 
             FileViewHandlers.getFileIcon({
                 file,
             }),
-        [plugin.settings.iconBeforeFileName]
+        [plugin.settings.iconBeforeFileName, file]
     );
 
     const fileDisplayName = useMemo(() => {
