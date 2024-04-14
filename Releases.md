@@ -1,5 +1,11 @@
 # Release Updates
 
+## Version 2.5.6
+
+-   Style adjustment for folder and file (border and size)
+-   Folder icon change handling fix
+-   File icon display fix
+
 ## Version 2.5.5
 
 -   Drag Manager Fix
