@@ -24,7 +24,7 @@ export const getFileCreateString = (params: { plugin: FileTreeAlternativePlugin;
         plugin.settings.createdYaml
             ? `
         ---
-        created: ${dayjs(new Date()).format('YYYY-MM-DD hh:mm:ss')}
+        created: ${dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss')}
         ---
         `
             : ''
