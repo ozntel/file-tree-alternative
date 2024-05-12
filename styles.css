@@ -404,14 +404,9 @@ div.oz-folder-name.is-root-folder {
     flex: 1;
 }
 
-.oz-coffee-div,
-.oz-tip-div {
+.oz-coffee-div {
     text-align: center;
     margin-top: 10px;
-}
-
-.oz-tip-div img {
-    border-radius: 10px;
 }
 
 #file-tree-divider {

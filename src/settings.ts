@@ -92,16 +92,6 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         /* ------------- Buy Me a Coffee ------------- */
 
-        const tipDiv = containerEl.createDiv('tip');
-        tipDiv.addClass('oz-tip-div');
-        const tipLink = tipDiv.createEl('a', { href: 'https://revolut.me/ozante' });
-        const tipImg = tipLink.createEl('img', {
-            attr: {
-                src: 'https://raw.githubusercontent.com/ozntel/file-tree-alternative/main/images/tip%20the%20artist_v2.png',
-            },
-        });
-        tipImg.height = 55;
-
         const coffeeDiv = containerEl.createDiv('coffee');
         coffeeDiv.addClass('oz-coffee-div');
         const coffeeLink = coffeeDiv.createEl('a', { href: 'https://ko-fi.com/L3L356V6Q' });
