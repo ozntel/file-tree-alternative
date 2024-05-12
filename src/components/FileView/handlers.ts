@@ -326,11 +326,12 @@ export const triggerContextMenu = (params: {
     // Pin - Unpin Item
     fileMenu.addItem((menuItem) => {
         menuItem.setIcon('pin');
-        if (ozPinnedFiles.contains(file)) menuItem.setTitle('Unpin');
+        const isAlreadyPinned: boolean = ozPinnedFiles.some((pinnedFile) => pinnedFile.path === file.path);
+        if (isAlreadyPinned) menuItem.setTitle('Unpin');
         else menuItem.setTitle('Pin to Top');
         menuItem.onClick((ev: MouseEvent) => {
-            if (ozPinnedFiles.contains(file)) {
-                let newPinnedFiles = ozPinnedFiles.filter((pinnedFile) => pinnedFile !== file);
+            if (isAlreadyPinned) {
+                let newPinnedFiles = ozPinnedFiles.filter((pinnedFile) => pinnedFile.path !== file.path);
                 setOzPinnedFiles(newPinnedFiles);
             } else {
                 setOzPinnedFiles([...ozPinnedFiles, file]);
