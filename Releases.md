@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.5.7
+
+-   Pin Functionality Fix
+
 ## Version 2.5.6
 
 -   Style adjustment for folder and file (border and size)
