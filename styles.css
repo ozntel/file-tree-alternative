@@ -223,7 +223,7 @@ div.oz-nav-file.is-active div.oz-nav-file-title-content {
 }
 
 .is-folder-active {
-    color: var(--oz-fta-all-panes-active-text-color);
+    color: var(--oz-fta-all-panes-active-text-color) !important;
     font-weight: bold;
 }
 
