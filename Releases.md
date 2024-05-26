@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.5.8
+
+-   Fix for selected folder color
+
 ## Version 2.5.7
 
 -   Pin Functionality Fix
