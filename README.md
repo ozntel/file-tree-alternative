@@ -42,7 +42,6 @@ Double Clicking again on the focused folder name will move focus to the parent f
 -   The plugin lists all files including the `files under sub-folders`. You can turn off this option from plugin settings if you want to see only the files under the folder you selected. You can also turn on `toggle button` from the plugin settings and it'll include an additional button (looks like an eye) to toggle `files under sub-folders`. You can also toggle viewing direct or all files under a folder.
 -   The plugin allows you to `Pin` your favorite files to the top. They are saved for the following sessions.
 -   You can define certain `file extensions` in plugin settings to exclude from listing in file explorer.
--   You can `star`/`unstar` your files in case you have `Starred` plugin turned on.
 -   You can drop `external files` into file list to add the files into current active folder path.
 -   You can turn on `Search` feature from plugin settings to filter files with their names.
     -   You can use `all:` syntax in search box to search files from all folders rather than the active folder.
