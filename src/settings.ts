@@ -396,7 +396,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Excluded File Extensions')
             .setDesc(
-                `Provide extension of files, which you want to exclude from listing in file tree, divided by comma. i.e. 'png, pdf, jpeg'.
+                `Provide extension of files, which you want to exclude from listing in file tree, separated by comma. i.e. 'png, pdf, jpeg'.
             You need to reload the vault or use "Reload File Tree" button below to make changes effective.`
             )
             .addTextArea((text) =>
@@ -409,7 +409,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
         new Setting(containerEl)
             .setName('Excluded Folder Paths')
             .setDesc(
-                `Provide full path of folders, which you want to exclude from listing in file tree, divided by comma. i.e. 'Personal/Attachments, Work/Documents/Folders'.
+                `Provide full path of folders, which you want to exclude from listing in file tree, separated by comma. i.e. 'Personal/Attachments, Work/Documents/Folders'.
             All subfolders are going to be excluded, as well. You need to reload the vault or use "Reload File Tree" button below to make changes effective.`
             )
             .addTextArea((text) =>
