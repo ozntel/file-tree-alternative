@@ -228,36 +228,42 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     // Function for Event Handlers
     function handleVaultChanges(file: TAbstractFile, changeType: VaultChange, oldPathBeforeRename?: string) {
         // Get Current States from Setters
-        let currentFocusedFolder: TFolder = null;
         let currentActiveFolderPath: string = '';
-        let currentView: string = '';
-        let currentFileList: OZFile[] = [];
-        let currentActiveOZFile: OZFile = null;
 
-        setFocusedFolder((focusedFolder) => {
-            currentFocusedFolder = focusedFolder;
-            return focusedFolder;
-        });
         setActiveFolderPath((activeFolderPath) => {
             currentActiveFolderPath = activeFolderPath;
             return activeFolderPath;
         });
-        setView((view) => {
-            currentView = view;
-            return view;
-        });
-        setOzFileList((fileList) => {
-            currentFileList = fileList;
-            return fileList;
-        });
-        setActiveOzFile((activeOZFile) => {
-            currentActiveOZFile = activeOZFile;
-            return activeOZFile;
-        });
 
         // File Event Handlers
         if (file instanceof TFile) {
+            // Update Pinned Files
+            if (['rename', 'delete'].contains(changeType)) {
+                let currentOzPinnedFiles: OZFile[] = [];
+                setOzPinnedFiles((ozPinnedFiles) => {
+                    currentOzPinnedFiles = ozPinnedFiles;
+                    return ozPinnedFiles;
+                });
+                const filteredPinnedFiles: OZFile[] = currentOzPinnedFiles.filter(
+                    (f) => f.path !== (changeType === 'rename' ? oldPathBeforeRename : file.path)
+                );
+                if (filteredPinnedFiles.length !== currentOzPinnedFiles.length) {
+                    setOzPinnedFiles([...filteredPinnedFiles, ...(changeType === 'rename' ? [FileTreeUtils.TFile2OZFile(file)] : [])]);
+                }
+            }
+            // Update current View
+            let currentView: string = '';
+            setView((view) => {
+                currentView = view;
+                return view;
+            });
             if (currentView === 'file') {
+                let currentFileList: OZFile[] = [];
+                setOzFileList((fileList) => {
+                    currentFileList = fileList;
+                    return fileList;
+                });
+                // Evaluate changes
                 if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
                     // If the file is modified but sorting is not last-update to not component update unnecessarily, return
                     let sortFilesBy = plugin.settings.sortFilesBy;
@@ -296,6 +302,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                                 ...(file.parent.path.startsWith(currentActiveFolderPath) ? [FileTreeUtils.TFile2OZFile(file)] : []),
                             ]);
                             // If active file is renamed, change the active file
+                            let currentActiveOZFile: OZFile = null;
+                            setActiveOzFile((activeOZFile) => {
+                                currentActiveOZFile = activeOZFile;
+                                return activeOZFile;
+                            });
                             if (changeType === 'rename' && currentActiveOZFile && currentActiveOZFile.path === oldPathBeforeRename) {
                                 setActiveOzFile(FileTreeUtils.TFile2OZFile(file));
                             }
@@ -319,6 +330,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
 
         // Folder Event Handlers
         else if (file instanceof TFolder) {
+            let currentFocusedFolder: TFolder = null;
+            setFocusedFolder((focusedFolder) => {
+                currentFocusedFolder = focusedFolder;
+                return focusedFolder;
+            });
             setFolderTree(FileTreeUtils.createFolderTree({ startFolder: currentFocusedFolder, plugin: plugin, excludedFolders: excludedFolders }));
             // if active folder is renamed, activefolderpath needs to be refreshed
             if (changeType === 'rename' && oldPathBeforeRename && currentActiveFolderPath === oldPathBeforeRename) {
