@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.5.9
+
+-   Fix for Pinned File Updates
+
 ## Version 2.5.8
 
 -   Fix for selected folder color
