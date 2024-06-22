@@ -355,10 +355,11 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
     }, [ozFileList]);
 
     // Custom Event Handler Function
-    function handleRevealFileEvent(evt: Event) {
+    async function handleRevealFileEvent(evt: Event) {
         // @ts-ignore
         const file: TFile = evt.detail.file;
         if (file && file instanceof TFile) {
+            await plugin.openFileTreeLeaf(true);
             revealFileInFileTree(FileTreeUtils.TFile2OZFile(file));
         } else {
             new Notice('File not found');
