@@ -1,5 +1,9 @@
 # Release Updates
 
+## Version 2.6.0
+
+-   Reveal Active File activates the Leaf
+
 ## Version 2.5.9
 
 -   Fix for Pinned File Updates
