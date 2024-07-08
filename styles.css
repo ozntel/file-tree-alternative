@@ -118,6 +118,8 @@ settings:
 
 .theme-light,
 .theme-dark {
+    --oz-fta-folder-font-mobile-size: 17px;
+    --oz-fta-file-font-mobile-size: 16px;
     --oz-fta-folder-font-size: 13px;
     --oz-fta-file-font-size: 12px;
     --oz-fta-folder-icon-color: var(--interactive-accent);
@@ -507,7 +509,9 @@ svg.oz-folder-toggle path {
 /* Mobile Adjustments */
 
 .is-mobile .oz-nav-file-title {
+    font-size: var(--oz-fta-folder-font-mobile-size);
     line-height: 21px;
+    padding: 5px;
 }
 
 .is-mobile .oz-flex-container {
@@ -515,11 +519,12 @@ svg.oz-folder-toggle path {
 }
 
 .is-mobile .oz-folder-name.is-root-folder {
-    font-size: calc(var(--oz-fta-folder-font-size) + 2.5px);
+    font-size: calc(var(--oz-fta-folder-font-mobile-size) + 1px);
 }
 
 .is-mobile .oz-folder-name {
-    font-size: var(--oz-fta-folder-font-size);
+    font-size: var(--oz-fta-folder-font-mobile-size);
+    padding: 5px;
 }
 
 .is-mobile div.oz-nav-file-title .nav-file-title-content {
