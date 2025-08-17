@@ -5,7 +5,7 @@
 
 The default file explorer of Obsidian has all files and folders in a single view. The File Tree Alternative plugin helps you to have separate views for folders and files.
 
-The plugin is updated quiet regularly. You can see the details of each release using the following link [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
+The plugin is updated quite regularly. You can see the details of each release using the following link [Release Updates](https://github.com/ozntel/file-tree-alternative/blob/main/Releases.md)
 
 ## Plugin Features
 
@@ -86,3 +86,4 @@ If you are enjoying the plugin then you can support my work and enthusiasm by bu
 <a href='https://ko-fi.com/L3L356V6Q' target='_blank'>
     <img height='48' style='border:0px;height:48px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' />
 </a>
+
