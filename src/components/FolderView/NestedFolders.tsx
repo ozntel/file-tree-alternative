@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { TFolder, Menu } from 'obsidian';
+import { TFolder, TFile, Menu } from 'obsidian';
 import { FolderTree } from 'utils/types';
 import FileTreeAlternativePlugin from 'main';
 import Tree from 'components/FolderView/treeComponent/TreeComponent';
@@ -58,32 +58,83 @@ export function NestedFolders(props: NestedFoldersProps) {
         // Menu Items
         const folderMenu = new Menu();
 
-        // Focus Items
-        if (Util.hasChildFolder(folder)) {
-            folderMenu.addItem((menuItem) => {
-                menuItem
-                    .setTitle('Focus on Folder')
-                    .setIcon('zoomInIcon')
-                    .onClick(() => focusOnFolder(folder));
-            });
-        }
-
-        if (!focusedFolder.isRoot()) {
-            folderMenu.addItem((menuItem) => {
-                menuItem
-                    .setTitle('Focus Back to Root')
-                    .setIcon('zoomOutIcon')
-                    .onClick(() => focusOnFolder(rootFolder));
-            });
-        }
 
         // CRUD Items
+        folderMenu.addItem((menuItem) => {
+            menuItem
+                .setTitle('New File')
+                .setIcon('document')
+                .onClick((ev: MouseEvent) => {
+                    Util.createNewFile(ev as unknown as React.MouseEvent<Element, MouseEvent>, folder.path, plugin);
+                });
+        });
+
+
         folderMenu.addItem((menuItem) => {
             menuItem
                 .setTitle('New Folder')
                 .setIcon('folder')
                 .onClick((ev: MouseEvent) => {
                     let vaultChangeModal = new VaultChangeModal(plugin, folder, 'create folder');
+                    vaultChangeModal.open();
+                });
+        });
+
+
+        // Folder Note Open & Create & Delete (If folder note loaded, avoid duplicate create, delete buttons)
+        const folderNotePath = `${folder.path}/${folder.name}.md`;
+        let folderNoteExists = folder.children.some((f) => `${folder.name}.md` === f.name);
+
+        if (folderNoteExists) {
+            folderMenu.addItem((menuItem) => {
+                menuItem
+                    .setTitle('Open Folder Note')
+                    .setIcon('go-to-file')
+                    .onClick((ev: MouseEvent) => {
+                        const folderNoteFile = plugin.app.vault.getAbstractFileByPath(folderNotePath);
+                        if (folderNoteFile && folderNoteFile instanceof TFile) {
+                            newFileUtils.openFile({
+                                file: Util.TFile2OZFile(folderNoteFile as TFile),
+                                app: plugin.app,
+                                newLeaf: false,
+                            });
+                        }
+                    });
+            });
+        }
+
+        if (!Util.pluginIsLoaded(plugin.app, 'folder-note-core')) {
+            // Delete Folder Note Button
+            if (folderNoteExists) {
+                folderMenu.addItem((menuItem) => {
+                    menuItem
+                        .setTitle('Delete Folder Note')
+                        .setIcon('trash')
+                        .onClick((ev: MouseEvent) => {
+                            const folderNoteFile = plugin.app.vault.getAbstractFileByPath(folderNotePath);
+                            if (folderNoteFile) plugin.app.vault.delete(folderNoteFile, true);
+                        });
+                });
+            }
+            // Create Folder Note Button
+            else {
+                folderMenu.addItem((menuItem) => {
+                    menuItem
+                        .setTitle('Create Folder Note')
+                        .setIcon('create-new')
+                        .onClick(async (ev: MouseEvent) => {
+                            newFileUtils.createNewMarkdownFile(plugin, folder, folder.name, `# ${folder.name}`);
+                        });
+                });
+            }
+        }
+
+        folderMenu.addItem((menuItem) => {
+            menuItem
+                .setTitle('Rename')
+                .setIcon('pencil')
+                .onClick((ev: MouseEvent) => {
+                    let vaultChangeModal = new VaultChangeModal(plugin, folder, 'rename');
                     vaultChangeModal.open();
                 });
         });
@@ -115,24 +166,24 @@ export function NestedFolders(props: NestedFoldersProps) {
                 });
         });
 
-        folderMenu.addItem((menuItem) => {
-            menuItem
-                .setTitle('Rename')
-                .setIcon('pencil')
-                .onClick((ev: MouseEvent) => {
-                    let vaultChangeModal = new VaultChangeModal(plugin, folder, 'rename');
-                    vaultChangeModal.open();
-                });
-        });
+        // Focus Items
+        if (Util.hasChildFolder(folder)) {
+            folderMenu.addItem((menuItem) => {
+                menuItem
+                    .setTitle('Focus on Folder')
+                    .setIcon('zoomInIcon')
+                    .onClick(() => focusOnFolder(folder));
+            });
+        }
 
-        folderMenu.addItem((menuItem) => {
-            menuItem
-                .setTitle('New File')
-                .setIcon('document')
-                .onClick((ev: MouseEvent) => {
-                    Util.createNewFile(ev as unknown as React.MouseEvent<Element, MouseEvent>, folder.path, plugin);
-                });
-        });
+        if (!focusedFolder.isRoot()) {
+            folderMenu.addItem((menuItem) => {
+                menuItem
+                    .setTitle('Focus Back to Root')
+                    .setIcon('zoomOutIcon')
+                    .onClick(() => focusOnFolder(rootFolder));
+            });
+        }
 
         // Move Item
         if (!Util.internalPluginLoaded('file-explorer', app)) {
@@ -156,49 +207,6 @@ export function NestedFolders(props: NestedFoldersProps) {
                 });
         });
 
-        // Folder Note Open & Create & Delete (If folder note loaded, avoid duplicate create, delete buttons)
-        const folderNotePath = `${folder.path}/${folder.name}.md`;
-        let folderNoteExists = folder.children.some((f) => `${folder.name}.md` === f.name);
-
-        if (folderNoteExists) {
-            folderMenu.addItem((menuItem) => {
-                menuItem
-                    .setTitle('Open Folder Note')
-                    .setIcon('go-to-file')
-                    .onClick((ev: MouseEvent) => {
-                        plugin.app.workspace.activeLeaf.setViewState({
-                            type: 'markdown',
-                            state: { file: folderNotePath },
-                        });
-                    });
-            });
-        }
-
-        if (!Util.pluginIsLoaded(plugin.app, 'folder-note-core')) {
-            // Delete Folder Note Button
-            if (folderNoteExists) {
-                folderMenu.addItem((menuItem) => {
-                    menuItem
-                        .setTitle('Delete Folder Note')
-                        .setIcon('trash')
-                        .onClick((ev: MouseEvent) => {
-                            const folderNoteFile = plugin.app.vault.getAbstractFileByPath(folderNotePath);
-                            if (folderNoteFile) plugin.app.vault.delete(folderNoteFile, true);
-                        });
-                });
-            }
-            // Create Folder Note Button
-            else {
-                folderMenu.addItem((menuItem) => {
-                    menuItem
-                        .setTitle('Create Folder Note')
-                        .setIcon('create-new')
-                        .onClick(async (ev: MouseEvent) => {
-                            newFileUtils.createNewMarkdownFile(plugin, folder, folder.name, `# ${folder.name}`);
-                        });
-                });
-            }
-        }
 
         // Trigger
         app.workspace.trigger('file-menu', folderMenu, folder, 'file-explorer');
