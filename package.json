@@ -5,7 +5,7 @@
     "main": "main.js",
     "scripts": {
         "dev": "rollup -c -w --bundleConfigAsCjs",
-        "build": "NODE_ENV=production rollup -c --bundleConfigAsCjs"
+        "build": "cross-env NODE_ENV=production rollup -c --bundleConfigAsCjs"
     },
     "keywords": [],
     "author": "",
@@ -25,6 +25,7 @@
         "@types/react": "18.2.0",
         "@types/react-dom": "18.2.0",
         "babel": "^6.23.0",
+        "cross-env": "^10.1.0",
         "million": "^2.6.4",
         "obsidian": "^1.4.11",
         "prop-types": "^15.7.2",

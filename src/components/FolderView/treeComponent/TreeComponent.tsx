@@ -6,6 +6,7 @@ import { getFolderIcon, IoMdArrowDropright } from 'utils/icons';
 import * as recoilState from 'recoil/pluginState';
 import { useRecoilState } from 'recoil';
 import useLongPress from 'hooks/useLongPress';
+import * as Util from 'utils/Utils';
 
 type TreeProps = {
     open?: boolean;
@@ -87,6 +88,16 @@ export default function Tree(props: TreeProps) {
     // --> Folder Count Map
     const folderCount = folderFileCountMap[props.folder.path];
 
+    // --> Rainbow color for folder
+    const rainbowColor = useMemo(() => {
+        if (!props.plugin.settings.rainbowFolders) return undefined;
+        const colorIndex = Util.getRainbowColorIndex(props.folder, props.plugin);
+        const colorOption = props.plugin.settings.rainbowColors[colorIndex];
+        if (!colorOption) return undefined;
+        const customColor = props.plugin.settings.rainbowCustomColors[colorIndex];
+        return Util.getRainbowColorValue(colorOption, customColor);
+    }, [props.plugin.settings.rainbowFolders, props.folder.path, props.plugin.settings.rainbowColors, props.plugin.settings.rainbowCustomColors, props.plugin.settings.rainbowColorRepeat, props.plugin.settings.sortFoldersBy]);
+
     // --> Drag and Drop Actions
     const dropFileOrFolder = (e: React.DragEvent<HTMLDivElement>) => {
         let data = e.dataTransfer.getData('application/json');
@@ -141,8 +152,8 @@ export default function Tree(props: TreeProps) {
             {({ getRootProps, getInputProps }) => (
                 <React.Fragment>
                     <div
-                        style={{ ...props.style }}
-                        className="treeview"
+                        style={rainbowColor ? { ...props.style, '--rainbow-folder-color': rainbowColor } as React.CSSProperties : { ...props.style }}
+                        className={`treeview${props.plugin.settings.rainbowFolders && rainbowColor ? ' rainbow-folder-container' : ''}`}
                         draggable
                         onDragStart={(e) => onFolderDragStart(e, props.folder)}
                         onDrop={(e) => dropFileOrFolder(e)}
@@ -156,7 +167,11 @@ export default function Tree(props: TreeProps) {
 
                             <div className="oz-folder-line">
                                 <div className="oz-icon-div">
-                                    <Icon className="oz-folder-toggle" style={{ opacity: props.children ? 1 : 0.3 }} onClick={toggle} />
+                                    <Icon 
+                                        className={`oz-folder-toggle${props.plugin.settings.rainbowFolders && rainbowColor ? ' rainbow-icon' : ''}`} 
+                                        style={{ opacity: props.children ? 1 : 0.3 }} 
+                                        onClick={toggle} 
+                                    />
                                 </div>
 
                                 <div
@@ -171,7 +186,8 @@ export default function Tree(props: TreeProps) {
                                     <div
                                         className={`oz-folder-name ${isFolderActive ? 'is-folder-active' : ''}${
                                             props.isRootFolder ? ' is-root-folder' : ''
-                                        }`}>
+                                        }${props.plugin.settings.rainbowFolders ? ' rainbow-folder' : ''}`}
+                                        style={rainbowColor ? { '--rainbow-folder-color': rainbowColor } as React.CSSProperties : {}}>
                                         {props.content}{' '}
                                         {props.plugin.settings.folderNote && props.folder.children.some((f) => f.name === `${props.folder.name}.md`) ? (
                                             <IoMdArrowDropright size={10} className="oz-folder-note-icon" />
@@ -191,7 +207,12 @@ export default function Tree(props: TreeProps) {
                     {props.children && (
                         <div
                             className="oz-folder-contents"
-                            style={{
+                            style={rainbowColor ? {
+                                height: open ? 'auto' : 0,
+                                opacity: open ? 1 : 0,
+                                display: open ? 'inherit' : 'none',
+                                '--rainbow-folder-color': rainbowColor,
+                            } as React.CSSProperties : {
                                 height: open ? 'auto' : 0,
                                 opacity: open ? 1 : 0,
                                 display: open ? 'inherit' : 'none',

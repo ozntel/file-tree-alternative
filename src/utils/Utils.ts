@@ -2,6 +2,7 @@ import { TFile, TFolder, App, Keymap, Platform } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { FolderFileCountMap, FolderTree, OZFile, BookmarksPluginItem } from 'utils/types';
 import { VaultChangeModal } from 'modals';
+import { RainbowColorOption } from 'settings';
 
 // Helper Function To Get List of Files
 export const getFilesUnderPath = (params: {
@@ -186,4 +187,71 @@ export const getBookmarkTitle = (title: string): BookmarksPluginItem => {
         currentItem = currentItem.items.find((b) => b.title === titleParts[i]);
     }
     return currentItem;
+};
+
+// Get the rainbow color index for a folder
+export const getRainbowColorIndex = (folder: TFolder, plugin: FileTreeAlternativePlugin): number => {
+    if (!folder.parent) return 0;
+    
+    // Get all sibling folders
+    const siblingFolders: TFolder[] = [];
+    for (let child of folder.parent.children) {
+        if (child instanceof TFolder) {
+            // Skip attachments folder if hideAttachments is enabled
+            if (plugin.settings.hideAttachments && child.name === plugin.settings.attachmentsFolderName) {
+                continue;
+            }
+            // Skip excluded folders
+            const excludedFoldersStr = plugin.settings.excludedFolders || '';
+            const excludedFolders = excludedFoldersStr
+                .split(',')
+                .map((f) => f.trim())
+                .filter((f) => f.length > 0);
+            if (excludedFolders.length > 0 && excludedFolders.contains(child.path)) {
+                continue;
+            }
+            siblingFolders.push(child);
+        }
+    }
+    
+    // Sort siblings by name to ensure consistent ordering
+    if (plugin.settings.sortFoldersBy === 'name') {
+        siblingFolders.sort((a, b) => a.name.localeCompare(b.name, 'en', { numeric: true }));
+    }
+    
+    // Find the index of current folder
+    const index = siblingFolders.findIndex((f) => f.path === folder.path);
+    
+    // Return index modulo rainbowColorRepeat
+    const repeatCount = plugin.settings.rainbowColorRepeat || 12;
+    return index >= 0 ? index % repeatCount : 0;
+};
+
+// Convert rainbow color option to CSS variable or custom color
+export const getRainbowColorValue = (colorOption: RainbowColorOption, customColor?: string): string => {
+    // If custom color is selected, return the custom color value
+    if (colorOption === 'custom' && customColor) {
+        return customColor;
+    }
+    
+    const colorMap: Record<RainbowColorOption, string> = {
+        'accent': 'var(--interactive-accent)',
+        'rosewater': 'var(--ctp-rosewater)',
+        'flamingo': 'var(--ctp-flamingo)',
+        'pink': 'var(--ctp-pink)',
+        'mauve': 'var(--ctp-mauve)',
+        'red': 'var(--ctp-red)',
+        'maroon': 'var(--ctp-maroon)',
+        'peach': 'var(--ctp-peach)',
+        'yellow': 'var(--ctp-yellow)',
+        'green': 'var(--ctp-green)',
+        'teal': 'var(--ctp-teal)',
+        'sky': 'var(--ctp-sky)',
+        'sapphire': 'var(--ctp-sapphire)',
+        'blue': 'var(--ctp-blue)',
+        'lavender': 'var(--ctp-lavender)',
+        'custom': customColor || '#FF6B6B',
+    };
+    
+    return colorMap[colorOption] || 'var(--interactive-accent)';
 };

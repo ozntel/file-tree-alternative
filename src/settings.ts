@@ -8,6 +8,7 @@ export type SortType = 'name' | 'last-update' | 'created' | 'file-size';
 export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 export type EvernoteViewOption = 'Disabled' | 'Horizontal' | 'Vertical';
+export type RainbowColorOption = 'accent' | 'rosewater' | 'flamingo' | 'pink' | 'mauve' | 'red' | 'maroon' | 'peach' | 'yellow' | 'green' | 'teal' | 'sky' | 'sapphire' | 'blue' | 'lavender' | 'custom';
 
 export interface FileTreeAlternativePluginSettings {
     openViewOnStart: boolean;
@@ -38,6 +39,10 @@ export interface FileTreeAlternativePluginSettings {
     deleteFileOption: DeleteFileOption;
     showFileNameAsFullPath: boolean;
     bookmarksEvents: boolean;
+    rainbowFolders: boolean;
+    rainbowColorRepeat: number;
+    rainbowColors: RainbowColorOption[];
+    rainbowCustomColors: string[];
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -69,6 +74,27 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     deleteFileOption: 'trash',
     showFileNameAsFullPath: false,
     bookmarksEvents: false,
+    rainbowFolders: false,
+    rainbowColorRepeat: 12,
+    rainbowColors: [
+        'red',        // 1. 红色
+        'peach',      // 2. 橙色
+        'yellow',     // 3. 黄色
+        'green',      // 4. 绿色
+        'teal',       // 5. 青色
+        'sky',        // 6. 天蓝色
+        'sapphire',   // 7. 宝石蓝
+        'blue',       // 8. 蓝色
+        'lavender',   // 9. 薰衣草紫
+        'mauve',      // 10. 紫色
+        'pink',       // 11. 粉红色
+        'rosewater',  // 12. 玫瑰水
+    ],
+    rainbowCustomColors: [
+        '#FF6B6B', '#FF9F43', '#FFD93D', '#6BCF7F',
+        '#4ECDC4', '#45B7D1', '#5F9DF7', '#A78BFA',
+        '#E879F9', '#FF69B4', '#F687B3', '#C084FC',
+    ],
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -82,6 +108,21 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
     refreshView() {
         let evt = new CustomEvent(eventTypes.refreshView, {});
         window.dispatchEvent(evt);
+    }
+
+    async reloadPlugin() {
+        // Force plugin reload to refresh all components
+        await this.plugin.saveSettings();
+        this.plugin.refreshTreeLeafs();
+    }
+
+    getOrdinalSuffix(num: number): string {
+        const j = num % 10;
+        const k = num % 100;
+        if (j === 1 && k !== 11) return 'st';
+        if (j === 2 && k !== 12) return 'nd';
+        if (j === 3 && k !== 13) return 'rd';
+        return 'th';
     }
 
     display(): void {
@@ -234,6 +275,133 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                     this.refreshView();
                 });
             });
+
+        const rainbowFolderSetting = new Setting(containerEl)
+            .setName('Rainbow Folders')
+            .setDesc('Enable this option to add cycling rainbow colors to folders. Based on Catppuccin theme color scheme.')
+            .addToggle((toggle) => {
+                toggle.setValue(this.plugin.settings.rainbowFolders).onChange(async (value) => {
+                    this.plugin.settings.rainbowFolders = value;
+                    await this.plugin.saveSettings();
+                    this.reloadPlugin();
+                    this.display();
+                });
+            });
+
+        if (this.plugin.settings.rainbowFolders) {
+            // Add collapse/expand functionality
+            rainbowFolderSetting.addExtraButton((button) => {
+                button
+                    .setIcon('chevron-down')
+                    .setTooltip('Expand/Collapse Rainbow Folder Settings')
+                    .onClick(() => {
+                        const isCollapsed = containerEl.querySelector('.rainbow-settings-collapsed');
+                        const settingsContainer = containerEl.querySelector('.rainbow-settings-container') as HTMLElement;
+                        if (settingsContainer) {
+                            if (isCollapsed) {
+                                settingsContainer.removeClass('rainbow-settings-collapsed');
+                                button.setIcon('chevron-down');
+                            } else {
+                                settingsContainer.addClass('rainbow-settings-collapsed');
+                                button.setIcon('chevron-right');
+                            }
+                        }
+                    });
+            });
+
+            const settingsContainer = containerEl.createDiv('rainbow-settings-container');
+            
+            settingsContainer.createEl('h3', { text: 'Rainbow Folder Configuration' });
+
+            const repeatCountDesc = settingsContainer.createDiv();
+            repeatCountDesc.addClass('setting-item-description');
+            repeatCountDesc.style.marginBottom = '10px';
+
+            new Setting(settingsContainer)
+                .setName('Repeating Color Count')
+                .setDesc('Select how many colors to cycle through (1-12). For example, selecting 6 means colors will repeat every 6 folders.')
+                .addSlider((slider) => {
+                    slider
+                        .setLimits(1, 12, 1)
+                        .setValue(this.plugin.settings.rainbowColorRepeat)
+                        .setDynamicTooltip()
+                        .onChange(async (value) => {
+                            this.plugin.settings.rainbowColorRepeat = value;
+                            await this.plugin.saveSettings();
+                            this.reloadPlugin();
+                            // Re-render settings page to update enabled/disabled status
+                            this.display();
+                        });
+                });
+
+            settingsContainer.createEl('h3', { text: 'Rainbow Color Scheme' });
+            settingsContainer.createEl('p', { 
+                text: 'Choose a Catppuccin theme preset color for each position. Only the first ' + this.plugin.settings.rainbowColorRepeat + ' colors will be used.',
+                cls: 'setting-item-description'
+            });
+            
+            const colorOptions: { label: string; value: RainbowColorOption }[] = [
+                { label: '🎨 Accent', value: 'accent' },
+                { label: '🌸 Rosewater', value: 'rosewater' },
+                { label: '🦩 Flamingo', value: 'flamingo' },
+                { label: '💗 Pink', value: 'pink' },
+                { label: '💜 Mauve', value: 'mauve' },
+                { label: '🔴 Red', value: 'red' },
+                { label: '🍷 Maroon', value: 'maroon' },
+                { label: '🍑 Peach', value: 'peach' },
+                { label: '💛 Yellow', value: 'yellow' },
+                { label: '💚 Green', value: 'green' },
+                { label: '🌊 Teal', value: 'teal' },
+                { label: '☁️ Sky', value: 'sky' },
+                { label: '💎 Sapphire', value: 'sapphire' },
+                { label: '💙 Blue', value: 'blue' },
+                { label: '💜 Lavender', value: 'lavender' },
+                { label: '🎨 Custom Color', value: 'custom' },
+            ];
+
+            for (let i = 0; i < 12; i++) {
+                const colorIndex = i + 1;
+                const isActive = i < this.plugin.settings.rainbowColorRepeat;
+                const currentColor = this.plugin.settings.rainbowColors[i] || 'accent';
+                const isCustom = currentColor === 'custom';
+                
+                const setting = new Setting(settingsContainer)
+                    .setName(`Color Position ${colorIndex}${!isActive ? ' (Disabled)' : ''}`)
+                    .setDesc(`Choose the color for the ${colorIndex}${this.getOrdinalSuffix(colorIndex)} folder`)
+                    .addDropdown((dropdown) => {
+                        colorOptions.forEach((option) => {
+                            dropdown.addOption(option.value, option.label);
+                        });
+                        dropdown
+                            .setValue(currentColor)
+                            .onChange(async (value: RainbowColorOption) => {
+                                this.plugin.settings.rainbowColors[i] = value;
+                                await this.plugin.saveSettings();
+                                this.reloadPlugin();
+                                // 重新显示设置以显示/隐藏自定义颜色输入框
+                                this.display();
+                            })
+                            .setDisabled(!isActive);
+                    });
+
+                // 如果选择了自定义颜色，显示颜色输入框
+                if (isCustom && isActive) {
+                    setting.addText((text) => {
+                        text.inputEl.type = 'color';
+                        text.inputEl.style.width = '80px';
+                        text.inputEl.style.height = '30px';
+                        text.inputEl.style.marginLeft = '10px';
+                        text
+                            .setValue(this.plugin.settings.rainbowCustomColors[i] || '#FF6B6B')
+                            .onChange(async (value) => {
+                                this.plugin.settings.rainbowCustomColors[i] = value;
+                                await this.plugin.saveSettings();
+                                this.reloadPlugin();
+                            });
+                    });
+                }
+            }
+        }
 
         /* ------------- File Pane Settings ------------- */
         containerEl.createEl('h2', { text: 'File Pane Settings' });
