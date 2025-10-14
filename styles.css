@@ -130,6 +130,40 @@ settings:
     --oz-fta-all-panes-active-text-color: var(--text-normal);
     --oz-fta-file-pane-active-file-background-color: var(--background-secondary-alt);
     --oz-fta-file-pane-file-name-color: var(--text-muted);
+    
+    /* Catppuccin Rainbow Folder Colors - Latte (Light Theme) */
+    --ctp-rosewater: #dc8a78;
+    --ctp-flamingo: #dd7878;
+    --ctp-pink: #ea76cb;
+    --ctp-mauve: #8839ef;
+    --ctp-red: #d20f39;
+    --ctp-maroon: #e64553;
+    --ctp-peach: #fe640b;
+    --ctp-yellow: #df8e1d;
+    --ctp-green: #40a02b;
+    --ctp-teal: #179299;
+    --ctp-sky: #04a5e5;
+    --ctp-sapphire: #209fb5;
+    --ctp-blue: #1e66f5;
+    --ctp-lavender: #7287fd;
+}
+
+.theme-dark {
+    /* Catppuccin Rainbow Folder Colors - Mocha (Dark Theme) */
+    --ctp-rosewater: #f5e0dc;
+    --ctp-flamingo: #f2cdcd;
+    --ctp-pink: #f5c2e7;
+    --ctp-mauve: #cba6f7;
+    --ctp-red: #f38ba8;
+    --ctp-maroon: #eba0ac;
+    --ctp-peach: #fab387;
+    --ctp-yellow: #f9e2af;
+    --ctp-green: #a6e3a1;
+    --ctp-teal: #94e2d5;
+    --ctp-sky: #89dceb;
+    --ctp-sapphire: #74c7ec;
+    --ctp-blue: #89b4fa;
+    --ctp-lavender: #b4befe;
 }
 
 .oz-file-tree-header {
@@ -223,8 +257,17 @@ div.oz-nav-file.is-active div.oz-nav-file-title-content {
 }
 
 .is-folder-active {
-    color: var(--oz-fta-all-panes-active-text-color) !important;
     font-weight: bold;
+}
+
+/* Non-rainbow folders keep the original active color */
+.is-folder-active:not(.rainbow-folder) {
+    color: var(--oz-fta-all-panes-active-text-color) !important;
+}
+
+/* Rainbow folders maintain their color even when active */
+.is-folder-active.rainbow-folder {
+    font-weight: 900;
 }
 
 .oz-nav-file-tag {
@@ -300,6 +343,11 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     margin-left: 5px !important;
 }
 
+/* Rainbow folder indentation guide color */
+.oz-folder-contents[style*="--rainbow-folder-color"] {
+    border-left-color: var(--rainbow-folder-color, var(--oz-fta-folder-indendation-guide-color)) !important;
+}
+
 .oz-folder-toggle {
     width: 1em;
     height: 1em;
@@ -334,6 +382,12 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 
 div.oz-folder-name.is-root-folder {
     font-size: calc(var(--oz-fta-folder-font-size) + 2px);
+}
+
+.oz-folder-name.rainbow-folder {
+    font-weight: 600;
+    transition: color 0.2s ease, font-weight 0.2s ease;
+    color: var(--rainbow-folder-color, var(--oz-fta-folder-pane-file-name-color)) !important;
 }
 
 .oz-icon-div {
@@ -407,6 +461,19 @@ div.oz-folder-name.is-root-folder {
 .oz-coffee-div {
     text-align: center;
     margin-top: 10px;
+}
+
+/* Rainbow settings container collapse */
+.rainbow-settings-container {
+    max-height: 3000px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 1;
+}
+
+.rainbow-settings-container.rainbow-settings-collapsed {
+    max-height: 0;
+    opacity: 0;
 }
 
 #file-tree-divider {
@@ -486,6 +553,18 @@ div#file-tree-divider-horizontal.active-divider {
 
 svg.oz-folder-toggle path {
     fill: var(--oz-fta-folder-icon-color) !important;
+}
+
+/* Rainbow folder icon color */
+svg.oz-folder-toggle.rainbow-icon path {
+    fill: var(--rainbow-folder-color, var(--oz-fta-folder-icon-color)) !important;
+    opacity: 0.9;
+}
+
+/* Icon hover effect */
+svg.oz-folder-toggle.rainbow-icon:hover path {
+    opacity: 1;
+    filter: brightness(1.2);
 }
 
 /* Solution for React-Icon Center Issue */
