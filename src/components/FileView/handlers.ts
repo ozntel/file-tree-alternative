@@ -278,19 +278,42 @@ export const getFileIcon = (params: { file: OZFile }) => {
 };
 
 // --> Dragging for File
-export const dragStarted = (params: { e: React.DragEvent<HTMLDivElement>; file: OZFile; plugin: FileTreeAlternativePlugin }) => {
-    let { e, file, plugin } = params;
+export const dragStarted = (params: {
+    e: React.DragEvent<HTMLDivElement>;
+    file: OZFile;
+    plugin: FileTreeAlternativePlugin;
+    selectedFiles?: string[];
+}) => {
+    let { e, file, plugin, selectedFiles } = params;
     let obsidianFile = plugin.app.vault.getAbstractFileByPath(file.path);
     if (!obsidianFile) return;
 
-    // json to move file to folder
-    e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
+    // If dragged file is in selectedFiles, drag all selected; otherwise drag only this file
+    const filesToDrag = selectedFiles && selectedFiles.includes(file.path) && selectedFiles.length > 0 ? selectedFiles : [file.path];
+
+    // JSON payload to move files to folder
+    e.dataTransfer.setData(
+        'application/json',
+        JSON.stringify({
+            filePath: file.path,
+            filePaths: filesToDrag,
+        })
+    );
 
     let dragManager = (plugin.app as any).dragManager;
     if (dragManager && obsidianFile instanceof TFile) {
         try {
-            const dragData = dragManager.dragFile(e.nativeEvent, obsidianFile);
-            dragManager.onDragStart(e.nativeEvent, dragData);
+            const obsidianFiles = filesToDrag
+                .map((p) => plugin.app.vault.getAbstractFileByPath(p))
+                .filter((f): f is TFile => f instanceof TFile);
+
+            if (obsidianFiles.length > 1 && typeof dragManager.dragFiles === 'function') {
+                const dragData = dragManager.dragFiles(e.nativeEvent, obsidianFiles);
+                dragManager.onDragStart(e.nativeEvent, dragData);
+            } else {
+                const dragData = dragManager.dragFile(e.nativeEvent, obsidianFile);
+                dragManager.onDragStart(e.nativeEvent, dragData);
+            }
         } catch (err) {
             console.warn('Obsidian dragManager error:', err);
         }
@@ -331,12 +354,92 @@ export const triggerContextMenu = (params: {
     ozPinnedFiles: OZFile[];
     setOzPinnedFiles: SetterOrUpdater<OZFile[]>;
     plugin: FileTreeAlternativePlugin;
+    selectedFiles?: string[];
+    setSelectedFiles?: SetterOrUpdater<string[]>;
 }) => {
-    let { file, e, ozPinnedFiles, setOzPinnedFiles, plugin } = params;
+    let { file, e, ozPinnedFiles, setOzPinnedFiles, plugin, selectedFiles, setSelectedFiles } = params;
     const fileMenu = new Menu();
     let fileToTrigger = plugin.app.vault.getAbstractFileByPath(file.path);
 
     if (!fileToTrigger) return;
+
+    const isMultiSelect = selectedFiles && selectedFiles.length > 1 && selectedFiles.includes(file.path);
+    const targetFilePaths = isMultiSelect ? selectedFiles : [file.path];
+
+    if (isMultiSelect) {
+        // Multi-file Move
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle(`Move ${targetFilePaths.length} files to...`);
+            menuItem.setIcon('paper-plane');
+            menuItem.onClick((ev: MouseEvent) => {
+                const ozFilesToMove = targetFilePaths.map((p) => {
+                    const af = plugin.app.vault.getAbstractFileByPath(p);
+                    return af instanceof TFile ? Util.TFile2OZFile(af) : null;
+                }).filter(Boolean);
+                let fileMoveSuggester = new MoveSuggestionModal(plugin.app, file, ozFilesToMove);
+                fileMoveSuggester.open();
+            });
+        });
+
+        // Multi-file Delete
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle(`Delete ${targetFilePaths.length} files`);
+            menuItem.setIcon('trash');
+            menuItem.onClick((ev: MouseEvent) => {
+                let confirmationModal = new ConfirmationModal(
+                    plugin,
+                    `Are you sure you want to delete ${targetFilePaths.length} files?`,
+                    function () {
+                        let deleteOption = plugin.settings.deleteFileOption;
+                        for (const path of targetFilePaths) {
+                            let fileToDelete = plugin.app.vault.getAbstractFileByPath(path);
+                            if (!fileToDelete) continue;
+                            if (deleteOption === 'permanent') {
+                                plugin.app.vault.delete(fileToDelete, true);
+                            } else if (deleteOption === 'system-trash') {
+                                plugin.app.vault.trash(fileToDelete, true);
+                            } else if (deleteOption === 'trash') {
+                                plugin.app.vault.trash(fileToDelete, false);
+                            }
+                        }
+                        if (setSelectedFiles) setSelectedFiles([]);
+                    }
+                );
+                confirmationModal.open();
+            });
+        });
+
+        // Multi-file Pin / Unpin
+        fileMenu.addItem((menuItem) => {
+            menuItem.setIcon('pin');
+            const allPinned = targetFilePaths.every((p) => ozPinnedFiles.some((f) => f.path === p));
+            menuItem.setTitle(allPinned ? `Unpin ${targetFilePaths.length} files` : `Pin ${targetFilePaths.length} files`);
+            menuItem.onClick((ev: MouseEvent) => {
+                if (allPinned) {
+                    setOzPinnedFiles(ozPinnedFiles.filter((f) => !targetFilePaths.includes(f.path)));
+                } else {
+                    const toAdd = targetFilePaths
+                        .filter((p) => !ozPinnedFiles.some((f) => f.path === p))
+                        .map((p) => {
+                            const af = plugin.app.vault.getAbstractFileByPath(p);
+                            return af instanceof TFile ? Util.TFile2OZFile(af) : null;
+                        })
+                        .filter(Boolean);
+                    setOzPinnedFiles([...ozPinnedFiles, ...toAdd]);
+                }
+            });
+        });
+
+        // Trigger file-menu event & show menu
+        plugin.app.workspace.trigger('file-menu', fileMenu, fileToTrigger, 'file-explorer');
+        if (isMouseEvent(e)) {
+            fileMenu.showAtPosition({ x: e.pageX, y: e.pageY });
+        } else {
+            // @ts-ignore
+            fileMenu.showAtPosition({ x: e.nativeEvent.locationX, y: e.nativeEvent.locationY });
+        }
+        return false;
+    }
 
     // Pin - Unpin Item
     fileMenu.addItem((menuItem) => {

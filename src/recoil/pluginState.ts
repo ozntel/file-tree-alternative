@@ -63,3 +63,8 @@ export const focusedFolder = atom({
     default: null as TFolder,
     dangerouslyAllowMutability: true,
 });
+
+export const selectedFiles = atom({
+    key: 'fileTreeSelectedFiles',
+    default: [] as string[],
+});

@@ -216,7 +216,10 @@ settings:
 
 div.oz-nav-file.is-active,
 div.oz-nav-file.is-active div.oz-nav-file-title,
-div.oz-nav-file.is-active div.oz-nav-file-title-content {
+div.oz-nav-file.is-active div.oz-nav-file-title-content,
+div.oz-nav-file.is-selected,
+div.oz-nav-file.is-selected div.oz-nav-file-title,
+div.oz-nav-file.is-selected div.oz-nav-file-title-content {
     background-color: var(--oz-fta-file-pane-active-file-background-color);
     color: var(--oz-fta-all-panes-active-text-color);
     font-weight: bold;

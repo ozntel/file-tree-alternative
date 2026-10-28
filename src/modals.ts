@@ -190,10 +190,12 @@ export class VaultChangeModal extends Modal {
 export class MoveSuggestionModal extends FuzzySuggestModal<TFolder> {
     app: App;
     fileOrFolderToMove: OZFile | TFolder;
+    filesOrFoldersToMove?: (OZFile | TFolder)[];
 
-    constructor(app: App, fileOrFolderToMove: OZFile | TFolder) {
+    constructor(app: App, fileOrFolderToMove: OZFile | TFolder, filesOrFoldersToMove?: (OZFile | TFolder)[]) {
         super(app);
         this.fileOrFolderToMove = fileOrFolderToMove;
+        this.filesOrFoldersToMove = filesOrFoldersToMove;
     }
 
     getItemText(item: TFolder): string {
@@ -205,42 +207,47 @@ export class MoveSuggestionModal extends FuzzySuggestModal<TFolder> {
     }
 
     async onChooseItem(item: TFolder, evt: MouseEvent | KeyboardEvent) {
-        let fileToMove: TAbstractFile;
-        if (this.fileOrFolderToMove instanceof TFolder) {
-            fileToMove = this.fileOrFolderToMove;
-        } else {
-            fileToMove = this.app.vault.getAbstractFileByPath(this.fileOrFolderToMove.path);
-        }
+        const itemsToMove = this.filesOrFoldersToMove && this.filesOrFoldersToMove.length > 0 ? this.filesOrFoldersToMove : [this.fileOrFolderToMove];
+        let movedCount = 0;
 
-        if (!fileToMove) {
-            new Notice('Could not find file or folder to move');
-            return;
-        }
+        for (const target of itemsToMove) {
+            let fileToMove: TAbstractFile;
+            if (target instanceof TFolder) {
+                fileToMove = target;
+            } else {
+                fileToMove = this.app.vault.getAbstractFileByPath(target.path);
+            }
 
-        // Check if moving folder under itself or child
-        if (fileToMove instanceof TFolder) {
-            const isSelfOrChild = item.path === fileToMove.path || item.path.startsWith(fileToMove.path + '/');
-            if (isSelfOrChild) {
-                new Notice("You can't move a folder under itself or its child");
-                return;
+            if (!fileToMove) continue;
+
+            // Check if moving folder under itself or child
+            if (fileToMove instanceof TFolder) {
+                const isSelfOrChild = item.path === fileToMove.path || item.path.startsWith(fileToMove.path + '/');
+                if (isSelfOrChild) {
+                    new Notice(`Cannot move folder "${fileToMove.name}" under itself or its child`);
+                    continue;
+                }
+            }
+
+            const newPath = normalizePath(item.isRoot() ? fileToMove.name : `${item.path}/${fileToMove.name}`);
+            if (fileToMove.path === newPath) continue;
+
+            if (this.app.vault.getAbstractFileByPath(newPath)) {
+                new Notice(`"${fileToMove.name}" already exists in the destination folder`);
+                continue;
+            }
+
+            try {
+                await this.app.fileManager.renameFile(fileToMove, newPath);
+                movedCount++;
+            } catch (err) {
+                console.error('Failed to move', err);
+                new Notice(`Failed to move "${fileToMove.name}": ${err.message || err}`);
             }
         }
 
-        const newPath = normalizePath(item.isRoot() ? fileToMove.name : `${item.path}/${fileToMove.name}`);
-        if (fileToMove.path === newPath) {
-            return;
-        }
-
-        if (this.app.vault.getAbstractFileByPath(newPath)) {
-            new Notice(`A file or folder with the name "${fileToMove.name}" already exists in the destination folder`);
-            return;
-        }
-
-        try {
-            await this.app.fileManager.renameFile(fileToMove, newPath);
-        } catch (err) {
-            console.error('Failed to move', err);
-            new Notice(`Failed to move: ${err.message || err}`);
+        if (movedCount > 1) {
+            new Notice(`Moved ${movedCount} items to ${item.name || 'root'}`);
         }
     }
 }

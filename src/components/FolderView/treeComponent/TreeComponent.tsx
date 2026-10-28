@@ -100,6 +100,7 @@ export default function Tree(props: TreeProps) {
 
                 // File Drop (supports single or multi)
                 if (filePaths.length > 0) {
+                    let successCount = 0;
                     for (const filePath of filePaths) {
                         let file = props.plugin.app.vault.getAbstractFileByPath(filePath);
                         if (file) {
@@ -113,6 +114,7 @@ export default function Tree(props: TreeProps) {
                             }
                             try {
                                 await props.plugin.app.fileManager.renameFile(file, targetPath);
+                                successCount++;
                             } catch (err) {
                                 console.error('Failed to move file', err);
                                 new Notice(`Failed to move file "${file.name}": ${err.message || err}`);
@@ -120,6 +122,9 @@ export default function Tree(props: TreeProps) {
                         } else {
                             new Notice(`Could not find file: ${filePath}`);
                         }
+                    }
+                    if (successCount > 1) {
+                        new Notice(`Moved ${successCount} files to ${props.folder.isRoot() ? 'root' : props.folder.name}`);
                     }
                 }
                 // Folder Drop
