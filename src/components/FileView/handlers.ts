@@ -110,6 +110,9 @@ export const handleRevealActiveFileButton = (params: { plugin: FileTreeAlternati
     window.dispatchEvent(event);
 };
 
+// Same ordering as localeCompare(..., 'en', { numeric: true }), but the collator is built once instead of on every comparison
+const fileNameCollator = new Intl.Collator('en', { numeric: true });
+
 // Sort - Filter Files Depending on Preferences
 export const sortedFiles = (params: { fileList: OZFile[]; plugin: FileTreeAlternativePlugin; ozPinnedFiles: OZFile[] }) => {
     let { fileList, plugin, ozPinnedFiles } = params;
@@ -119,9 +122,10 @@ export const sortedFiles = (params: { fileList: OZFile[]; plugin: FileTreeAltern
         sortedfileList = sortedfileList.filter((f) => !f.isFolderNote);
     }
     // Sort File by Name or Last Content Update, moving pinned files to the front
+    const pinnedPaths = new Set(ozPinnedFiles.map((f) => f.path));
     sortedfileList.sort((a, b) => {
-        const aPinned = ozPinnedFiles.some((f) => f.path === a.path);
-        const bPinned = ozPinnedFiles.some((f) => f.path === b.path);
+        const aPinned = pinnedPaths.has(a.path);
+        const bPinned = pinnedPaths.has(b.path);
         if (aPinned && !bPinned) {
             return -1;
         } else if (!aPinned && bPinned) {
@@ -137,8 +141,8 @@ export const sortedFiles = (params: { fileList: OZFile[]; plugin: FileTreeAltern
 
         if (plugin.settings.sortFilesBy === 'name') {
             return plugin.settings.showFileNameAsFullPath
-                ? itemA.path.localeCompare(itemB.path, 'en', { numeric: true })
-                : itemA.basename.localeCompare(itemB.basename, 'en', { numeric: true });
+                ? fileNameCollator.compare(itemA.path, itemB.path)
+                : fileNameCollator.compare(itemA.basename, itemB.basename);
         } else if (plugin.settings.sortFilesBy === 'last-update') {
             return itemB.stat.mtime - itemA.stat.mtime;
         } else if (plugin.settings.sortFilesBy === 'created') {

@@ -247,9 +247,9 @@ export function FileComponent(props: FilesProps) {
                                             : ' file-tree-files-fixed'
                                         : ''
                                 }`}>
-                                {filesToList.map((file, index) => {
+                                {filesToList.map((file) => {
                                     return (
-                                        <LazyLoad height={22} key={index}>
+                                        <LazyLoad height={22} key={file.path}>
                                             <NavFile
                                                 file={file}
                                                 plugin={plugin}

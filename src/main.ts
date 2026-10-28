@@ -95,10 +95,14 @@ export default class FileTreeAlternativePlugin extends Plugin {
         });
 
         // Add event listener for vault changes
-        this.app.vault.on('create', this.onCreate);
-        this.app.vault.on('delete', this.onDelete);
-        this.app.vault.on('modify', this.onModify);
-        this.app.vault.on('rename', this.onRename);
+        // Registered after layout is ready: during vault load Obsidian fires 'create' for every existing file,
+        // which would otherwise trigger a view update (and folder count recalculation) per file on startup
+        this.app.workspace.onLayoutReady(() => {
+            this.registerEvent(this.app.vault.on('create', this.onCreate));
+            this.registerEvent(this.app.vault.on('delete', this.onDelete));
+            this.registerEvent(this.app.vault.on('modify', this.onModify));
+            this.registerEvent(this.app.vault.on('rename', this.onRename));
+        });
 
         // Ribbon Icon For Opening
         this.refreshIconRibbon();
@@ -107,11 +111,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
     onunload() {
         console.log('Unloading Alternative File Tree Plugin');
         this.detachFileTreeLeafs();
-        // Remove event listeners
-        this.app.vault.off('create', this.onCreate);
-        this.app.vault.off('delete', this.onDelete);
-        this.app.vault.off('modify', this.onModify);
-        this.app.vault.off('rename', this.onRename);
+        // Vault event listeners are removed automatically via registerEvent
         this.bookmarksRemoveEventListener();
     }
 
