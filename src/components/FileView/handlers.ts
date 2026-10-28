@@ -3,6 +3,7 @@ import { VaultChangeModal, MoveSuggestionModal, ConfirmationModal } from 'modals
 import { OZFile, eventTypes } from 'utils/types';
 import * as Util from 'utils/Utils';
 import { TFile, TFolder, Menu, normalizePath } from 'obsidian';
+import { prepareQueryMatcher } from 'utils/searchQuery';
 import * as newFileUtils from 'utils/newFile';
 import { SetterOrUpdater } from 'recoil';
 import * as Icons from 'utils/icons';
@@ -39,7 +40,9 @@ const getFilesWithName = (params: {
         excludedFolders: excludedFolders,
         getAllFiles: getAllFiles,
     });
-    var filteredFiles = files.filter((file) => file.basename.toLowerCase().includes(searchPhrase.toLowerCase().trimStart()));
+    // Fuzzy matching per term (like the Quick Switcher) combined with AND / OR / NOT operators
+    const queryMatches = prepareQueryMatcher(searchPhrase);
+    var filteredFiles = files.filter((file) => queryMatches([file.basename]));
     return filteredFiles;
 };
 
@@ -79,6 +82,11 @@ const getFilesWithTag = (params: {
 }): Set<OZFile> => {
     let { searchTag, plugin, focusedFolder, excludedExtensions, excludedFolders } = params;
     let filesWithTag: Set<OZFile> = new Set();
+    // Tags use substring matching, combined with AND / OR / NOT operators
+    const queryMatches = prepareQueryMatcher(searchTag, (term) => {
+        const lowerTerm = term.toLowerCase();
+        return (tag) => tag.toLowerCase().contains(lowerTerm);
+    });
     let ozFiles = Util.getFilesUnderPath({
         path: plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/',
         plugin: plugin,
@@ -91,11 +99,7 @@ const getFilesWithTag = (params: {
             f: ozFile,
             plugin: plugin,
         });
-        for (let fileTag of fileTags) {
-            if (fileTag.toLowerCase().contains(searchTag.toLowerCase().trimStart())) {
-                if (!filesWithTag.has(ozFile)) filesWithTag.add(ozFile);
-            }
-        }
+        if (fileTags.length > 0 && queryMatches(fileTags)) filesWithTag.add(ozFile);
     }
     return filesWithTag;
 };
