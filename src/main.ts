@@ -131,7 +131,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
         let dataPath: string = treeItem.getAttribute('data-path');
         if (!dataPath || dataPath === '') return;
         // Find the bookmark from the items
-        let bookmarkItem = getBookmarkTitle(dataPath);
+        let bookmarkItem = getBookmarkTitle(dataPath, this.app);
         // Create Custom Menu only if Shift is Used
         if ((event as any).shiftKey) {
             if (!bookmarkItem) return;

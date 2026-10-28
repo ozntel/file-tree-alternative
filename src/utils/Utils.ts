@@ -1,4 +1,4 @@
-import { TFile, TFolder, App, Keymap, Platform } from 'obsidian';
+import { TFile, TFolder, App, Keymap, Platform, normalizePath } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { FolderFileCountMap, FolderTree, OZFile, BookmarksPluginItem } from 'utils/types';
 import { VaultChangeModal } from 'modals';
@@ -14,7 +14,7 @@ export const getFilesUnderPath = (params: {
     const { path, plugin, getAllFiles, excludedExtensions, excludedFolders } = params;
     var filesUnderPath: OZFile[] = [];
     var showFilesFromSubFolders = getAllFiles ? true : plugin.settings.showFilesFromSubFolders;
-    var folderObj = plugin.app.vault.getAbstractFileByPath(path);
+    var folderObj = (path === '' || path === '/') ? plugin.app.vault.getRoot() : plugin.app.vault.getAbstractFileByPath(path);
     recursiveFx(folderObj as TFolder, plugin.app);
     function recursiveFx(folderObj: TFolder, app: App) {
         if (folderObj instanceof TFolder && folderObj.children) {
@@ -168,22 +168,26 @@ export const platformIsMobile = () => {
 };
 
 export const createNewFile = async (e: React.MouseEvent | null, folderPath: string, plugin: FileTreeAlternativePlugin) => {
-    let targetFolder = plugin.app.vault.getAbstractFileByPath(folderPath);
-    if (!targetFolder) return;
+    let targetFolder = folderPath === '' || folderPath === '/' ? plugin.app.vault.getRoot() : plugin.app.vault.getAbstractFileByPath(folderPath);
+    if (!targetFolder || !(targetFolder instanceof TFolder)) return;
     let modal = new VaultChangeModal(plugin, targetFolder, 'create note');
     modal.open();
 };
 
-export const getBookmarksPluginItems = (): BookmarksPluginItem[] => {
-    return (app as any).internalPlugins.plugins['bookmarks'].instance.items as BookmarksPluginItem[];
+export const getBookmarksPluginItems = (app: App): BookmarksPluginItem[] => {
+    return (app as any).internalPlugins?.plugins['bookmarks']?.instance?.items as BookmarksPluginItem[];
 };
 
-export const getBookmarkTitle = (title: string): BookmarksPluginItem => {
-    let bookmarkItems = getBookmarksPluginItems();
+export const getBookmarkTitle = (title: string, app: App): BookmarksPluginItem => {
+    let bookmarkItems = getBookmarksPluginItems(app);
+    if (!bookmarkItems) return null;
     let titleParts = title.split('/');
     let currentItem: BookmarksPluginItem = bookmarkItems.find((b) => b.title === titleParts[0]);
+    if (!currentItem) return null;
     for (let i = 1; i < titleParts.length; i++) {
+        if (!currentItem.items) return null;
         currentItem = currentItem.items.find((b) => b.title === titleParts[i]);
+        if (!currentItem) return null;
     }
     return currentItem;
 };
