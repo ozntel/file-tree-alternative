@@ -275,7 +275,7 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         new Setting(containerEl)
             .setName('Search in File List')
-            .setDesc(`Turn on this option if you want to enable search function to filter files by name. Combine terms with space (AND), | or OR (OR) and a leading - (NOT), e.g. "west rewards -draft | netherlands".`)
+            .setDesc(`Turn on this option if you want to enable search function to filter files by name. Combine terms with space (AND), | or OR (OR) a leading - (NOT) and a leading ~ for fuzzy matching, e.g. "west rewards -draft | ~nthlnd".`)
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.searchFunction).onChange((value) => {
                     this.plugin.settings.searchFunction = value;

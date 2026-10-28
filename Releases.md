@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.6.2
+
+- Optional Fuzzy search by using "~"
+- Performance optimization for file rendering and search
+
 ## Version 2.6.1
 
 - Fuzzy search with query capabilities

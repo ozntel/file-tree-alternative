@@ -244,17 +244,8 @@ export default function Tree(props: TreeProps) {
                             </div>
                         </div>
                     </div>
-                    {props.children && (
-                        <div
-                            className="oz-folder-contents"
-                            style={{
-                                height: open ? 'auto' : 0,
-                                opacity: open ? 1 : 0,
-                                display: open ? 'inherit' : 'none',
-                            }}>
-                            {props.children}
-                        </div>
-                    )}
+                    {/* Subfolders are only mounted while open, so collapsed subtrees cost nothing to render */}
+                    {props.children && open && <div className="oz-folder-contents">{props.children}</div>}
                 </React.Fragment>
             )}
         </Dropzone>
