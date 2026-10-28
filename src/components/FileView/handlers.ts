@@ -40,7 +40,7 @@ const getFilesWithName = (params: {
         excludedFolders: excludedFolders,
         getAllFiles: getAllFiles,
     });
-    // Fuzzy matching per term (like the Quick Switcher) combined with AND / OR / NOT operators
+    // Case-insensitive term matching (~term for fuzzy) combined with AND / OR / NOT operators
     const queryMatches = prepareQueryMatcher(searchPhrase);
     var filteredFiles = files.filter((file) => queryMatches([file.basename]));
     return filteredFiles;
@@ -82,11 +82,7 @@ const getFilesWithTag = (params: {
 }): Set<OZFile> => {
     let { searchTag, plugin, focusedFolder, excludedExtensions, excludedFolders } = params;
     let filesWithTag: Set<OZFile> = new Set();
-    // Tags use substring matching, combined with AND / OR / NOT operators
-    const queryMatches = prepareQueryMatcher(searchTag, (term) => {
-        const lowerTerm = term.toLowerCase();
-        return (tag) => tag.toLowerCase().contains(lowerTerm);
-    });
+    const queryMatches = prepareQueryMatcher(searchTag);
     let ozFiles = Util.getFilesUnderPath({
         path: plugin.settings.allSearchOnlyInFocusedFolder ? focusedFolder.path : '/',
         plugin: plugin,

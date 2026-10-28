@@ -208,7 +208,7 @@ export function FileComponent(props: FilesProps) {
                                     <div className="oz-input-container">
                                         <input
                                             type="search"
-                                            placeholder="Search... (a b, a | b, -a)"
+                                            placeholder="Search... (a b, a | b, -a, ~a)"
                                             ref={searchInput}
                                             value={searchPhrase}
                                             onChange={(e) => {
