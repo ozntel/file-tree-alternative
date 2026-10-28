@@ -287,8 +287,14 @@ export const dragStarted = (params: { e: React.DragEvent<HTMLDivElement>; file: 
     e.dataTransfer.setData('application/json', JSON.stringify({ filePath: file.path }));
 
     let dragManager = (plugin.app as any).dragManager;
-    const dragData = dragManager.dragFile(e.nativeEvent, obsidianFile);
-    dragManager.onDragStart(e.nativeEvent, dragData);
+    if (dragManager && obsidianFile instanceof TFile) {
+        try {
+            const dragData = dragManager.dragFile(e.nativeEvent, obsidianFile);
+            dragManager.onDragStart(e.nativeEvent, dragData);
+        } catch (err) {
+            console.warn('Obsidian dragManager error:', err);
+        }
+    }
 };
 
 // --> AuxClick (Mouse Wheel Button Action)

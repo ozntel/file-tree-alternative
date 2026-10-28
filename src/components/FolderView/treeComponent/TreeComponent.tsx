@@ -90,6 +90,8 @@ export default function Tree(props: TreeProps) {
 
     // --> Drag and Drop Actions
     const dropFileOrFolder = async (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
         let data = e.dataTransfer.getData('application/json');
         if (data !== '') {
             try {
@@ -156,11 +158,20 @@ export default function Tree(props: TreeProps) {
     };
 
     const onFolderDragStart = (e: React.DragEvent<HTMLDivElement>, folder: TFolder) => {
+        e.stopPropagation();
         e.dataTransfer.setData('application/json', JSON.stringify({ folderPath: folder.path }));
 
         let dragManager = (props.plugin.app as any).dragManager;
-        const dragData = dragManager.dragFile(e.nativeEvent, folder);
-        dragManager.onDragStart(e.nativeEvent, dragData);
+        if (dragManager) {
+            try {
+                if (typeof dragManager.dragFolder === 'function') {
+                    const dragData = dragManager.dragFolder(e.nativeEvent, folder);
+                    dragManager.onDragStart(e.nativeEvent, dragData);
+                }
+            } catch (err) {
+                console.warn('Obsidian dragManager error:', err);
+            }
+        }
     };
 
     return (
@@ -179,8 +190,15 @@ export default function Tree(props: TreeProps) {
                         draggable
                         onDragStart={(e) => onFolderDragStart(e, props.folder)}
                         onDrop={(e) => dropFileOrFolder(e)}
-                        onDragOver={() => setHightlight(true)}
-                        onDragLeave={() => setHightlight(false)}>
+                        onDragOver={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setHightlight(true);
+                        }}
+                        onDragLeave={(e) => {
+                            e.stopPropagation();
+                            setHightlight(false);
+                        }}>
                         <div
                             {...getRootProps({ className: 'dropzone' })}
                             className={'oz-folder-element' + (highlight ? ' drag-entered' : '')}
