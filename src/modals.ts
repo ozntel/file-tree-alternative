@@ -1,4 +1,4 @@
-import { Modal, App, TFolder, TAbstractFile, FuzzySuggestModal } from 'obsidian';
+import { Modal, App, TFolder, TAbstractFile, FuzzySuggestModal, normalizePath, Notice } from 'obsidian';
 import FileTreeAlternativePlugin from 'main';
 import { getFileCreateString, createNewMarkdownFile } from 'utils/newFile';
 import { OZFile } from 'utils/types';
@@ -138,18 +138,31 @@ export class VaultChangeModal extends Modal {
                 }
                 // Folder Note files to be updated
                 if (this.file instanceof TFolder && this.plugin.settings.folderNote) {
-                    let folderNoteFile = this.app.vault.getAbstractFileByPath(this.file.path + '/' + this.file.name + '.md');
-                    if (folderNoteFile) this.app.fileManager.renameFile(folderNoteFile, this.file.path + '/' + newName + '.md');
+                    let folderNoteFile = this.app.vault.getAbstractFileByPath(normalizePath(this.file.path + '/' + this.file.name + '.md'));
+                    if (folderNoteFile) {
+                        const newFolderNotePath = normalizePath(this.file.path + '/' + newName + '.md');
+                        await this.app.fileManager.renameFile(folderNoteFile, newFolderNotePath);
+                    }
                 }
                 // Rename the destination file/folder name
-                this.app.fileManager.renameFile(
+                const targetFile =
                     this.file instanceof TFolder || this.file instanceof TAbstractFile
                         ? this.file
-                        : this.plugin.app.vault.getAbstractFileByPath(this.file.path),
-                    this.file.parent.path + '/' + newName
-                );
+                        : this.plugin.app.vault.getAbstractFileByPath(this.file.path);
+                if (targetFile) {
+                    const parentFolder = targetFile.parent;
+                    const parentPath = parentFolder && !parentFolder.isRoot() ? `${parentFolder.path}/` : '';
+                    const newPath = normalizePath(`${parentPath}${newName}`);
+                    await this.app.fileManager.renameFile(targetFile, newPath);
+                }
             } else if (this.action === 'create folder') {
-                this.app.vault.createFolder(this.file.path + '/' + newName);
+                const targetFolder = this.file.path === '/' || this.file.path === '' ? '' : `${this.file.path}/`;
+                const newFolderPath = normalizePath(`${targetFolder}${newName}`);
+                if (this.app.vault.getAbstractFileByPath(newFolderPath)) {
+                    new Notice(`Folder "${newName}" already exists`);
+                    return;
+                }
+                await this.app.vault.createFolder(newFolderPath);
             } else if (this.action === 'create note') {
                 await createNewMarkdownFile(
                     this.plugin,
@@ -184,17 +197,50 @@ export class MoveSuggestionModal extends FuzzySuggestModal<TFolder> {
     }
 
     getItemText(item: TFolder): string {
-        return item.path;
+        return item.path === '/' ? '/' : item.path;
     }
 
     getItems(): TFolder[] {
         return getAllFoldersInVault(this.app);
     }
 
-    onChooseItem(item: TFolder, evt: MouseEvent | KeyboardEvent) {
-        let fileToRename = this.app.vault.getAbstractFileByPath(item.path);
-        if (fileToRename) {
-            this.app.vault.rename(fileToRename, item.path + '/' + fileToRename.name);
+    async onChooseItem(item: TFolder, evt: MouseEvent | KeyboardEvent) {
+        let fileToMove: TAbstractFile;
+        if (this.fileOrFolderToMove instanceof TFolder) {
+            fileToMove = this.fileOrFolderToMove;
+        } else {
+            fileToMove = this.app.vault.getAbstractFileByPath(this.fileOrFolderToMove.path);
+        }
+
+        if (!fileToMove) {
+            new Notice('Could not find file or folder to move');
+            return;
+        }
+
+        // Check if moving folder under itself or child
+        if (fileToMove instanceof TFolder) {
+            const isSelfOrChild = item.path === fileToMove.path || item.path.startsWith(fileToMove.path + '/');
+            if (isSelfOrChild) {
+                new Notice("You can't move a folder under itself or its child");
+                return;
+            }
+        }
+
+        const newPath = normalizePath(item.isRoot() ? fileToMove.name : `${item.path}/${fileToMove.name}`);
+        if (fileToMove.path === newPath) {
+            return;
+        }
+
+        if (this.app.vault.getAbstractFileByPath(newPath)) {
+            new Notice(`A file or folder with the name "${fileToMove.name}" already exists in the destination folder`);
+            return;
+        }
+
+        try {
+            await this.app.fileManager.renameFile(fileToMove, newPath);
+        } catch (err) {
+            console.error('Failed to move', err);
+            new Notice(`Failed to move: ${err.message || err}`);
         }
     }
 }

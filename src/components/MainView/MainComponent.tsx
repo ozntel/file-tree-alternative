@@ -1,4 +1,4 @@
-import { TAbstractFile, TFile, TFolder, Notice } from 'obsidian';
+import { TAbstractFile, TFile, TFolder, Notice, normalizePath } from 'obsidian';
 import React, { useEffect } from 'react';
 import { FileComponent } from 'components/FileView/FileComponent';
 import { MainFolder } from 'components/FolderView/MainFolder';
@@ -263,6 +263,14 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                     currentFileList = fileList;
                     return fileList;
                 });
+                // Path checks with normalization
+                const isRootActive = currentActiveFolderPath === '' || currentActiveFolderPath === '/';
+                const normActiveFolder = isRootActive ? '' : normalizePath(currentActiveFolderPath);
+                const normFileParent = normalizePath(file.parent.path);
+
+                const isDirectParent = normActiveFolder === '' ? file.parent.isRoot() : normFileParent === normActiveFolder;
+                const isUnderActiveFolder = isDirectParent || (plugin.settings.showFilesFromSubFolders && (normActiveFolder === '' || normFileParent.startsWith(normActiveFolder + '/')));
+
                 // Evaluate changes
                 if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
                     // If the file is modified but sorting is not last-update to not component update unnecessarily, return
@@ -273,13 +281,9 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                         }
                     }
                     // If the file renamed or deleted or modified is in the current view, it will be updated
-                    let parentFolderPath = file.path.substring(0, file.path.lastIndexOf('/'));
                     let fileInCurrentView = currentFileList.some((f) => {
                         return changeType === 'rename' ? f.path === oldPathBeforeRename : f.path === file.path;
                     });
-                    let fileInCurrentFolder =
-                        currentActiveFolderPath === parentFolderPath ||
-                        (plugin.settings.showFilesFromSubFolders && parentFolderPath.startsWith(currentActiveFolderPath));
                     if (fileInCurrentView) {
                         if (changeType === 'delete') {
                             setOzFileList(
@@ -291,16 +295,10 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                             changeType === 'rename' ||
                             (changeType === 'modify' && (sortFilesBy === 'last-update' || sortFilesBy === 'file-size'))
                         ) {
-                            // Fix for Root Folder Path
-                            if (currentActiveFolderPath === '/') currentActiveFolderPath = '';
-                            // Set the file list
-                            setOzFileList([
-                                ...currentFileList.filter((f) => {
-                                    return changeType === 'rename' ? f.path !== oldPathBeforeRename : f.path !== file.path;
-                                }),
-                                // Include any file that roles up to the current active folder, not only the direct ones
-                                ...(file.parent.path.startsWith(currentActiveFolderPath) ? [FileTreeUtils.TFile2OZFile(file)] : []),
-                            ]);
+                            const withoutOld = currentFileList.filter((f) => (changeType === 'rename' ? f.path !== oldPathBeforeRename : f.path !== file.path));
+                            const updatedList = isUnderActiveFolder ? [...withoutOld, FileTreeUtils.TFile2OZFile(file)] : withoutOld;
+                            setOzFileList(updatedList);
+
                             // If active file is renamed, change the active file
                             let currentActiveOZFile: OZFile = null;
                             setActiveOzFile((activeOZFile) => {
@@ -312,13 +310,12 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                             }
                         }
                     }
-                    // File is no in current view but parent folder is and should be included
-                    else if (fileInCurrentFolder && !fileInCurrentView) {
+                    // File is not in current view but moved under active folder and should be included
+                    else if (isUnderActiveFolder && !fileInCurrentView) {
                         setOzFileList([...currentFileList, FileTreeUtils.TFile2OZFile(file)]);
                     }
                 } else if (changeType === 'create') {
-                    let fileIsCreatedUnderActiveFolder = file.path.match(new RegExp(currentActiveFolderPath + '.*'));
-                    if (fileIsCreatedUnderActiveFolder) {
+                    if (isUnderActiveFolder) {
                         // If file is not already in the list, add into view
                         if (!currentFileList.some((f) => f.path === file.path)) {
                             setOzFileList([...currentFileList, FileTreeUtils.TFile2OZFile(file)]);

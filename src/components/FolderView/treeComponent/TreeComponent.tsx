@@ -1,4 +1,4 @@
-import { TFolder, Notice } from 'obsidian';
+import { TFolder, Notice, normalizePath } from 'obsidian';
 import React, { useState, useMemo, useEffect } from 'react';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
@@ -59,7 +59,8 @@ export default function Tree(props: TreeProps) {
     const onDrop = (files: File[]) => {
         files.map(async (file) => {
             file.arrayBuffer().then((arrayBuffer) => {
-                props.plugin.app.vault.adapter.writeBinary(props.folder.path + '/' + file.name, arrayBuffer);
+                const targetPath = normalizePath(props.folder.isRoot() ? file.name : `${props.folder.path}/${file.name}`);
+                props.plugin.app.vault.adapter.writeBinary(targetPath, arrayBuffer);
             });
         });
     };
@@ -88,34 +89,66 @@ export default function Tree(props: TreeProps) {
     const folderCount = folderFileCountMap[props.folder.path];
 
     // --> Drag and Drop Actions
-    const dropFileOrFolder = (e: React.DragEvent<HTMLDivElement>) => {
+    const dropFileOrFolder = async (e: React.DragEvent<HTMLDivElement>) => {
         let data = e.dataTransfer.getData('application/json');
         if (data !== '') {
-            let dataJson = JSON.parse(data);
-            // File Drop
-            if (dataJson['filePath']) {
-                const filePath = dataJson.filePath;
-                // check if file exists
-                let file = props.plugin.app.vault.getAbstractFileByPath(filePath);
-                if (file) {
-                    props.plugin.app.vault.rename(file, `${props.folder.path}/${file.name}`);
-                } else {
-                    new Notice('Couldnt find the file');
-                }
-            }
-            // Folder Drop
-            else if (dataJson['folderPath']) {
-                const folderPath = dataJson.folderPath;
-                let folder = props.plugin.app.vault.getAbstractFileByPath(folderPath);
-                if (folder) {
-                    if (!props.folder.path.startsWith(folder.path)) {
-                        props.plugin.app.vault.rename(folder, `${props.folder.path}/${folder.name}`);
-                    } else {
-                        new Notice('You cant move folder under its child');
+            try {
+                let dataJson = JSON.parse(data);
+                const filePaths: string[] = dataJson['filePaths'] ? dataJson['filePaths'] : dataJson['filePath'] ? [dataJson['filePath']] : [];
+
+                // File Drop (supports single or multi)
+                if (filePaths.length > 0) {
+                    for (const filePath of filePaths) {
+                        let file = props.plugin.app.vault.getAbstractFileByPath(filePath);
+                        if (file) {
+                            const targetPath = normalizePath(props.folder.isRoot() ? file.name : `${props.folder.path}/${file.name}`);
+                            if (file.path === targetPath) {
+                                continue;
+                            }
+                            if (props.plugin.app.vault.getAbstractFileByPath(targetPath)) {
+                                new Notice(`File "${file.name}" already exists in the destination folder`);
+                                continue;
+                            }
+                            try {
+                                await props.plugin.app.fileManager.renameFile(file, targetPath);
+                            } catch (err) {
+                                console.error('Failed to move file', err);
+                                new Notice(`Failed to move file "${file.name}": ${err.message || err}`);
+                            }
+                        } else {
+                            new Notice(`Could not find file: ${filePath}`);
+                        }
                     }
-                } else {
-                    new Notice('Couldnt find the folder');
                 }
+                // Folder Drop
+                else if (dataJson['folderPath']) {
+                    const folderPath = dataJson.folderPath;
+                    let folder = props.plugin.app.vault.getAbstractFileByPath(folderPath);
+                    if (folder && folder instanceof TFolder) {
+                        const isSelfOrChild = props.folder.path === folder.path || props.folder.path.startsWith(folder.path + '/');
+                        if (isSelfOrChild) {
+                            new Notice("You can't move a folder under itself or its child");
+                        } else {
+                            const targetPath = normalizePath(props.folder.isRoot() ? folder.name : `${props.folder.path}/${folder.name}`);
+                            if (folder.path === targetPath) {
+                                // Dropped into parent where it already is
+                            } else if (props.plugin.app.vault.getAbstractFileByPath(targetPath)) {
+                                new Notice(`Folder "${folder.name}" already exists in the destination folder`);
+                            } else {
+                                try {
+                                    await props.plugin.app.fileManager.renameFile(folder, targetPath);
+                                } catch (err) {
+                                    console.error('Failed to move folder', err);
+                                    new Notice(`Failed to move folder "${folder.name}": ${err.message || err}`);
+                                }
+                            }
+                        }
+                    } else {
+                        new Notice('Could not find the folder');
+                    }
+                }
+            } catch (err) {
+                console.error('Error parsing drag and drop data', err);
             }
         }
         setHightlight(false);

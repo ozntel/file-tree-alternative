@@ -2,11 +2,10 @@ import FileTreeAlternativePlugin from 'main';
 import { VaultChangeModal, MoveSuggestionModal, ConfirmationModal } from 'modals';
 import { OZFile, eventTypes } from 'utils/types';
 import * as Util from 'utils/Utils';
-import { TFile, TFolder } from 'obsidian';
+import { TFile, TFolder, Menu, normalizePath } from 'obsidian';
 import * as newFileUtils from 'utils/newFile';
 import { SetterOrUpdater } from 'recoil';
 import * as Icons from 'utils/icons';
-import { Menu } from 'obsidian';
 import { isMouseEvent } from 'hooks/useLongPress';
 import { SortType } from 'settings';
 
@@ -15,9 +14,11 @@ import { SortType } from 'settings';
 // Function After an External File Dropped into Folder Name
 export const handleOnDropFiles = (params: { files: File[]; activeFolderPath: string; plugin: FileTreeAlternativePlugin }) => {
     let { files, activeFolderPath, plugin } = params;
+    const isRoot = activeFolderPath === '' || activeFolderPath === '/';
     files.map(async (file) => {
         file.arrayBuffer().then((arrayBuffer) => {
-            plugin.app.vault.adapter.writeBinary(activeFolderPath + '/' + file.name, arrayBuffer);
+            const targetPath = normalizePath(isRoot ? file.name : `${activeFolderPath}/${file.name}`);
+            plugin.app.vault.adapter.writeBinary(targetPath, arrayBuffer);
         });
     });
 };
@@ -112,32 +113,40 @@ export const handleRevealActiveFileButton = (params: { plugin: FileTreeAlternati
 // Sort - Filter Files Depending on Preferences
 export const sortedFiles = (params: { fileList: OZFile[]; plugin: FileTreeAlternativePlugin; ozPinnedFiles: OZFile[] }) => {
     let { fileList, plugin, ozPinnedFiles } = params;
-    let sortedfileList: OZFile[] = fileList;
+    let sortedfileList: OZFile[] = [...fileList];
     // Remove Files for Folder Note (If file name is same as parent folder name)
     if (plugin.settings.folderNote) {
         sortedfileList = sortedfileList.filter((f) => !f.isFolderNote);
     }
     // Sort File by Name or Last Content Update, moving pinned files to the front
-    sortedfileList = sortedfileList.sort((a, b) => {
-        if (ozPinnedFiles.some((f) => f.path === a.path) && !ozPinnedFiles.some((f) => f.path === b.path)) {
+    sortedfileList.sort((a, b) => {
+        const aPinned = ozPinnedFiles.some((f) => f.path === a.path);
+        const bPinned = ozPinnedFiles.some((f) => f.path === b.path);
+        if (aPinned && !bPinned) {
             return -1;
-        } else if (!ozPinnedFiles.some((f) => f.path === a.path) && ozPinnedFiles.some((f) => f.path === b.path)) {
+        } else if (!aPinned && bPinned) {
             return 1;
         }
+
+        let itemA = a;
+        let itemB = b;
         if (plugin.settings.sortReverse) {
-            [a, b] = [b, a];
+            itemA = b;
+            itemB = a;
         }
+
         if (plugin.settings.sortFilesBy === 'name') {
             return plugin.settings.showFileNameAsFullPath
-                ? a.path.localeCompare(b.path, 'en', { numeric: true })
-                : a.basename.localeCompare(b.basename, 'en', { numeric: true });
+                ? itemA.path.localeCompare(itemB.path, 'en', { numeric: true })
+                : itemA.basename.localeCompare(itemB.basename, 'en', { numeric: true });
         } else if (plugin.settings.sortFilesBy === 'last-update') {
-            return b.stat.mtime - a.stat.mtime;
+            return itemB.stat.mtime - itemA.stat.mtime;
         } else if (plugin.settings.sortFilesBy === 'created') {
-            return b.stat.ctime - a.stat.ctime;
+            return itemB.stat.ctime - itemA.stat.ctime;
         } else if (plugin.settings.sortFilesBy === 'file-size') {
-            return b.stat.size - a.stat.size;
+            return itemB.stat.size - itemA.stat.size;
         }
+        return 0;
     });
     return sortedfileList;
 };
@@ -398,8 +407,10 @@ export const triggerContextMenu = (params: {
         menuItem.setIcon('documents');
         menuItem.onClick((ev: MouseEvent) => {
             let fileToCopy = plugin.app.vault.getAbstractFileByPath(file.path);
-            if (fileToCopy) {
-                plugin.app.vault.copy(fileToCopy as TFile, `${file.parent.path}/${file.basename} 1.${file.extension}`);
+            if (fileToCopy && fileToCopy instanceof TFile) {
+                const isRoot = file.parent.path === '/' || file.parent.path === '';
+                const targetPath = normalizePath(isRoot ? `${file.basename} 1.${file.extension}` : `${file.parent.path}/${file.basename} 1.${file.extension}`);
+                plugin.app.vault.copy(fileToCopy, targetPath);
             }
         });
     });
