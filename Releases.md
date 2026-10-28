@@ -4,6 +4,7 @@
 
 - Fuzzy search with query capabilities
 - Disappearing files issue resolved
+- Multiselect capability
 
 ## Version 2.6.0
 
