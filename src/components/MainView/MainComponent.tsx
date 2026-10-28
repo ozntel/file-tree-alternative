@@ -263,13 +263,21 @@ export default function MainTreeComponent(props: MainTreeComponentProps) {
                     currentFileList = fileList;
                     return fileList;
                 });
-                // Path checks with normalization
+                // Path checks with normalization (file.parent can be null when file is deleted)
                 const isRootActive = currentActiveFolderPath === '' || currentActiveFolderPath === '/';
                 const normActiveFolder = isRootActive ? '' : normalizePath(currentActiveFolderPath);
-                const normFileParent = normalizePath(file.parent.path);
+                const normFileParent = file.parent ? normalizePath(file.parent.path) : '';
 
-                const isDirectParent = normActiveFolder === '' ? file.parent.isRoot() : normFileParent === normActiveFolder;
-                const isUnderActiveFolder = isDirectParent || (plugin.settings.showFilesFromSubFolders && (normActiveFolder === '' || normFileParent.startsWith(normActiveFolder + '/')));
+                const isDirectParent = file.parent
+                    ? normActiveFolder === ''
+                        ? file.parent.isRoot()
+                        : normFileParent === normActiveFolder
+                    : false;
+                const isUnderActiveFolder =
+                    isDirectParent ||
+                    (plugin.settings.showFilesFromSubFolders &&
+                        Boolean(file.parent) &&
+                        (normActiveFolder === '' || normFileParent.startsWith(normActiveFolder + '/')));
 
                 // Evaluate changes
                 if (changeType === 'rename' || changeType === 'modify' || changeType === 'delete') {
