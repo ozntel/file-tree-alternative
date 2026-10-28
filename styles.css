@@ -296,7 +296,6 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
 }
 
 .oz-folder-contents {
-    will-change: transform, opacity, height;
     margin-left: 6;
     padding-left: 14px;
     border-left: 2px solid var(--oz-fta-folder-indendation-guide-color);

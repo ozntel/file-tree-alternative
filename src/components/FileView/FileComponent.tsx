@@ -5,7 +5,7 @@ import FileTreeAlternativePlugin from 'main';
 import { OZFile } from 'utils/types';
 import * as Util from 'utils/Utils';
 import * as recoilState from 'recoil/pluginState';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState, SetterOrUpdater } from 'recoil';
 import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress from 'hooks/useLongPress';
 import * as FileViewHandlers from 'components/FileView/handlers';
@@ -22,7 +22,9 @@ export function FileComponent(props: FilesProps) {
     // States Coming From Main Component
     const [_view, setView] = useRecoilState(recoilState.view);
     const [ozFileList, setOzFileList] = useRecoilState(recoilState.ozFileList);
-    const [ozPinnedFiles] = useRecoilState(recoilState.ozPinnedFileList);
+    const [ozPinnedFiles, setOzPinnedFiles] = useRecoilState(recoilState.ozPinnedFileList);
+    const activeOzFile = useRecoilValue(recoilState.activeOZFile);
+    const setActiveOzFile = useSetRecoilState(recoilState.activeOZFile);
     const [activeFolderPath, setActiveFolderPath] = useRecoilState(recoilState.activeFolderPath);
     const [excludedExtensions] = useRecoilState(recoilState.excludedExtensions);
     const [excludedFolders] = useRecoilState(recoilState.excludedFolders);
@@ -86,6 +88,13 @@ export function FileComponent(props: FilesProps) {
             }),
         [excludedFolders, excludedExtensions, ozPinnedFiles, ozFileList, plugin.settings.sortFilesBy, plugin.settings.sortReverse]
     );
+
+    // Rows only receive simple flags so they can skip re-rendering; list-wide data they need inside
+    // event handlers (range select, drag, context menu) is read from this ref at event time instead
+    const listStateRef = React.useRef<NavFileListState>(null);
+    listStateRef.current = { filesToList, selectedFiles, ozPinnedFiles };
+    const selectedPaths = useMemo(() => new Set(selectedFiles), [selectedFiles]);
+    const pinnedPaths = useMemo(() => new Set(ozPinnedFiles.map((f) => f.path)), [ozPinnedFiles]);
 
     // Go Back Button - Sets Main Component View to Folder
     const handleGoBack = (e: React.MouseEvent) => {
@@ -253,9 +262,15 @@ export function FileComponent(props: FilesProps) {
                                             <NavFile
                                                 file={file}
                                                 plugin={plugin}
-                                                filesToList={filesToList}
-                                                selectedFiles={selectedFiles}
+                                                isActive={activeOzFile?.path === file.path}
+                                                isSelected={selectedPaths.has(file.path)}
+                                                isPinned={pinnedPaths.has(file.path)}
+                                                iconBeforeFileName={plugin.settings.iconBeforeFileName}
+                                                showFileNameAsFullPath={plugin.settings.showFileNameAsFullPath}
+                                                listStateRef={listStateRef}
                                                 setSelectedFiles={setSelectedFiles}
+                                                setOzPinnedFiles={setOzPinnedFiles}
+                                                setActiveOzFile={setActiveOzFile}
                                                 lastSelectedFileRef={lastSelectedFileRef}
                                             />
                                         </LazyLoad>
@@ -273,24 +288,43 @@ export function FileComponent(props: FilesProps) {
 
 /* ----------- SINGLE NAVFILE ELEMENT ----------- */
 
-const NavFile = (props: {
+type NavFileListState = { filesToList: OZFile[]; selectedFiles: string[]; ozPinnedFiles: OZFile[] };
+
+// Memoized: a row only re-renders when its own props change (e.g. it becomes active/selected/pinned),
+// not on every selection or active file change in the list
+const NavFile = React.memo((props: {
     file: OZFile;
     plugin: FileTreeAlternativePlugin;
-    filesToList: OZFile[];
-    selectedFiles: string[];
-    setSelectedFiles: (paths: string[] | ((prev: string[]) => string[])) => void;
+    isActive: boolean;
+    isSelected: boolean;
+    isPinned: boolean;
+    iconBeforeFileName: boolean;
+    showFileNameAsFullPath: boolean;
+    listStateRef: React.MutableRefObject<NavFileListState>;
+    setSelectedFiles: SetterOrUpdater<string[]>;
+    setOzPinnedFiles: SetterOrUpdater<OZFile[]>;
+    setActiveOzFile: SetterOrUpdater<OZFile>;
     lastSelectedFileRef: React.MutableRefObject<string | null>;
 }) => {
-    const { file, plugin, filesToList, selectedFiles, setSelectedFiles, lastSelectedFileRef } = props;
-
-    const [ozPinnedFiles, setOzPinnedFiles] = useRecoilState(recoilState.ozPinnedFileList);
-    const [activeOzFile, setActiveOzFile] = useRecoilState(recoilState.activeOZFile);
+    const {
+        file,
+        plugin,
+        isActive,
+        isSelected,
+        isPinned,
+        iconBeforeFileName,
+        showFileNameAsFullPath,
+        listStateRef,
+        setSelectedFiles,
+        setOzPinnedFiles,
+        setActiveOzFile,
+        lastSelectedFileRef,
+    } = props;
 
     const [hoverActive, setHoverActive] = useState<boolean>(false);
 
-    const isSelected = selectedFiles.includes(file.path);
-
-    const longPressEvents = useLongPress((e: React.TouchEvent) => {
+    const triggerContextMenu = (e: React.MouseEvent | React.TouchEvent) => {
+        const { ozPinnedFiles, selectedFiles } = listStateRef.current;
         FileViewHandlers.triggerContextMenu({
             file,
             e,
@@ -300,7 +334,9 @@ const NavFile = (props: {
             selectedFiles,
             setSelectedFiles,
         });
-    }, 500);
+    };
+
+    const longPressEvents = useLongPress(triggerContextMenu, 500);
 
     useEffect(() => {
         const handleKeyDownEvent = (e: KeyboardEvent) => {
@@ -323,24 +359,21 @@ const NavFile = (props: {
             FileViewHandlers.getFileIcon({
                 file,
             }),
-        [plugin.settings.iconBeforeFileName, file]
+        [iconBeforeFileName, file]
     );
 
     const fileDisplayName = useMemo(() => {
-        return plugin.settings.showFileNameAsFullPath ? Util.getFileNameAndExtension(file.path).fileName : file.basename;
-    }, [plugin.settings.showFileNameAsFullPath, file.path]);
+        return showFileNameAsFullPath ? Util.getFileNameAndExtension(file.path).fileName : file.basename;
+    }, [showFileNameAsFullPath, file.path]);
 
     const handleFileClick = (e: React.MouseEvent) => {
         if (e.metaKey || e.ctrlKey) {
             // Toggle selection
-            if (selectedFiles.includes(file.path)) {
-                setSelectedFiles(selectedFiles.filter((p) => p !== file.path));
-            } else {
-                setSelectedFiles([...selectedFiles, file.path]);
-            }
+            setSelectedFiles((prev) => (prev.includes(file.path) ? prev.filter((p) => p !== file.path) : [...prev, file.path]));
             lastSelectedFileRef.current = file.path;
         } else if (e.shiftKey) {
             // Range selection
+            const { filesToList } = listStateRef.current;
             const anchor = lastSelectedFileRef.current || file.path;
             const anchorIndex = filesToList.findIndex((f) => f.path === anchor);
             const currentIndex = filesToList.findIndex((f) => f.path === file.path);
@@ -369,7 +402,7 @@ const NavFile = (props: {
 
     return (
         <div
-            className={'oz-nav-file' + (activeOzFile && activeOzFile.path === file.path ? ' is-active' : '') + (isSelected ? ' is-selected' : '')}
+            className={'oz-nav-file' + (isActive ? ' is-active' : '') + (isSelected ? ' is-selected' : '')}
             key={file.path}
             draggable
             onDragStart={(e) =>
@@ -377,22 +410,12 @@ const NavFile = (props: {
                     e,
                     file,
                     plugin,
-                    selectedFiles,
+                    selectedFiles: listStateRef.current.selectedFiles,
                 })
             }
             onClick={handleFileClick}
             onAuxClick={(e) => FileViewHandlers.onAuxClick({ e, plugin, file })}
-            onContextMenu={(e) =>
-                FileViewHandlers.triggerContextMenu({
-                    e,
-                    file,
-                    plugin,
-                    ozPinnedFiles,
-                    setOzPinnedFiles,
-                    selectedFiles,
-                    setSelectedFiles,
-                })
-            }
+            onContextMenu={triggerContextMenu}
             onMouseEnter={(e) =>
                 FileViewHandlers.mouseEnteredOnFile({
                     e,
@@ -405,12 +428,12 @@ const NavFile = (props: {
             {...longPressEvents}>
             <div className="oz-nav-file-title" data-path={file.path}>
                 <div className="oz-nav-file-title-content">
-                    {plugin.settings.iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
+                    {iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
                     {fileDisplayName}
                 </div>
-                {ozPinnedFiles.some((f) => f.path === file.path) && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
+                {isPinned && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
                 {file.extension !== 'md' && <span className="oz-nav-file-tag">{file.extension}</span>}
             </div>
         </div>
     );
-};
+});
