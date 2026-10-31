@@ -21,23 +21,25 @@ export const SingleViewVertical = (props: { plugin: FileTreeAlternativePlugin })
         }
     }, [folderPaneHeight]);
 
-    function touchMouseStart(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        if (e.type !== 'drag' && (e.target as Element).id !== 'file-tree-divider') return;
+    function touchMouseStart(e: React.PointerEvent<HTMLDivElement>) {
+        if ((e.target as Element).id !== 'file-tree-divider') return;
         e.preventDefault();
+        // Keep receiving move events while the finger/mouse leaves the thin divider
+        (e.target as Element).setPointerCapture(e.pointerId);
         setDividerOnMove(true);
         let height = dividerRef.current.offsetTop - folderPaneRef.current.offsetTop;
         setFolderPaneHeight(height);
         setClientY(e.nativeEvent.clientY);
     }
 
-    function touchMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    function touchMouseMove(e: React.PointerEvent<HTMLDivElement>) {
         if (!dividerOnMove) return;
         e.preventDefault();
         setFolderPaneHeight(folderPaneHeight + (e.nativeEvent.clientY - clientY));
         setClientY(e.nativeEvent.clientY);
     }
 
-    function touchMouseEnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    function touchMouseEnd(e: React.PointerEvent<HTMLDivElement>) {
         if (!dividerOnMove) return;
         e.preventDefault();
         setDividerOnMove(false);
@@ -46,7 +48,7 @@ export const SingleViewVertical = (props: { plugin: FileTreeAlternativePlugin })
 
     return (
         // Register Move & End Events for All File Tree Leaf
-        <div className="file-tree-container" onMouseMove={(e) => touchMouseMove(e)} onMouseUp={(e) => touchMouseEnd(e)}>
+        <div className="file-tree-container" onPointerMove={(e) => touchMouseMove(e)} onPointerUp={(e) => touchMouseEnd(e)} onPointerCancel={(e) => touchMouseEnd(e)}>
             <div
                 className="oz-folder-pane"
                 ref={folderPaneRef}
@@ -54,12 +56,12 @@ export const SingleViewVertical = (props: { plugin: FileTreeAlternativePlugin })
                 <MainFolder plugin={plugin} />
             </div>
 
-            {/* Mouse Down Event only For Divider */}
+            {/* Pointer Down Event only For Divider (mouse and touch) */}
             <div
                 id="file-tree-divider"
                 ref={dividerRef}
                 onClick={(e) => e.preventDefault()}
-                onMouseDown={(e) => touchMouseStart(e)}
+                onPointerDown={(e) => touchMouseStart(e)}
                 className={dividerOnMove ? 'active-divider' : ''}></div>
 
             <div className="oz-file-list-pane">
@@ -87,23 +89,25 @@ export const SingleViewHorizontal = (props: { plugin: FileTreeAlternativePlugin 
         }
     }, [folderPaneWidth]);
 
-    function touchMouseStart(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-        if (e.type !== 'drag' && (e.target as Element).id !== 'file-tree-divider-horizontal') return;
+    function touchMouseStart(e: React.PointerEvent<HTMLDivElement>) {
+        if ((e.target as Element).id !== 'file-tree-divider-horizontal') return;
         e.preventDefault();
+        // Keep receiving move events while the finger/mouse leaves the thin divider
+        (e.target as Element).setPointerCapture(e.pointerId);
         setDividerOnMove(true);
         let width = dividerRef.current.offsetLeft - folderPaneRef.current.offsetLeft;
         setFolderPaneWidth(width);
         setClientX(e.nativeEvent.clientX);
     }
 
-    function touchMouseMove(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    function touchMouseMove(e: React.PointerEvent<HTMLDivElement>) {
         if (!dividerOnMove) return;
         e.preventDefault();
         setFolderPaneWidth(folderPaneWidth + (e.nativeEvent.clientX - clientX));
         setClientX(e.nativeEvent.clientX);
     }
 
-    function touchMouseEnd(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    function touchMouseEnd(e: React.PointerEvent<HTMLDivElement>) {
         if (!dividerOnMove) return;
         e.preventDefault();
         setDividerOnMove(false);
@@ -112,7 +116,7 @@ export const SingleViewHorizontal = (props: { plugin: FileTreeAlternativePlugin 
 
     return (
         // Register Move & End Events for All File Tree Leaf
-        <div className="file-tree-container-horizontal" onMouseMove={(e) => touchMouseMove(e)} onMouseUp={(e) => touchMouseEnd(e)}>
+        <div className="file-tree-container-horizontal" onPointerMove={(e) => touchMouseMove(e)} onPointerUp={(e) => touchMouseEnd(e)} onPointerCancel={(e) => touchMouseEnd(e)}>
             <div
                 className="oz-folder-pane-horizontal"
                 ref={folderPaneRef}
@@ -120,12 +124,12 @@ export const SingleViewHorizontal = (props: { plugin: FileTreeAlternativePlugin 
                 <MainFolder plugin={plugin} />
             </div>
 
-            {/* Mouse Down Event only For Divider */}
+            {/* Pointer Down Event only For Divider (mouse and touch) */}
             <div
                 id="file-tree-divider-horizontal"
                 ref={dividerRef}
                 onClick={(e) => e.preventDefault()}
-                onMouseDown={(e) => touchMouseStart(e)}
+                onPointerDown={(e) => touchMouseStart(e)}
                 className={dividerOnMove ? 'active-divider' : ''}></div>
 
             <div className="oz-file-list-pane-horizontal">

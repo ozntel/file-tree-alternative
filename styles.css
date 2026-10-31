@@ -66,6 +66,13 @@ settings:
         format: hex
         default: '#'
     -
+        id: oz-fta-file-preview-font-size
+        title: File Pane | Preview Text Font Size
+        description: Set the font size of note excerpts in Preview file list style
+        type: variable-number
+        default: 12
+        format: px
+    -
         id: oz-fta-file-pane-foldername-color
         title: File Pane | Header Folder Name Color
         description: Set the color of folder name in the file pane
@@ -120,6 +127,7 @@ settings:
 .theme-dark {
     --oz-fta-folder-font-size: 13px;
     --oz-fta-file-font-size: 12px;
+    --oz-fta-file-preview-font-size: 12px;
     --oz-fta-folder-icon-color: var(--interactive-accent);
     --oz-fta-folder-indendation-guide-color: var(--text-muted);
     --oz-fta-header-background-color: var(--background-secondary-alt);
@@ -161,8 +169,10 @@ settings:
     opacity: 1;
 }
 
-.oz-nav-action-button:hover {
-    opacity: 0.6;
+@media (hover: hover) {
+    .oz-nav-action-button:hover {
+        opacity: 0.6;
+    }
 }
 
 .oz-nav-action-button svg {
@@ -225,6 +235,113 @@ div.oz-nav-file.is-selected div.oz-nav-file-title-content {
     font-weight: bold;
 }
 
+/* Preview File List Style */
+
+.oz-nav-file.oz-nav-file-preview-mode {
+    padding: 5px 4px 6px 4px;
+    cursor: pointer;
+}
+
+.oz-nav-file-preview-mode .oz-nav-file-title {
+    color: var(--text-normal);
+    font-weight: 600;
+    padding: 0px;
+}
+
+.oz-nav-file-preview {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.oz-nav-file-preview-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.oz-nav-file-preview-excerpt {
+    color: var(--text-muted);
+    font-size: var(--oz-fta-file-preview-font-size);
+    line-height: 17px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+
+.oz-nav-file-preview-meta {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-top: 3px;
+    font-size: calc(var(--oz-fta-file-preview-font-size) - 1px);
+    color: var(--text-faint);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.oz-nav-file-preview-date {
+    flex-shrink: 0;
+    margin-right: 2px;
+}
+
+.oz-nav-file-preview-property {
+    color: var(--color-blue, #3b82f6);
+    background-color: rgba(var(--color-blue-rgb, 59, 130, 246), 0.15);
+    border-radius: 4px;
+    padding: 0px 6px;
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oz-nav-file-preview-alias {
+    color: var(--color-orange, #e08a2e);
+    background-color: rgba(var(--color-orange-rgb, 224, 138, 46), 0.15);
+    border-radius: 8px;
+    padding: 0px 6px;
+    font-style: italic;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oz-nav-file-preview-tag {
+    color: var(--tag-color, var(--text-accent));
+    background-color: var(--tag-background, var(--background-modifier-hover));
+    border-radius: 8px;
+    padding: 0px 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oz-nav-file-preview-thumbnail {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: var(--background-secondary-alt);
+}
+
+div.oz-nav-file.oz-nav-file-preview-mode.is-active .oz-nav-file-preview,
+div.oz-nav-file.oz-nav-file-preview-mode.is-selected .oz-nav-file-preview {
+    font-weight: normal;
+}
+
+div.oz-nav-file.oz-nav-file-preview-mode.is-active .oz-nav-file-preview-excerpt,
+div.oz-nav-file.oz-nav-file-preview-mode.is-selected .oz-nav-file-preview-excerpt {
+    color: var(--text-normal);
+    opacity: 0.8;
+}
+
+.is-mobile .oz-nav-file.oz-nav-file-preview-mode {
+    padding: 8px 4px 9px 4px;
+}
+
 .is-folder-active {
     color: var(--oz-fta-all-panes-active-text-color) !important;
     font-weight: bold;
@@ -283,11 +400,17 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     padding-top: 3px !important;
 }
 
-.drag-entered,
-.oz-folder-element:hover,
-.oz-nav-file:hover {
+.drag-entered {
     background-color: var(--background-secondary-alt);
     color: var(--text-normal);
+}
+
+@media (hover: hover) {
+    .oz-folder-element:hover,
+    .oz-nav-file:hover {
+        background-color: var(--background-secondary-alt);
+        color: var(--text-normal);
+    }
 }
 
 .oz-nav-file {
@@ -412,6 +535,7 @@ div.oz-folder-name.is-root-folder {
 }
 
 #file-tree-divider {
+    touch-action: none;
     height: 3.8px;
     opacity: 0.3;
     cursor: row-resize;
@@ -424,8 +548,10 @@ div#file-tree-divider.active-divider {
     border-bottom: 0.5px solid var(--interactive-accent);
 }
 
-#file-tree-divider:hover {
-    background-color: var(--text-muted);
+@media (hover: hover) {
+    #file-tree-divider:hover {
+        background-color: var(--text-muted);
+    }
 }
 
 .file-tree-container-horizontal {
@@ -451,6 +577,7 @@ div#file-tree-divider.active-divider {
 }
 
 #file-tree-divider-horizontal {
+    touch-action: none;
     margin-left: 5px;
     width: 3.8px;
     opacity: 0.3;
@@ -464,8 +591,10 @@ div#file-tree-divider-horizontal.active-divider {
     border-bottom: 0.5px solid var(--interactive-accent);
 }
 
-#file-tree-divider-horizontal:hover {
-    background-color: var(--text-muted);
+@media (hover: hover) {
+    #file-tree-divider-horizontal:hover {
+        background-color: var(--text-muted);
+    }
 }
 
 .file-tree-header-fixed {
@@ -506,14 +635,136 @@ svg.oz-folder-toggle path {
     vertical-align: middle;
 }
 
-/* Mobile Adjustments */
+/* Selection Mode */
 
-.is-mobile .oz-nav-file-title {
-    line-height: 21px;
+.oz-selection-header {
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
 }
 
-.is-mobile .oz-flex-container {
-    height: 31px;
+.oz-selection-count {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-normal);
+    white-space: nowrap;
+}
+
+button.oz-selection-header-button {
+    font-size: 12px;
+    padding: 2px 10px;
+    height: auto;
+    min-height: 24px;
+    white-space: nowrap;
+}
+
+.oz-nav-file-checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: middle;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-faint);
+    color: var(--text-on-accent);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.oz-nav-file-checkbox.is-checked {
+    background-color: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}
+
+/* The checkbox shows the selection, keep selected rows readable instead of bold */
+div.oz-nav-file.oz-nav-file-selection-mode.is-selected div.oz-nav-file-title-content {
+    font-weight: normal;
+}
+
+.oz-selection-action-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-around;
+    gap: 4px;
+    margin-top: 6px;
+    padding: 4px;
+    border-radius: 8px;
+    background: var(--oz-fta-header-background-color);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.12);
+}
+
+button.oz-selection-action {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    height: auto;
+    padding: 4px 2px;
+    font-size: 11px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-normal);
+}
+
+button.oz-selection-action.mod-warning {
+    color: var(--text-error);
+}
+
+button.oz-selection-action:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* Mobile Adjustments */
+
+/* No text selection, iOS callout or grey tap flash while holding rows for the context menu */
+.is-mobile .oz-nav-file,
+.is-mobile .oz-folder-element,
+.is-mobile .oz-nav-action-button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Tap feedback instead of hover */
+.is-mobile .oz-nav-file:active,
+.is-mobile .oz-folder-element:active {
+    background-color: var(--background-modifier-hover);
+}
+
+/* Rows of ~38px so they can be hit reliably with a finger */
+.is-mobile .oz-nav-file-title {
+    line-height: 21px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.is-mobile .oz-nav-file-preview-mode .oz-nav-file-title {
+    padding-top: 0px;
+    padding-bottom: 2px;
+}
+
+.is-mobile div.oz-nav-file-title .oz-nav-file-title-content {
+    font-size: calc(var(--oz-fta-file-font-size) + 3px);
+}
+
+.is-mobile .oz-nav-file-preview-excerpt {
+    font-size: calc(var(--oz-fta-file-preview-font-size) + 1px);
+    line-height: 19px;
+}
+
+.is-mobile .oz-folder-element {
+    padding: 7px 0px;
 }
 
 .is-mobile .oz-folder-name.is-root-folder {
@@ -521,17 +772,88 @@ svg.oz-folder-toggle path {
 }
 
 .is-mobile .oz-folder-name {
-    font-size: var(--oz-fta-folder-font-size);
+    font-size: calc(var(--oz-fta-folder-font-size) + 2px);
 }
 
-.is-mobile div.oz-nav-file-title .nav-file-title-content {
-    font-size: calc(var(--oz-fta-file-font-size) + 3px);
+/* Larger expand/collapse target around the small chevron */
+.is-mobile .oz-icon-div {
+    padding: 6px 4px 6px 6px;
+    margin: -6px 0px -6px -6px;
 }
 
-.is-mobile .oz-input-container > input {
-    height: 33px;
+.is-mobile .oz-folder-toggle {
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 8px;
+}
+
+/* Header buttons: more room between icons so neighbours are not hit by mistake */
+.is-mobile .oz-flex-container {
+    min-height: 40px;
+    align-items: center;
+}
+
+.is-mobile .oz-nav-action-button {
+    padding: 6px;
+    margin-left: 4px;
 }
 
 .is-mobile .oz-nav-action-button svg {
     transform: scale(1.2);
+}
+
+.is-mobile .oz-folders-action-items {
+    display: flex;
+    justify-content: space-around;
+    padding: 6px 4px;
+}
+
+.is-mobile .oz-folders-action-items .oz-nav-action-button {
+    width: 26px;
+    height: 26px;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: content-box;
+}
+
+/* 16px avoids iOS zooming into the search box on focus */
+.is-mobile .oz-input-container {
+    height: 38px;
+}
+
+.is-mobile .oz-input-container > input {
+    height: 36px;
+    font-size: 16px;
+}
+
+/* Wider grab area for the split divider, the visible line stays thin */
+.is-mobile #file-tree-divider {
+    height: 14px;
+    margin-bottom: 4px;
+}
+
+.is-mobile #file-tree-divider-horizontal {
+    width: 14px;
+    margin-left: 2px;
+}
+
+.is-mobile .oz-nav-file-checkbox {
+    width: 22px;
+    height: 22px;
+    margin-right: 10px;
+}
+
+.is-mobile button.oz-selection-header-button {
+    font-size: 14px;
+    min-height: 32px;
+    padding: 4px 12px;
+}
+
+.is-mobile .oz-selection-count {
+    font-size: 15px;
+}
+
+.is-mobile button.oz-selection-action {
+    font-size: 12px;
+    padding: 8px 2px;
 }

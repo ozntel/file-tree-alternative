@@ -256,6 +256,60 @@ export const handleSearch = (params: {
     setOzFileList(filteredFiles);
 };
 
+// ----> BULK FILE ACTIONS (multi-select context menu & selection mode action bar) <----- \\
+
+const pathsToOzFiles = (plugin: FileTreeAlternativePlugin, filePaths: string[]): OZFile[] =>
+    filePaths
+        .map((p) => {
+            const af = plugin.app.vault.getAbstractFileByPath(p);
+            return af instanceof TFile ? Util.TFile2OZFile(af) : null;
+        })
+        .filter(Boolean);
+
+export const moveFiles = (params: { plugin: FileTreeAlternativePlugin; filePaths: string[] }) => {
+    const ozFilesToMove = pathsToOzFiles(params.plugin, params.filePaths);
+    if (ozFilesToMove.length === 0) return;
+    new MoveSuggestionModal(params.plugin.app, ozFilesToMove[0], ozFilesToMove).open();
+};
+
+export const deleteFiles = (params: { plugin: FileTreeAlternativePlugin; filePaths: string[]; onDeleted?: () => void }) => {
+    const { plugin, filePaths, onDeleted } = params;
+    let confirmationModal = new ConfirmationModal(plugin, `Are you sure you want to delete ${filePaths.length} ${filePaths.length === 1 ? 'file' : 'files'}?`, function () {
+        let deleteOption = plugin.settings.deleteFileOption;
+        for (const path of filePaths) {
+            let fileToDelete = plugin.app.vault.getAbstractFileByPath(path);
+            if (!fileToDelete) continue;
+            if (deleteOption === 'permanent') {
+                plugin.app.vault.delete(fileToDelete, true);
+            } else if (deleteOption === 'system-trash') {
+                plugin.app.vault.trash(fileToDelete, true);
+            } else if (deleteOption === 'trash') {
+                plugin.app.vault.trash(fileToDelete, false);
+            }
+        }
+        if (onDeleted) onDeleted();
+    });
+    confirmationModal.open();
+};
+
+export const allFilesPinned = (filePaths: string[], ozPinnedFiles: OZFile[]) =>
+    filePaths.length > 0 && filePaths.every((p) => ozPinnedFiles.some((f) => f.path === p));
+
+export const togglePinFiles = (params: {
+    plugin: FileTreeAlternativePlugin;
+    filePaths: string[];
+    ozPinnedFiles: OZFile[];
+    setOzPinnedFiles: SetterOrUpdater<OZFile[]>;
+}) => {
+    const { plugin, filePaths, ozPinnedFiles, setOzPinnedFiles } = params;
+    if (allFilesPinned(filePaths, ozPinnedFiles)) {
+        setOzPinnedFiles(ozPinnedFiles.filter((f) => !filePaths.includes(f.path)));
+    } else {
+        const toAdd = pathsToOzFiles(plugin, filePaths.filter((p) => !ozPinnedFiles.some((f) => f.path === p)));
+        setOzPinnedFiles([...ozPinnedFiles, ...toAdd]);
+    }
+};
+
 // ----> NAV FILE COMPONENT HANDLERS <----- \\
 
 // Handle Click Event on File - Allows Open with Cmd/Ctrl
@@ -360,8 +414,9 @@ export const triggerContextMenu = (params: {
     plugin: FileTreeAlternativePlugin;
     selectedFiles?: string[];
     setSelectedFiles?: SetterOrUpdater<string[]>;
+    onEnterSelectionMode?: () => void;
 }) => {
-    let { file, e, ozPinnedFiles, setOzPinnedFiles, plugin, selectedFiles, setSelectedFiles } = params;
+    let { file, e, ozPinnedFiles, setOzPinnedFiles, plugin, selectedFiles, setSelectedFiles, onEnterSelectionMode } = params;
     const fileMenu = new Menu();
     let fileToTrigger = plugin.app.vault.getAbstractFileByPath(file.path);
 
@@ -375,63 +430,28 @@ export const triggerContextMenu = (params: {
         fileMenu.addItem((menuItem) => {
             menuItem.setTitle(`Move ${targetFilePaths.length} files to...`);
             menuItem.setIcon('paper-plane');
-            menuItem.onClick((ev: MouseEvent) => {
-                const ozFilesToMove = targetFilePaths.map((p) => {
-                    const af = plugin.app.vault.getAbstractFileByPath(p);
-                    return af instanceof TFile ? Util.TFile2OZFile(af) : null;
-                }).filter(Boolean);
-                let fileMoveSuggester = new MoveSuggestionModal(plugin.app, file, ozFilesToMove);
-                fileMoveSuggester.open();
-            });
+            menuItem.onClick(() => moveFiles({ plugin, filePaths: targetFilePaths }));
         });
 
         // Multi-file Delete
         fileMenu.addItem((menuItem) => {
             menuItem.setTitle(`Delete ${targetFilePaths.length} files`);
             menuItem.setIcon('trash');
-            menuItem.onClick((ev: MouseEvent) => {
-                let confirmationModal = new ConfirmationModal(
+            menuItem.onClick(() =>
+                deleteFiles({
                     plugin,
-                    `Are you sure you want to delete ${targetFilePaths.length} files?`,
-                    function () {
-                        let deleteOption = plugin.settings.deleteFileOption;
-                        for (const path of targetFilePaths) {
-                            let fileToDelete = plugin.app.vault.getAbstractFileByPath(path);
-                            if (!fileToDelete) continue;
-                            if (deleteOption === 'permanent') {
-                                plugin.app.vault.delete(fileToDelete, true);
-                            } else if (deleteOption === 'system-trash') {
-                                plugin.app.vault.trash(fileToDelete, true);
-                            } else if (deleteOption === 'trash') {
-                                plugin.app.vault.trash(fileToDelete, false);
-                            }
-                        }
-                        if (setSelectedFiles) setSelectedFiles([]);
-                    }
-                );
-                confirmationModal.open();
-            });
+                    filePaths: targetFilePaths,
+                    onDeleted: () => setSelectedFiles && setSelectedFiles([]),
+                })
+            );
         });
 
         // Multi-file Pin / Unpin
         fileMenu.addItem((menuItem) => {
             menuItem.setIcon('pin');
-            const allPinned = targetFilePaths.every((p) => ozPinnedFiles.some((f) => f.path === p));
+            const allPinned = allFilesPinned(targetFilePaths, ozPinnedFiles);
             menuItem.setTitle(allPinned ? `Unpin ${targetFilePaths.length} files` : `Pin ${targetFilePaths.length} files`);
-            menuItem.onClick((ev: MouseEvent) => {
-                if (allPinned) {
-                    setOzPinnedFiles(ozPinnedFiles.filter((f) => !targetFilePaths.includes(f.path)));
-                } else {
-                    const toAdd = targetFilePaths
-                        .filter((p) => !ozPinnedFiles.some((f) => f.path === p))
-                        .map((p) => {
-                            const af = plugin.app.vault.getAbstractFileByPath(p);
-                            return af instanceof TFile ? Util.TFile2OZFile(af) : null;
-                        })
-                        .filter(Boolean);
-                    setOzPinnedFiles([...ozPinnedFiles, ...toAdd]);
-                }
-            });
+            menuItem.onClick(() => togglePinFiles({ plugin, filePaths: targetFilePaths, ozPinnedFiles, setOzPinnedFiles }));
         });
 
         // Trigger file-menu event & show menu
@@ -443,6 +463,15 @@ export const triggerContextMenu = (params: {
             fileMenu.showAtPosition({ x: e.nativeEvent.locationX, y: e.nativeEvent.locationY });
         }
         return false;
+    }
+
+    // Select Item - starts selection mode, the touch friendly way to select multiple files
+    if (onEnterSelectionMode) {
+        fileMenu.addItem((menuItem) => {
+            menuItem.setTitle('Select');
+            menuItem.setIcon('check-square');
+            menuItem.onClick(() => onEnterSelectionMode());
+        });
     }
 
     // Pin - Unpin Item

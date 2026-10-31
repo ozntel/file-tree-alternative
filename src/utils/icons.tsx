@@ -1,13 +1,13 @@
 import React from 'react';
 import FileTreeAlternativePlugin from 'main';
-import { BiFolderPlus, BiFolder, BiFolderMinus, BiFile, BiCurrentLocation } from 'react-icons/bi';
+import { BiFolderPlus, BiFolder, BiFolderMinus, BiFile, BiCurrentLocation, BiTrash, BiCheck } from 'react-icons/bi';
 import { ImFolder, ImFolderPlus, ImFolderMinus } from 'react-icons/im';
 import { TiFolder, TiFolderOpen } from 'react-icons/ti';
 import { CgCloseO, CgAdd, CgRemove } from 'react-icons/cg';
 import { FaTimesCircle, FaThumbtack, FaArrowCircleLeft } from 'react-icons/fa';
 import { AiFillFilePdf, AiFillFileImage, AiFillFileWord } from 'react-icons/ai';
 import { IoIosSearch, IoIosEye, IoIosEyeOff, IoIosAddCircle, IoIosCloseCircleOutline, IoIosArrowBack, IoMdArrowDropright } from 'react-icons/io';
-import { MdOutlineCreateNewFolder } from 'react-icons/md';
+import { MdOutlineCreateNewFolder, MdDriveFileMove } from 'react-icons/md';
 import { CgChevronDoubleDown, CgChevronDoubleUp, CgSortAz } from 'react-icons/cg';
 
 const MinusSquareO = (props: any) => (
@@ -116,4 +116,7 @@ export {
     AiFillFileImage,
     AiFillFileWord,
     BiCurrentLocation,
+    BiTrash,
+    BiCheck,
+    MdDriveFileMove,
 };

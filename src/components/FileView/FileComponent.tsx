@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
+import { TFile, Platform } from 'obsidian';
 import * as Icons from 'utils/icons';
 import FileTreeAlternativePlugin from 'main';
 import { OZFile } from 'utils/types';
@@ -10,6 +11,8 @@ import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress from 'hooks/useLongPress';
 import * as FileViewHandlers from 'components/FileView/handlers';
 import LazyLoad from 'react-lazy-load';
+import usePreview from 'hooks/usePreview';
+import * as PreviewCache from 'utils/previewCache';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -38,6 +41,8 @@ export function FileComponent(props: FilesProps) {
     const [searchPhrase, setSearchPhrase] = useState<string>('');
     const [searchBoxVisible, setSearchBoxVisible] = useState<boolean>(false);
     const [treeHeader, setTreeHeader] = useState<string>(Util.getFolderName(activeFolderPath, plugin.app));
+    // Selection mode: taps toggle files instead of opening them (multi-select without modifier keys, e.g. on mobile)
+    const [selectionMode, setSelectionMode] = useState<boolean>(false);
 
     // Force Update
     const forceUpdate = useForceUpdate();
@@ -45,20 +50,22 @@ export function FileComponent(props: FilesProps) {
     // Clear selection on Escape key
     useEffect(() => {
         const handleGlobalKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'Escape' && selectedFiles.length > 0) {
+            if (e.key === 'Escape' && (selectedFiles.length > 0 || selectionMode)) {
                 setSelectedFiles([]);
+                setSelectionMode(false);
             }
         };
         document.addEventListener('keydown', handleGlobalKeyDown);
         return () => {
             document.removeEventListener('keydown', handleGlobalKeyDown);
         };
-    }, [selectedFiles]);
+    }, [selectedFiles, selectionMode]);
 
     // Clear selection when active folder changes
     useEffect(() => {
         setTreeHeader(Util.getFolderName(activeFolderPath, plugin.app));
         setSelectedFiles([]);
+        setSelectionMode(false);
         lastSelectedFileRef.current = null;
     }, [activeFolderPath]);
 
@@ -91,8 +98,19 @@ export function FileComponent(props: FilesProps) {
 
     // Rows only receive simple flags so they can skip re-rendering; list-wide data they need inside
     // event handlers (range select, drag, context menu) is read from this ref at event time instead
+    const enterSelectionMode = (filePath: string) => {
+        setSelectionMode(true);
+        setSelectedFiles([filePath]);
+        lastSelectedFileRef.current = filePath;
+    };
+
+    const exitSelectionMode = () => {
+        setSelectionMode(false);
+        setSelectedFiles([]);
+    };
+
     const listStateRef = React.useRef<NavFileListState>(null);
-    listStateRef.current = { filesToList, selectedFiles, ozPinnedFiles };
+    listStateRef.current = { filesToList, selectedFiles, ozPinnedFiles, enterSelectionMode };
     const selectedPaths = useMemo(() => new Set(selectedFiles), [selectedFiles]);
     const pinnedPaths = useMemo(() => new Set(ozPinnedFiles.map((f) => f.path)), [ozPinnedFiles]);
 
@@ -124,6 +142,28 @@ export function FileComponent(props: FilesProps) {
 
     const topIconSize = 19;
 
+    const previewMode = plugin.settings.fileListStyle === 'preview';
+    const previewOptions: PreviewOptions = useMemo(
+        () => ({
+            lines: plugin.settings.previewLines,
+            showThumbnail: plugin.settings.previewShowThumbnail,
+            showTags: plugin.settings.previewShowTags,
+            showAliases: plugin.settings.previewShowAliases,
+            propertyKey: plugin.settings.previewPropertyKey,
+            dateField: plugin.settings.sortFilesBy === 'created' ? 'ctime' : 'mtime',
+        }),
+        [
+            plugin.settings.previewLines,
+            plugin.settings.previewShowThumbnail,
+            plugin.settings.previewShowTags,
+            plugin.settings.previewShowAliases,
+            plugin.settings.previewPropertyKey,
+            plugin.settings.sortFilesBy,
+        ]
+    );
+    // Placeholder height for rows outside of the viewport: title + text lines + date line (rows are taller on mobile)
+    const rowHeight = (previewMode ? 22 + previewOptions.lines * 17 + 22 : 22) + (Platform.isMobile ? 16 : 0);
+
     return (
         <React.Fragment>
             <Dropzone
@@ -146,72 +186,82 @@ export function FileComponent(props: FilesProps) {
                         <div className="oz-explorer-container">
                             {/* Header */}
                             <div className={`oz-file-tree-header-wrapper${plugin.settings.fixedHeaderInFileList ? ' file-tree-header-fixed' : ''}`}>
-                                <div className="oz-flex-container">
-                                    <div className="oz-nav-action-button" style={{ marginLeft: '0px' }}>
-                                        {['Horizontal', 'Vertical'].includes(plugin.settings.evernoteView) ? (
-                                            <Icons.IoIosCloseCircleOutline
-                                                onClick={(e) => handleGoBack(e)}
-                                                size={topIconSize}
-                                                aria-label="Close File Pane"
-                                            />
-                                        ) : (
-                                            <Icons.IoIosArrowBack
-                                                onClick={(e) => handleGoBack(e)}
-                                                size={topIconSize}
-                                                aria-label="Go Back to Folder View"
-                                            />
-                                        )}
-                                    </div>
-                                    <div className="oz-nav-buttons-right-block">
-                                        {plugin.settings.revealActiveFileButton && (
-                                            <div className="oz-nav-action-button">
-                                                <Icons.BiCurrentLocation
-                                                    onClick={() => FileViewHandlers.handleRevealActiveFileButton({ plugin })}
+                                {selectionMode ? (
+                                    <SelectionHeader
+                                        selectedCount={selectedFiles.length}
+                                        allSelected={filesToList.length > 0 && selectedFiles.length === filesToList.length}
+                                        onSelectAll={() => setSelectedFiles(filesToList.map((f) => f.path))}
+                                        onDeselectAll={() => setSelectedFiles([])}
+                                        onDone={exitSelectionMode}
+                                    />
+                                ) : (
+                                    <div className="oz-flex-container">
+                                        <div className="oz-nav-action-button" style={{ marginLeft: '0px' }}>
+                                            {['Horizontal', 'Vertical'].includes(plugin.settings.evernoteView) ? (
+                                                <Icons.IoIosCloseCircleOutline
+                                                    onClick={(e) => handleGoBack(e)}
                                                     size={topIconSize}
-                                                    aria-label="Reveal Active File"
+                                                    aria-label="Close File Pane"
+                                                />
+                                            ) : (
+                                                <Icons.IoIosArrowBack
+                                                    onClick={(e) => handleGoBack(e)}
+                                                    size={topIconSize}
+                                                    aria-label="Go Back to Folder View"
+                                                />
+                                            )}
+                                        </div>
+                                        <div className="oz-nav-buttons-right-block">
+                                            {plugin.settings.revealActiveFileButton && (
+                                                <div className="oz-nav-action-button">
+                                                    <Icons.BiCurrentLocation
+                                                        onClick={() => FileViewHandlers.handleRevealActiveFileButton({ plugin })}
+                                                        size={topIconSize}
+                                                        aria-label="Reveal Active File"
+                                                    />
+                                                </div>
+                                            )}
+                                            {plugin.settings.showFilesFromSubFoldersButton && (
+                                                <div className="oz-nav-action-button">
+                                                    {showSubFolders ? (
+                                                        <Icons.IoIosEyeOff
+                                                            onClick={toggleShowSubFolders}
+                                                            size={topIconSize}
+                                                            aria-label="Hide Files from Sub-Folders"
+                                                        />
+                                                    ) : (
+                                                        <Icons.IoIosEye
+                                                            onClick={toggleShowSubFolders}
+                                                            size={topIconSize}
+                                                            aria-label="Show Files from Sub-Folders"
+                                                        />
+                                                    )}
+                                                </div>
+                                            )}
+                                            {plugin.settings.searchFunction && (
+                                                <div className="oz-nav-action-button">
+                                                    <Icons.IoIosSearch onClick={toggleSearchBox} size={topIconSize} aria-label="Search File by Name or Tag" />
+                                                </div>
+                                            )}
+                                            <div className="oz-nav-action-button">
+                                                <Icons.CgSortAz
+                                                    size={topIconSize + 2}
+                                                    onClick={(e) => {
+                                                        FileViewHandlers.sortFileListClickHandle({ e, plugin, forceUpdate });
+                                                    }}
+                                                    aria-label="Sorting Options"
                                                 />
                                             </div>
-                                        )}
-                                        {plugin.settings.showFilesFromSubFoldersButton && (
                                             <div className="oz-nav-action-button">
-                                                {showSubFolders ? (
-                                                    <Icons.IoIosEyeOff
-                                                        onClick={toggleShowSubFolders}
-                                                        size={topIconSize}
-                                                        aria-label="Hide Files from Sub-Folders"
-                                                    />
-                                                ) : (
-                                                    <Icons.IoIosEye
-                                                        onClick={toggleShowSubFolders}
-                                                        size={topIconSize}
-                                                        aria-label="Show Files from Sub-Folders"
-                                                    />
-                                                )}
+                                                <Icons.IoIosAddCircle
+                                                    onClick={(e) => Util.createNewFile(e, activeFolderPath, plugin)}
+                                                    size={topIconSize}
+                                                    aria-label="Create a Note"
+                                                />
                                             </div>
-                                        )}
-                                        {plugin.settings.searchFunction && (
-                                            <div className="oz-nav-action-button">
-                                                <Icons.IoIosSearch onClick={toggleSearchBox} size={topIconSize} aria-label="Search File by Name or Tag" />
-                                            </div>
-                                        )}
-                                        <div className="oz-nav-action-button">
-                                            <Icons.CgSortAz
-                                                size={topIconSize + 2}
-                                                onClick={(e) => {
-                                                    FileViewHandlers.sortFileListClickHandle({ e, plugin, forceUpdate });
-                                                }}
-                                                aria-label="Sorting Options"
-                                            />
-                                        </div>
-                                        <div className="oz-nav-action-button">
-                                            <Icons.IoIosAddCircle
-                                                onClick={(e) => Util.createNewFile(e, activeFolderPath, plugin)}
-                                                size={topIconSize}
-                                                aria-label="Create a Note"
-                                            />
                                         </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {searchBoxVisible && (
                                     <div className="oz-input-container">
@@ -258,7 +308,7 @@ export function FileComponent(props: FilesProps) {
                                 }`}>
                                 {filesToList.map((file) => {
                                     return (
-                                        <LazyLoad height={22} key={file.path}>
+                                        <LazyLoad height={rowHeight} key={file.path}>
                                             <NavFile
                                                 file={file}
                                                 plugin={plugin}
@@ -267,6 +317,9 @@ export function FileComponent(props: FilesProps) {
                                                 isPinned={pinnedPaths.has(file.path)}
                                                 iconBeforeFileName={plugin.settings.iconBeforeFileName}
                                                 showFileNameAsFullPath={plugin.settings.showFileNameAsFullPath}
+                                                previewOptions={previewMode ? previewOptions : null}
+                                                selectionMode={selectionMode}
+                                                setSelectionMode={setSelectionMode}
                                                 listStateRef={listStateRef}
                                                 setSelectedFiles={setSelectedFiles}
                                                 setOzPinnedFiles={setOzPinnedFiles}
@@ -278,6 +331,16 @@ export function FileComponent(props: FilesProps) {
                                 })}
                             </div>
                             {/* End: File List */}
+
+                            {selectionMode && (
+                                <SelectionActionBar
+                                    plugin={plugin}
+                                    selectedFiles={selectedFiles}
+                                    ozPinnedFiles={ozPinnedFiles}
+                                    setOzPinnedFiles={setOzPinnedFiles}
+                                    onDone={exitSelectionMode}
+                                />
+                            )}
                         </div>
                     </div>
                 )}
@@ -288,7 +351,13 @@ export function FileComponent(props: FilesProps) {
 
 /* ----------- SINGLE NAVFILE ELEMENT ----------- */
 
-type NavFileListState = { filesToList: OZFile[]; selectedFiles: string[]; ozPinnedFiles: OZFile[] };
+type NavFileListState = {
+    filesToList: OZFile[];
+    selectedFiles: string[];
+    ozPinnedFiles: OZFile[];
+    enterSelectionMode: (filePath: string) => void;
+};
+type PreviewOptions = { lines: number; showThumbnail: boolean; showTags: boolean; showAliases: boolean; propertyKey: string; dateField: 'mtime' | 'ctime' };
 
 // Memoized: a row only re-renders when its own props change (e.g. it becomes active/selected/pinned),
 // not on every selection or active file change in the list
@@ -300,6 +369,9 @@ const NavFile = React.memo((props: {
     isPinned: boolean;
     iconBeforeFileName: boolean;
     showFileNameAsFullPath: boolean;
+    previewOptions: PreviewOptions | null;
+    selectionMode: boolean;
+    setSelectionMode: (selectionMode: boolean) => void;
     listStateRef: React.MutableRefObject<NavFileListState>;
     setSelectedFiles: SetterOrUpdater<string[]>;
     setOzPinnedFiles: SetterOrUpdater<OZFile[]>;
@@ -314,6 +386,9 @@ const NavFile = React.memo((props: {
         isPinned,
         iconBeforeFileName,
         showFileNameAsFullPath,
+        previewOptions,
+        selectionMode,
+        setSelectionMode,
         listStateRef,
         setSelectedFiles,
         setOzPinnedFiles,
@@ -324,7 +399,7 @@ const NavFile = React.memo((props: {
     const [hoverActive, setHoverActive] = useState<boolean>(false);
 
     const triggerContextMenu = (e: React.MouseEvent | React.TouchEvent) => {
-        const { ozPinnedFiles, selectedFiles } = listStateRef.current;
+        const { ozPinnedFiles, selectedFiles, enterSelectionMode } = listStateRef.current;
         FileViewHandlers.triggerContextMenu({
             file,
             e,
@@ -333,6 +408,7 @@ const NavFile = React.memo((props: {
             setOzPinnedFiles,
             selectedFiles,
             setSelectedFiles,
+            onEnterSelectionMode: selectionMode ? undefined : () => enterSelectionMode(file.path),
         });
     };
 
@@ -367,12 +443,15 @@ const NavFile = React.memo((props: {
     }, [showFileNameAsFullPath, file.path]);
 
     const handleFileClick = (e: React.MouseEvent) => {
-        if (e.metaKey || e.ctrlKey) {
-            // Toggle selection
+        // Any multi-select (Ctrl/Cmd or Shift click) switches on selection mode, so its header and action bar show up
+        if ((selectionMode && !e.shiftKey) || e.metaKey || e.ctrlKey) {
+            // Toggle selection (plain tap in selection mode, Ctrl/Cmd click otherwise)
             setSelectedFiles((prev) => (prev.includes(file.path) ? prev.filter((p) => p !== file.path) : [...prev, file.path]));
             lastSelectedFileRef.current = file.path;
+            setSelectionMode(true);
         } else if (e.shiftKey) {
             // Range selection
+            setSelectionMode(true);
             const { filesToList } = listStateRef.current;
             const anchor = lastSelectedFileRef.current || file.path;
             const anchorIndex = filesToList.findIndex((f) => f.path === anchor);
@@ -402,9 +481,16 @@ const NavFile = React.memo((props: {
 
     return (
         <div
-            className={'oz-nav-file' + (isActive ? ' is-active' : '') + (isSelected ? ' is-selected' : '')}
+            className={
+                'oz-nav-file' +
+                (previewOptions ? ' oz-nav-file-preview-mode' : '') +
+                (selectionMode ? ' oz-nav-file-selection-mode' : '') +
+                (isActive ? ' is-active' : '') +
+                (isSelected ? ' is-selected' : '')
+            }
             key={file.path}
-            draggable
+            // On phones a held finger would start a drag instead of opening the context menu
+            draggable={!Platform.isPhone}
             onDragStart={(e) =>
                 FileViewHandlers.dragStarted({
                     e,
@@ -428,12 +514,134 @@ const NavFile = React.memo((props: {
             {...longPressEvents}>
             <div className="oz-nav-file-title" data-path={file.path}>
                 <div className="oz-nav-file-title-content">
+                    {selectionMode && (
+                        <span className={'oz-nav-file-checkbox' + (isSelected ? ' is-checked' : '')} role="checkbox" aria-checked={isSelected}>
+                            {isSelected && <Icons.BiCheck size={14} />}
+                        </span>
+                    )}
                     {iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
                     {fileDisplayName}
                 </div>
                 {isPinned && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
                 {file.extension !== 'md' && <span className="oz-nav-file-tag">{file.extension}</span>}
             </div>
+            {previewOptions && <NavFilePreview file={file} plugin={plugin} options={previewOptions} />}
         </div>
     );
 });
+
+/* ----------- NAVFILE PREVIEW (excerpt, date, tags, thumbnail) ----------- */
+
+const NavFilePreview = (props: { file: OZFile; plugin: FileTreeAlternativePlugin; options: PreviewOptions }) => {
+    const { file, plugin, options } = props;
+    const preview = usePreview(file.path, plugin.app);
+
+    const thumbnailSrc = useMemo(() => {
+        if (!options.showThumbnail || !preview?.imagePath) return null;
+        const imageFile = plugin.app.vault.getAbstractFileByPath(preview.imagePath);
+        return imageFile instanceof TFile ? plugin.app.vault.getResourcePath(imageFile) : null;
+    }, [options.showThumbnail, preview?.imagePath]);
+
+    const timestamp = preview ? preview[options.dateField] : file.stat[options.dateField];
+    const tags = options.showTags && preview ? preview.tags.slice(0, 3) : [];
+    const aliases = options.showAliases && preview ? preview.aliases.slice(0, 2) : [];
+    const propertyValue = preview ? PreviewCache.getPropertyValue(preview.frontmatter, options.propertyKey) : '';
+
+    return (
+        <div className="oz-nav-file-preview">
+            <div className="oz-nav-file-preview-body">
+                {preview?.excerpt && (
+                    <div className="oz-nav-file-preview-excerpt" style={{ WebkitLineClamp: options.lines }}>
+                        {preview.excerpt}
+                    </div>
+                )}
+                <div className="oz-nav-file-preview-meta">
+                    <span className="oz-nav-file-preview-date">{PreviewCache.formatPreviewDate(timestamp)}</span>
+                    {propertyValue && (
+                        <span className="oz-nav-file-preview-property" aria-label={options.propertyKey}>
+                            {propertyValue}
+                        </span>
+                    )}
+                    {aliases.map((alias) => (
+                        <span className="oz-nav-file-preview-alias" key={'alias-' + alias} aria-label="Alias">
+                            {alias}
+                        </span>
+                    ))}
+                    {tags.map((tag) => (
+                        <span className="oz-nav-file-preview-tag" key={tag}>
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            </div>
+            {thumbnailSrc && <img className="oz-nav-file-preview-thumbnail" src={thumbnailSrc} loading="lazy" draggable={false} alt="" />}
+        </div>
+    );
+};
+
+/* ----------- SELECTION MODE HEADER & ACTION BAR ----------- */
+
+const SelectionHeader = (props: {
+    selectedCount: number;
+    allSelected: boolean;
+    onSelectAll: () => void;
+    onDeselectAll: () => void;
+    onDone: () => void;
+}) => {
+    const { selectedCount, allSelected, onSelectAll, onDeselectAll, onDone } = props;
+    return (
+        <div className="oz-flex-container oz-selection-header">
+            <button className="oz-selection-header-button" onClick={allSelected ? onDeselectAll : onSelectAll}>
+                {allSelected ? 'Deselect all' : 'Select all'}
+            </button>
+            <div className="oz-selection-count">{selectedCount} selected</div>
+            <button className="oz-selection-header-button mod-cta" onClick={onDone}>
+                Done
+            </button>
+        </div>
+    );
+};
+
+const SelectionActionBar = (props: {
+    plugin: FileTreeAlternativePlugin;
+    selectedFiles: string[];
+    ozPinnedFiles: OZFile[];
+    setOzPinnedFiles: SetterOrUpdater<OZFile[]>;
+    onDone: () => void;
+}) => {
+    const { plugin, selectedFiles, ozPinnedFiles, setOzPinnedFiles, onDone } = props;
+    const nothingSelected = selectedFiles.length === 0;
+    const allPinned = FileViewHandlers.allFilesPinned(selectedFiles, ozPinnedFiles);
+
+    return (
+        <div className="oz-selection-action-bar">
+            <button
+                className="oz-selection-action"
+                disabled={nothingSelected}
+                onClick={() => {
+                    FileViewHandlers.moveFiles({ plugin, filePaths: selectedFiles });
+                    onDone();
+                }}>
+                <Icons.MdDriveFileMove size={20} />
+                <span>Move</span>
+            </button>
+            <button
+                className="oz-selection-action"
+                disabled={nothingSelected}
+                onClick={() => {
+                    FileViewHandlers.togglePinFiles({ plugin, filePaths: selectedFiles, ozPinnedFiles, setOzPinnedFiles });
+                    onDone();
+                }}>
+                <Icons.FaThumbtack size={17} />
+                <span>{allPinned ? 'Unpin' : 'Pin'}</span>
+            </button>
+            <button
+                className="oz-selection-action mod-warning"
+                disabled={nothingSelected}
+                onClick={() => FileViewHandlers.deleteFiles({ plugin, filePaths: selectedFiles, onDeleted: onDone })}>
+                <Icons.BiTrash size={20} />
+                <span>Delete</span>
+            </button>
+        </div>
+    );
+};

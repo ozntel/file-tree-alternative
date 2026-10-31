@@ -1,5 +1,12 @@
 # Release Updates
 
+## Version 2.6.3
+
+- Note Previews in File List
+- Mobile Usability Improvements
+- Selection Mode for Multiselect
+- Release Automation with GitHub Actions
+
 ## Version 2.6.2
 
 - Optional Fuzzy search by using "~"

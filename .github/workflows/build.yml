@@ -1,0 +1,22 @@
+# Makes sure every pull request to main still compiles before it can trigger a release.
+name: Build
+
+on:
+    pull_request:
+        branches: [main]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Build
+              run: |
+                  npm install --no-audit --no-fund
+                  npm run build
+                  test -s dist/main.js
