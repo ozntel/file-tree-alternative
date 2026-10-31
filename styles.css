@@ -635,6 +635,95 @@ svg.oz-folder-toggle path {
     vertical-align: middle;
 }
 
+/* Selection Mode */
+
+.oz-selection-header {
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+}
+
+.oz-selection-count {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-normal);
+    white-space: nowrap;
+}
+
+button.oz-selection-header-button {
+    font-size: 12px;
+    padding: 2px 10px;
+    height: auto;
+    min-height: 24px;
+    white-space: nowrap;
+}
+
+.oz-nav-file-checkbox {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: middle;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-faint);
+    color: var(--text-on-accent);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.oz-nav-file-checkbox.is-checked {
+    background-color: var(--interactive-accent);
+    border-color: var(--interactive-accent);
+}
+
+/* The checkbox shows the selection, keep selected rows readable instead of bold */
+div.oz-nav-file.oz-nav-file-selection-mode.is-selected div.oz-nav-file-title-content {
+    font-weight: normal;
+}
+
+.oz-selection-action-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-around;
+    gap: 4px;
+    margin-top: 6px;
+    padding: 4px;
+    border-radius: 8px;
+    background: var(--oz-fta-header-background-color);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0px -1px 6px rgba(0, 0, 0, 0.12);
+}
+
+button.oz-selection-action {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    height: auto;
+    padding: 4px 2px;
+    font-size: 11px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--text-normal);
+}
+
+button.oz-selection-action.mod-warning {
+    color: var(--text-error);
+}
+
+button.oz-selection-action:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
 /* Mobile Adjustments */
 
 /* No text selection, iOS callout or grey tap flash while holding rows for the context menu */
@@ -746,4 +835,25 @@ svg.oz-folder-toggle path {
 .is-mobile #file-tree-divider-horizontal {
     width: 14px;
     margin-left: 2px;
+}
+
+.is-mobile .oz-nav-file-checkbox {
+    width: 22px;
+    height: 22px;
+    margin-right: 10px;
+}
+
+.is-mobile button.oz-selection-header-button {
+    font-size: 14px;
+    min-height: 32px;
+    padding: 4px 12px;
+}
+
+.is-mobile .oz-selection-count {
+    font-size: 15px;
+}
+
+.is-mobile button.oz-selection-action {
+    font-size: 12px;
+    padding: 8px 2px;
 }
