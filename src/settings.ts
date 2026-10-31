@@ -8,6 +8,7 @@ export type SortType = 'name' | 'last-update' | 'created' | 'file-size';
 export type FolderSortType = 'name' | 'item-number';
 export type DeleteFileOption = 'trash' | 'permanent' | 'system-trash';
 export type EvernoteViewOption = 'Disabled' | 'Horizontal' | 'Vertical';
+export type FileListStyle = 'compact' | 'preview';
 
 export interface FileTreeAlternativePluginSettings {
     openViewOnStart: boolean;
@@ -38,6 +39,12 @@ export interface FileTreeAlternativePluginSettings {
     deleteFileOption: DeleteFileOption;
     showFileNameAsFullPath: boolean;
     bookmarksEvents: boolean;
+    fileListStyle: FileListStyle;
+    previewLines: number;
+    previewShowThumbnail: boolean;
+    previewShowTags: boolean;
+    previewShowAliases: boolean;
+    previewPropertyKey: string;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -69,6 +76,12 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     deleteFileOption: 'trash',
     showFileNameAsFullPath: false,
     bookmarksEvents: false,
+    fileListStyle: 'preview',
+    previewLines: 2,
+    previewShowThumbnail: true,
+    previewShowTags: true,
+    previewShowAliases: true,
+    previewPropertyKey: '',
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -237,6 +250,87 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
 
         /* ------------- File Pane Settings ------------- */
         containerEl.createEl('h2', { text: 'File Pane Settings' });
+
+        new Setting(containerEl)
+            .setName('File List Style')
+            .setDesc('Compact shows only file names. Preview also shows the first lines of each note, the date, tags and the first image.')
+            .addDropdown((dropdown) => {
+                dropdown
+                    .addOption('compact', 'Compact')
+                    .addOption('preview', 'Preview')
+                    .setValue(this.plugin.settings.fileListStyle)
+                    .onChange((value: FileListStyle) => {
+                        this.plugin.settings.fileListStyle = value;
+                        this.plugin.saveSettings();
+                        this.refreshView();
+                        this.display();
+                    });
+            });
+
+        if (this.plugin.settings.fileListStyle === 'preview') {
+            new Setting(containerEl)
+                .setName('Preview Lines')
+                .setDesc('Number of text lines shown under each note name')
+                .addDropdown((dropdown) => {
+                    dropdown
+                        .addOption('1', '1')
+                        .addOption('2', '2')
+                        .addOption('3', '3')
+                        .setValue(String(this.plugin.settings.previewLines))
+                        .onChange((value) => {
+                            this.plugin.settings.previewLines = Number(value);
+                            this.plugin.saveSettings();
+                            this.refreshView();
+                        });
+                });
+
+            new Setting(containerEl)
+                .setName('Preview Thumbnails')
+                .setDesc('Show the first embedded image of a note (or the image file itself) as a thumbnail')
+                .addToggle((toggle) =>
+                    toggle.setValue(this.plugin.settings.previewShowThumbnail).onChange((value) => {
+                        this.plugin.settings.previewShowThumbnail = value;
+                        this.plugin.saveSettings();
+                        this.refreshView();
+                    })
+                );
+
+            new Setting(containerEl)
+                .setName('Preview Tags')
+                .setDesc('Show the tags of a note next to its date')
+                .addToggle((toggle) =>
+                    toggle.setValue(this.plugin.settings.previewShowTags).onChange((value) => {
+                        this.plugin.settings.previewShowTags = value;
+                        this.plugin.saveSettings();
+                        this.refreshView();
+                    })
+                );
+
+            new Setting(containerEl)
+                .setName('Preview Aliases')
+                .setDesc('Show the aliases of a note next to its date')
+                .addToggle((toggle) =>
+                    toggle.setValue(this.plugin.settings.previewShowAliases).onChange((value) => {
+                        this.plugin.settings.previewShowAliases = value;
+                        this.plugin.saveSettings();
+                        this.refreshView();
+                    })
+                );
+
+            new Setting(containerEl)
+                .setName('Preview Property')
+                .setDesc('Name of a frontmatter (YAML) property to show next to the date, e.g. "status" or "author". Leave empty to show none.')
+                .addText((text) =>
+                    text
+                        .setPlaceholder('status')
+                        .setValue(this.plugin.settings.previewPropertyKey)
+                        .onChange((value) => {
+                            this.plugin.settings.previewPropertyKey = value.trim();
+                            this.plugin.saveSettings();
+                            this.refreshView();
+                        })
+                );
+        }
 
         new Setting(containerEl)
             .setName('Include Files From Subfolders to the File List')

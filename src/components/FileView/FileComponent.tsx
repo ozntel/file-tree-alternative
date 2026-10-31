@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
+import { TFile } from 'obsidian';
 import * as Icons from 'utils/icons';
 import FileTreeAlternativePlugin from 'main';
 import { OZFile } from 'utils/types';
@@ -10,6 +11,8 @@ import useForceUpdate from 'hooks/ForceUpdate';
 import useLongPress from 'hooks/useLongPress';
 import * as FileViewHandlers from 'components/FileView/handlers';
 import LazyLoad from 'react-lazy-load';
+import usePreview from 'hooks/usePreview';
+import * as PreviewCache from 'utils/previewCache';
 
 interface FilesProps {
     plugin: FileTreeAlternativePlugin;
@@ -123,6 +126,28 @@ export function FileComponent(props: FilesProps) {
     };
 
     const topIconSize = 19;
+
+    const previewMode = plugin.settings.fileListStyle === 'preview';
+    const previewOptions: PreviewOptions = useMemo(
+        () => ({
+            lines: plugin.settings.previewLines,
+            showThumbnail: plugin.settings.previewShowThumbnail,
+            showTags: plugin.settings.previewShowTags,
+            showAliases: plugin.settings.previewShowAliases,
+            propertyKey: plugin.settings.previewPropertyKey,
+            dateField: plugin.settings.sortFilesBy === 'created' ? 'ctime' : 'mtime',
+        }),
+        [
+            plugin.settings.previewLines,
+            plugin.settings.previewShowThumbnail,
+            plugin.settings.previewShowTags,
+            plugin.settings.previewShowAliases,
+            plugin.settings.previewPropertyKey,
+            plugin.settings.sortFilesBy,
+        ]
+    );
+    // Placeholder height for rows outside of the viewport: title + text lines + date line
+    const rowHeight = previewMode ? 22 + previewOptions.lines * 17 + 22 : 22;
 
     return (
         <React.Fragment>
@@ -258,7 +283,7 @@ export function FileComponent(props: FilesProps) {
                                 }`}>
                                 {filesToList.map((file) => {
                                     return (
-                                        <LazyLoad height={22} key={file.path}>
+                                        <LazyLoad height={rowHeight} key={file.path}>
                                             <NavFile
                                                 file={file}
                                                 plugin={plugin}
@@ -267,6 +292,7 @@ export function FileComponent(props: FilesProps) {
                                                 isPinned={pinnedPaths.has(file.path)}
                                                 iconBeforeFileName={plugin.settings.iconBeforeFileName}
                                                 showFileNameAsFullPath={plugin.settings.showFileNameAsFullPath}
+                                                previewOptions={previewMode ? previewOptions : null}
                                                 listStateRef={listStateRef}
                                                 setSelectedFiles={setSelectedFiles}
                                                 setOzPinnedFiles={setOzPinnedFiles}
@@ -289,6 +315,7 @@ export function FileComponent(props: FilesProps) {
 /* ----------- SINGLE NAVFILE ELEMENT ----------- */
 
 type NavFileListState = { filesToList: OZFile[]; selectedFiles: string[]; ozPinnedFiles: OZFile[] };
+type PreviewOptions = { lines: number; showThumbnail: boolean; showTags: boolean; showAliases: boolean; propertyKey: string; dateField: 'mtime' | 'ctime' };
 
 // Memoized: a row only re-renders when its own props change (e.g. it becomes active/selected/pinned),
 // not on every selection or active file change in the list
@@ -300,6 +327,7 @@ const NavFile = React.memo((props: {
     isPinned: boolean;
     iconBeforeFileName: boolean;
     showFileNameAsFullPath: boolean;
+    previewOptions: PreviewOptions | null;
     listStateRef: React.MutableRefObject<NavFileListState>;
     setSelectedFiles: SetterOrUpdater<string[]>;
     setOzPinnedFiles: SetterOrUpdater<OZFile[]>;
@@ -314,6 +342,7 @@ const NavFile = React.memo((props: {
         isPinned,
         iconBeforeFileName,
         showFileNameAsFullPath,
+        previewOptions,
         listStateRef,
         setSelectedFiles,
         setOzPinnedFiles,
@@ -402,7 +431,9 @@ const NavFile = React.memo((props: {
 
     return (
         <div
-            className={'oz-nav-file' + (isActive ? ' is-active' : '') + (isSelected ? ' is-selected' : '')}
+            className={
+                'oz-nav-file' + (previewOptions ? ' oz-nav-file-preview-mode' : '') + (isActive ? ' is-active' : '') + (isSelected ? ' is-selected' : '')
+            }
             key={file.path}
             draggable
             onDragStart={(e) =>
@@ -434,6 +465,56 @@ const NavFile = React.memo((props: {
                 {isPinned && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
                 {file.extension !== 'md' && <span className="oz-nav-file-tag">{file.extension}</span>}
             </div>
+            {previewOptions && <NavFilePreview file={file} plugin={plugin} options={previewOptions} />}
         </div>
     );
 });
+
+/* ----------- NAVFILE PREVIEW (excerpt, date, tags, thumbnail) ----------- */
+
+const NavFilePreview = (props: { file: OZFile; plugin: FileTreeAlternativePlugin; options: PreviewOptions }) => {
+    const { file, plugin, options } = props;
+    const preview = usePreview(file.path, plugin.app);
+
+    const thumbnailSrc = useMemo(() => {
+        if (!options.showThumbnail || !preview?.imagePath) return null;
+        const imageFile = plugin.app.vault.getAbstractFileByPath(preview.imagePath);
+        return imageFile instanceof TFile ? plugin.app.vault.getResourcePath(imageFile) : null;
+    }, [options.showThumbnail, preview?.imagePath]);
+
+    const timestamp = preview ? preview[options.dateField] : file.stat[options.dateField];
+    const tags = options.showTags && preview ? preview.tags.slice(0, 3) : [];
+    const aliases = options.showAliases && preview ? preview.aliases.slice(0, 2) : [];
+    const propertyValue = preview ? PreviewCache.getPropertyValue(preview.frontmatter, options.propertyKey) : '';
+
+    return (
+        <div className="oz-nav-file-preview">
+            <div className="oz-nav-file-preview-body">
+                {preview?.excerpt && (
+                    <div className="oz-nav-file-preview-excerpt" style={{ WebkitLineClamp: options.lines }}>
+                        {preview.excerpt}
+                    </div>
+                )}
+                <div className="oz-nav-file-preview-meta">
+                    <span className="oz-nav-file-preview-date">{PreviewCache.formatPreviewDate(timestamp)}</span>
+                    {propertyValue && (
+                        <span className="oz-nav-file-preview-property" aria-label={options.propertyKey}>
+                            {propertyValue}
+                        </span>
+                    )}
+                    {aliases.map((alias) => (
+                        <span className="oz-nav-file-preview-alias" key={'alias-' + alias} aria-label="Alias">
+                            {alias}
+                        </span>
+                    ))}
+                    {tags.map((tag) => (
+                        <span className="oz-nav-file-preview-tag" key={tag}>
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+            </div>
+            {thumbnailSrc && <img className="oz-nav-file-preview-thumbnail" src={thumbnailSrc} loading="lazy" draggable={false} alt="" />}
+        </div>
+    );
+};

@@ -66,6 +66,13 @@ settings:
         format: hex
         default: '#'
     -
+        id: oz-fta-file-preview-font-size
+        title: File Pane | Preview Text Font Size
+        description: Set the font size of note excerpts in Preview file list style
+        type: variable-number
+        default: 12
+        format: px
+    -
         id: oz-fta-file-pane-foldername-color
         title: File Pane | Header Folder Name Color
         description: Set the color of folder name in the file pane
@@ -120,6 +127,7 @@ settings:
 .theme-dark {
     --oz-fta-folder-font-size: 13px;
     --oz-fta-file-font-size: 12px;
+    --oz-fta-file-preview-font-size: 12px;
     --oz-fta-folder-icon-color: var(--interactive-accent);
     --oz-fta-folder-indendation-guide-color: var(--text-muted);
     --oz-fta-header-background-color: var(--background-secondary-alt);
@@ -223,6 +231,113 @@ div.oz-nav-file.is-selected div.oz-nav-file-title-content {
     background-color: var(--oz-fta-file-pane-active-file-background-color);
     color: var(--oz-fta-all-panes-active-text-color);
     font-weight: bold;
+}
+
+/* Preview File List Style */
+
+.oz-nav-file.oz-nav-file-preview-mode {
+    padding: 5px 4px 6px 4px;
+    cursor: pointer;
+}
+
+.oz-nav-file-preview-mode .oz-nav-file-title {
+    color: var(--text-normal);
+    font-weight: 600;
+    padding: 0px;
+}
+
+.oz-nav-file-preview {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.oz-nav-file-preview-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.oz-nav-file-preview-excerpt {
+    color: var(--text-muted);
+    font-size: var(--oz-fta-file-preview-font-size);
+    line-height: 17px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}
+
+.oz-nav-file-preview-meta {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-top: 3px;
+    font-size: calc(var(--oz-fta-file-preview-font-size) - 1px);
+    color: var(--text-faint);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.oz-nav-file-preview-date {
+    flex-shrink: 0;
+    margin-right: 2px;
+}
+
+.oz-nav-file-preview-property {
+    color: var(--color-blue, #3b82f6);
+    background-color: rgba(var(--color-blue-rgb, 59, 130, 246), 0.15);
+    border-radius: 4px;
+    padding: 0px 6px;
+    flex-shrink: 1;
+    min-width: 0;
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oz-nav-file-preview-alias {
+    color: var(--color-orange, #e08a2e);
+    background-color: rgba(var(--color-orange-rgb, 224, 138, 46), 0.15);
+    border-radius: 8px;
+    padding: 0px 6px;
+    font-style: italic;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oz-nav-file-preview-tag {
+    color: var(--tag-color, var(--text-accent));
+    background-color: var(--tag-background, var(--background-modifier-hover));
+    border-radius: 8px;
+    padding: 0px 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.oz-nav-file-preview-thumbnail {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: var(--background-secondary-alt);
+}
+
+div.oz-nav-file.oz-nav-file-preview-mode.is-active .oz-nav-file-preview,
+div.oz-nav-file.oz-nav-file-preview-mode.is-selected .oz-nav-file-preview {
+    font-weight: normal;
+}
+
+div.oz-nav-file.oz-nav-file-preview-mode.is-active .oz-nav-file-preview-excerpt,
+div.oz-nav-file.oz-nav-file-preview-mode.is-selected .oz-nav-file-preview-excerpt {
+    color: var(--text-normal);
+    opacity: 0.8;
+}
+
+.is-mobile .oz-nav-file.oz-nav-file-preview-mode {
+    padding: 8px 4px 9px 4px;
 }
 
 .is-folder-active {

@@ -4,6 +4,7 @@ import { ZoomInIcon, ZoomOutIcon, ZoomOutDoubleIcon, LocationIcon, SpaceIcon } f
 import { FileTreeAlternativePluginSettings, FileTreeAlternativePluginSettingsTab, DEFAULT_SETTINGS } from './settings';
 import { VaultChange, eventTypes } from 'utils/types';
 import { getBookmarkTitle } from 'utils/Utils';
+import * as PreviewCache from 'utils/previewCache';
 
 export default class FileTreeAlternativePlugin extends Plugin {
     settings: FileTreeAlternativePluginSettings;
@@ -102,6 +103,8 @@ export default class FileTreeAlternativePlugin extends Plugin {
             this.registerEvent(this.app.vault.on('delete', this.onDelete));
             this.registerEvent(this.app.vault.on('modify', this.onModify));
             this.registerEvent(this.app.vault.on('rename', this.onRename));
+            // Note previews depend on content, tags and embeds, which are all up to date once the metadata cache changed
+            this.registerEvent(this.app.metadataCache.on('changed', (file) => PreviewCache.invalidatePreview(file.path)));
         });
 
         // Ribbon Icon For Opening
@@ -113,10 +116,16 @@ export default class FileTreeAlternativePlugin extends Plugin {
         this.detachFileTreeLeafs();
         // Vault event listeners are removed automatically via registerEvent
         this.bookmarksRemoveEventListener();
+        PreviewCache.clearPreviewCache();
     }
 
     async loadSettings() {
-        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+        const savedSettings = await this.loadData();
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, savedSettings);
+        // Preview is the default for new installs only, existing users keep the compact list they are used to
+        if (savedSettings && savedSettings.fileListStyle === undefined) {
+            this.settings.fileListStyle = 'compact';
+        }
     }
 
     async saveSettings() {
@@ -189,9 +198,15 @@ export default class FileTreeAlternativePlugin extends Plugin {
     };
 
     onCreate = (file: TAbstractFile) => this.triggerVaultChangeEvent(file, 'create', '');
-    onDelete = (file: TAbstractFile) => this.triggerVaultChangeEvent(file, 'delete', '');
+    onDelete = (file: TAbstractFile) => {
+        PreviewCache.removePreview(file.path);
+        this.triggerVaultChangeEvent(file, 'delete', '');
+    };
     onModify = (file: TAbstractFile) => this.triggerVaultChangeEvent(file, 'modify', '');
-    onRename = (file: TAbstractFile, oldPath: string) => this.triggerVaultChangeEvent(file, 'rename', oldPath);
+    onRename = (file: TAbstractFile, oldPath: string) => {
+        PreviewCache.removePreview(oldPath);
+        this.triggerVaultChangeEvent(file, 'rename', oldPath);
+    };
 
     refreshIconRibbon = () => {
         this.ribbonIconEl?.remove();
