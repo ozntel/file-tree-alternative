@@ -169,8 +169,10 @@ settings:
     opacity: 1;
 }
 
-.oz-nav-action-button:hover {
-    opacity: 0.6;
+@media (hover: hover) {
+    .oz-nav-action-button:hover {
+        opacity: 0.6;
+    }
 }
 
 .oz-nav-action-button svg {
@@ -398,11 +400,17 @@ div.workspace-leaf-content[data-type='file-tree-view'] > div.view-content {
     padding-top: 3px !important;
 }
 
-.drag-entered,
-.oz-folder-element:hover,
-.oz-nav-file:hover {
+.drag-entered {
     background-color: var(--background-secondary-alt);
     color: var(--text-normal);
+}
+
+@media (hover: hover) {
+    .oz-folder-element:hover,
+    .oz-nav-file:hover {
+        background-color: var(--background-secondary-alt);
+        color: var(--text-normal);
+    }
 }
 
 .oz-nav-file {
@@ -527,6 +535,7 @@ div.oz-folder-name.is-root-folder {
 }
 
 #file-tree-divider {
+    touch-action: none;
     height: 3.8px;
     opacity: 0.3;
     cursor: row-resize;
@@ -539,8 +548,10 @@ div#file-tree-divider.active-divider {
     border-bottom: 0.5px solid var(--interactive-accent);
 }
 
-#file-tree-divider:hover {
-    background-color: var(--text-muted);
+@media (hover: hover) {
+    #file-tree-divider:hover {
+        background-color: var(--text-muted);
+    }
 }
 
 .file-tree-container-horizontal {
@@ -566,6 +577,7 @@ div#file-tree-divider.active-divider {
 }
 
 #file-tree-divider-horizontal {
+    touch-action: none;
     margin-left: 5px;
     width: 3.8px;
     opacity: 0.3;
@@ -579,8 +591,10 @@ div#file-tree-divider-horizontal.active-divider {
     border-bottom: 0.5px solid var(--interactive-accent);
 }
 
-#file-tree-divider-horizontal:hover {
-    background-color: var(--text-muted);
+@media (hover: hover) {
+    #file-tree-divider-horizontal:hover {
+        background-color: var(--text-muted);
+    }
 }
 
 .file-tree-header-fixed {
@@ -623,12 +637,45 @@ svg.oz-folder-toggle path {
 
 /* Mobile Adjustments */
 
-.is-mobile .oz-nav-file-title {
-    line-height: 21px;
+/* No text selection, iOS callout or grey tap flash while holding rows for the context menu */
+.is-mobile .oz-nav-file,
+.is-mobile .oz-folder-element,
+.is-mobile .oz-nav-action-button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.is-mobile .oz-flex-container {
-    height: 31px;
+/* Tap feedback instead of hover */
+.is-mobile .oz-nav-file:active,
+.is-mobile .oz-folder-element:active {
+    background-color: var(--background-modifier-hover);
+}
+
+/* Rows of ~38px so they can be hit reliably with a finger */
+.is-mobile .oz-nav-file-title {
+    line-height: 21px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.is-mobile .oz-nav-file-preview-mode .oz-nav-file-title {
+    padding-top: 0px;
+    padding-bottom: 2px;
+}
+
+.is-mobile div.oz-nav-file-title .oz-nav-file-title-content {
+    font-size: calc(var(--oz-fta-file-font-size) + 3px);
+}
+
+.is-mobile .oz-nav-file-preview-excerpt {
+    font-size: calc(var(--oz-fta-file-preview-font-size) + 1px);
+    line-height: 19px;
+}
+
+.is-mobile .oz-folder-element {
+    padding: 7px 0px;
 }
 
 .is-mobile .oz-folder-name.is-root-folder {
@@ -636,17 +683,67 @@ svg.oz-folder-toggle path {
 }
 
 .is-mobile .oz-folder-name {
-    font-size: var(--oz-fta-folder-font-size);
+    font-size: calc(var(--oz-fta-folder-font-size) + 2px);
 }
 
-.is-mobile div.oz-nav-file-title .nav-file-title-content {
-    font-size: calc(var(--oz-fta-file-font-size) + 3px);
+/* Larger expand/collapse target around the small chevron */
+.is-mobile .oz-icon-div {
+    padding: 6px 4px 6px 6px;
+    margin: -6px 0px -6px -6px;
 }
 
-.is-mobile .oz-input-container > input {
-    height: 33px;
+.is-mobile .oz-folder-toggle {
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 8px;
+}
+
+/* Header buttons: more room between icons so neighbours are not hit by mistake */
+.is-mobile .oz-flex-container {
+    min-height: 40px;
+    align-items: center;
+}
+
+.is-mobile .oz-nav-action-button {
+    padding: 6px;
+    margin-left: 4px;
 }
 
 .is-mobile .oz-nav-action-button svg {
     transform: scale(1.2);
+}
+
+.is-mobile .oz-folders-action-items {
+    display: flex;
+    justify-content: space-around;
+    padding: 6px 4px;
+}
+
+.is-mobile .oz-folders-action-items .oz-nav-action-button {
+    width: 26px;
+    height: 26px;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: content-box;
+}
+
+/* 16px avoids iOS zooming into the search box on focus */
+.is-mobile .oz-input-container {
+    height: 38px;
+}
+
+.is-mobile .oz-input-container > input {
+    height: 36px;
+    font-size: 16px;
+}
+
+/* Wider grab area for the split divider, the visible line stays thin */
+.is-mobile #file-tree-divider {
+    height: 14px;
+    margin-bottom: 4px;
+}
+
+.is-mobile #file-tree-divider-horizontal {
+    width: 14px;
+    margin-left: 2px;
 }

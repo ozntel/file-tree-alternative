@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Dropzone from 'react-dropzone';
-import { TFile } from 'obsidian';
+import { TFile, Platform } from 'obsidian';
 import * as Icons from 'utils/icons';
 import FileTreeAlternativePlugin from 'main';
 import { OZFile } from 'utils/types';
@@ -146,8 +146,8 @@ export function FileComponent(props: FilesProps) {
             plugin.settings.sortFilesBy,
         ]
     );
-    // Placeholder height for rows outside of the viewport: title + text lines + date line
-    const rowHeight = previewMode ? 22 + previewOptions.lines * 17 + 22 : 22;
+    // Placeholder height for rows outside of the viewport: title + text lines + date line (rows are taller on mobile)
+    const rowHeight = (previewMode ? 22 + previewOptions.lines * 17 + 22 : 22) + (Platform.isMobile ? 16 : 0);
 
     return (
         <React.Fragment>
@@ -435,7 +435,8 @@ const NavFile = React.memo((props: {
                 'oz-nav-file' + (previewOptions ? ' oz-nav-file-preview-mode' : '') + (isActive ? ' is-active' : '') + (isSelected ? ' is-selected' : '')
             }
             key={file.path}
-            draggable
+            // On phones a held finger would start a drag instead of opening the context menu
+            draggable={!Platform.isPhone}
             onDragStart={(e) =>
                 FileViewHandlers.dragStarted({
                     e,

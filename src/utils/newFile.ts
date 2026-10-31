@@ -1,7 +1,7 @@
 import FileTreeAlternativePlugin from 'main';
 import { stripIndents } from 'common-tags';
 import dayjs from 'dayjs';
-import { TFile, TFolder, App } from 'obsidian';
+import { TFile, TFolder, App, Platform } from 'obsidian';
 import { eventTypes, OZFile } from 'utils/types';
 
 export const openFile = (props: { file: OZFile; app: App; newLeaf: boolean; leafBySplit?: boolean }) => {
@@ -14,6 +14,18 @@ export const openFile = (props: { file: OZFile; app: App; newLeaf: boolean; leaf
         focus: true,
     });
     leaf.openFile(fileToOpen as TFile, { eState: { focus: true } });
+    closeSidebarOnPhone(app);
+};
+
+// On phones the sidebar is a drawer covering the note, close it like the core file explorer does
+export const closeSidebarOnPhone = (app: App) => {
+    if (!Platform.isPhone) return;
+    const { leftSplit, rightSplit } = app.workspace;
+    for (const treeLeaf of app.workspace.getLeavesOfType('file-tree-view')) {
+        const root = treeLeaf.getRoot();
+        if (root === leftSplit) leftSplit.collapse();
+        else if (root === rightSplit) rightSplit.collapse();
+    }
 };
 
 export const getFileCreateString = (params: { plugin: FileTreeAlternativePlugin; fileName: string }): string => {

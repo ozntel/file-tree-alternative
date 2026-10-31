@@ -1,4 +1,4 @@
-import { TFolder, Notice, normalizePath } from 'obsidian';
+import { TFolder, Notice, normalizePath, Platform } from 'obsidian';
 import React, { useState, useMemo, useEffect } from 'react';
 import FileTreeAlternativePlugin from 'main';
 import Dropzone from 'react-dropzone';
@@ -192,7 +192,8 @@ export default function Tree(props: TreeProps) {
                     <div
                         style={{ ...props.style }}
                         className="treeview"
-                        draggable
+                        // On phones a held finger would start a drag instead of opening the context menu
+                        draggable={!Platform.isPhone}
                         onDragStart={(e) => onFolderDragStart(e, props.folder)}
                         onDrop={(e) => dropFileOrFolder(e)}
                         onDragOver={(e) => {
@@ -211,8 +212,9 @@ export default function Tree(props: TreeProps) {
                             <input {...getInputProps()} />
 
                             <div className="oz-folder-line">
-                                <div className="oz-icon-div">
-                                    <Icon className="oz-folder-toggle" style={{ opacity: props.children ? 1 : 0.3 }} onClick={toggle} />
+                                {/* Click on the wrapper so its padding enlarges the tap area on mobile */}
+                                <div className="oz-icon-div" onClick={toggle}>
+                                    <Icon className="oz-folder-toggle" style={{ opacity: props.children ? 1 : 0.3 }} />
                                 </div>
 
                                 <div
