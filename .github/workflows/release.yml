@@ -1,0 +1,84 @@
+# Publishes a GitHub release whenever main gets a manifest.json version that has no tag yet,
+# i.e. right after a pull request created by `npm run release` is merged.
+name: Release
+
+on:
+    push:
+        branches: [main]
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+concurrency:
+    group: release
+    cancel-in-progress: false
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Check if this version is already released
+              id: version
+              run: |
+                  VERSION=$(node -p "require('./manifest.json').version")
+                  echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+                  if git rev-parse -q --verify "refs/tags/$VERSION" >/dev/null; then
+                      echo "Tag $VERSION already exists, nothing to release."
+                      echo "release=false" >> "$GITHUB_OUTPUT"
+                  else
+                      echo "release=true" >> "$GITHUB_OUTPUT"
+                  fi
+
+            - name: Check versions are consistent
+              if: steps.version.outputs.release == 'true'
+              run: |
+                  VERSION=${{ steps.version.outputs.version }}
+                  PACKAGE_VERSION=$(node -p "require('./package.json').version")
+                  IN_VERSIONS=$(node -p "Object.keys(require('./versions.json')).includes('$VERSION')")
+                  if [ "$PACKAGE_VERSION" != "$VERSION" ] || [ "$IN_VERSIONS" != "true" ]; then
+                      echo "::error::manifest.json ($VERSION), package.json ($PACKAGE_VERSION) and versions.json must have the same version"
+                      exit 1
+                  fi
+
+            - uses: actions/setup-node@v4
+              if: steps.version.outputs.release == 'true'
+              with:
+                  node-version: 22
+
+            - name: Build
+              if: steps.version.outputs.release == 'true'
+              run: |
+                  npm install --no-audit --no-fund
+                  npm run build
+
+            - name: Prepare release notes and assets
+              if: steps.version.outputs.release == 'true'
+              run: |
+                  VERSION=${{ steps.version.outputs.version }}
+                  awk -v heading="## Version $VERSION" '
+                      { sub(/\r$/, "") }
+                      $0 == heading { found = 1; next }
+                      found && /^## / { exit }
+                      found { print }
+                  ' Releases.md > release-notes.md
+                  if [ -z "$(tr -d '[:space:]' < release-notes.md)" ]; then
+                      echo "Version $VERSION" > release-notes.md
+                  fi
+                  mkdir release
+                  cp dist/main.js manifest.json styles.css release/
+
+            - name: Create GitHub release
+              if: steps.version.outputs.release == 'true'
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  VERSION=${{ steps.version.outputs.version }}
+                  gh release create "$VERSION" release/main.js release/manifest.json release/styles.css \
+                      --target "$GITHUB_SHA" \
+                      --title "$VERSION" \
+                      --notes-file release-notes.md
