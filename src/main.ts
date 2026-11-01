@@ -36,6 +36,7 @@ export default class FileTreeAlternativePlugin extends Plugin {
         // Load Settings
         this.addSettingTab(new FileTreeAlternativePluginSettingsTab(this.app, this));
         await this.loadSettings();
+        this.refreshBodyClasses();
 
         // Register File Tree View
         this.registerView(this.VIEW_TYPE, (leaf) => {
@@ -117,7 +118,13 @@ export default class FileTreeAlternativePlugin extends Plugin {
         // Vault event listeners are removed automatically via registerEvent
         this.bookmarksRemoveEventListener();
         PreviewCache.clearPreviewCache();
+        document.body.removeClass('oz-fta-touch-friendly');
     }
+
+    // Body classes for styles that depend on settings
+    refreshBodyClasses = () => {
+        document.body.toggleClass('oz-fta-touch-friendly', this.settings.mobileTouchFriendly);
+    };
 
     async loadSettings() {
         const savedSettings = await this.loadData();

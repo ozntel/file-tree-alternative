@@ -45,6 +45,7 @@ export interface FileTreeAlternativePluginSettings {
     previewShowTags: boolean;
     previewShowAliases: boolean;
     previewPropertyKey: string;
+    mobileTouchFriendly: boolean;
 }
 
 export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
@@ -82,6 +83,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     previewShowTags: true,
     previewShowAliases: true,
     previewPropertyKey: '',
+    mobileTouchFriendly: false,
 };
 
 export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
@@ -153,6 +155,18 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
                 toggle.setValue(this.plugin.settings.openViewOnStart).onChange((value) => {
                     this.plugin.settings.openViewOnStart = value;
                     this.plugin.saveSettings();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Larger Touch Targets on Mobile')
+            .setDesc('Turn on for taller rows, bigger text and more space between buttons on phones and tablets. Easier to tap, but fewer files fit on the screen.')
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.mobileTouchFriendly).onChange((value) => {
+                    this.plugin.settings.mobileTouchFriendly = value;
+                    this.plugin.saveSettings();
+                    this.plugin.refreshBodyClasses();
+                    this.refreshView();
                 })
             );
 
