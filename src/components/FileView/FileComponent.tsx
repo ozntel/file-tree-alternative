@@ -161,8 +161,9 @@ export function FileComponent(props: FilesProps) {
             plugin.settings.sortFilesBy,
         ]
     );
-    // Placeholder height for rows outside of the viewport: title + text lines + date line (rows are taller on mobile)
-    const rowHeight = (previewMode ? 22 + previewOptions.lines * 17 + 22 : 22) + (Platform.isMobile ? 16 : 0);
+    // Placeholder height for rows not loaded yet: title + text lines + date line (taller with larger touch targets).
+    // Loaded rows size to their content, see .LazyLoad.is-visible in styles.css
+    const rowHeight = (previewMode ? 22 + previewOptions.lines * 17 + 22 : 22) + (Platform.isMobile && plugin.settings.mobileTouchFriendly ? 16 : 0);
 
     return (
         <React.Fragment>
@@ -479,6 +480,22 @@ const NavFile = React.memo((props: {
         }
     };
 
+    const titleElement = (
+        <div className="oz-nav-file-title" data-path={file.path}>
+            <div className="oz-nav-file-title-content">
+                {selectionMode && (
+                    <span className={'oz-nav-file-checkbox' + (isSelected ? ' is-checked' : '')} role="checkbox" aria-checked={isSelected}>
+                        {isSelected && <Icons.BiCheck size={14} />}
+                    </span>
+                )}
+                {iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
+                {fileDisplayName}
+            </div>
+            {isPinned && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
+            {file.extension !== 'md' && <span className="oz-nav-file-tag">{file.extension}</span>}
+        </div>
+    );
+
     return (
         <div
             className={
@@ -512,28 +529,20 @@ const NavFile = React.memo((props: {
             }
             onMouseLeave={(e) => FileViewHandlers.mouseLeftFile({ e, file, setHoverActive })}
             {...longPressEvents}>
-            <div className="oz-nav-file-title" data-path={file.path}>
-                <div className="oz-nav-file-title-content">
-                    {selectionMode && (
-                        <span className={'oz-nav-file-checkbox' + (isSelected ? ' is-checked' : '')} role="checkbox" aria-checked={isSelected}>
-                            {isSelected && <Icons.BiCheck size={14} />}
-                        </span>
-                    )}
-                    {iconBeforeFileName && <FileIcon className="oz-nav-file-icon" size={15} />}
-                    {fileDisplayName}
-                </div>
-                {isPinned && <Icons.FaThumbtack className="oz-nav-file-tag" size={14} />}
-                {file.extension !== 'md' && <span className="oz-nav-file-tag">{file.extension}</span>}
-            </div>
-            {previewOptions && <NavFilePreview file={file} plugin={plugin} options={previewOptions} />}
+            {previewOptions ? (
+                // The preview renders the title itself so its thumbnail can sit next to the title and the text
+                <NavFilePreview file={file} plugin={plugin} options={previewOptions} title={titleElement} />
+            ) : (
+                titleElement
+            )}
         </div>
     );
 });
 
 /* ----------- NAVFILE PREVIEW (excerpt, date, tags, thumbnail) ----------- */
 
-const NavFilePreview = (props: { file: OZFile; plugin: FileTreeAlternativePlugin; options: PreviewOptions }) => {
-    const { file, plugin, options } = props;
+const NavFilePreview = (props: { file: OZFile; plugin: FileTreeAlternativePlugin; options: PreviewOptions; title: React.ReactNode }) => {
+    const { file, plugin, options, title } = props;
     const preview = usePreview(file.path, plugin.app);
 
     const thumbnailSrc = useMemo(() => {
@@ -550,6 +559,7 @@ const NavFilePreview = (props: { file: OZFile; plugin: FileTreeAlternativePlugin
     return (
         <div className="oz-nav-file-preview">
             <div className="oz-nav-file-preview-body">
+                {title}
                 {preview?.excerpt && (
                     <div className="oz-nav-file-preview-excerpt" style={{ WebkitLineClamp: options.lines }}>
                         {preview.excerpt}
