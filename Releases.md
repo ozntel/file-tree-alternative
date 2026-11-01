@@ -1,5 +1,10 @@
 # Release Updates
 
+## Version 2.6.4
+
+- Mobile Spacing Toggle and Compact Preview Rows
+- README Rewrite
+
 ## Version 2.6.3
 
 - Note Previews in File List
