@@ -19,6 +19,7 @@ export interface FileTreeAlternativePluginSettings {
     allSearchOnlyInFocusedFolder: boolean;
     showFilesFromSubFoldersButton: boolean;
     revealActiveFileButton: boolean;
+    autoReveal: boolean;
     excludedExtensions: string;
     excludedFolders: string;
     hideAttachments: boolean;
@@ -57,6 +58,7 @@ export const DEFAULT_SETTINGS: FileTreeAlternativePluginSettings = {
     allSearchOnlyInFocusedFolder: false,
     showFilesFromSubFoldersButton: true,
     revealActiveFileButton: false,
+    autoReveal: false,
     excludedExtensions: '',
     excludedFolders: '',
     hideAttachments: false,
@@ -376,6 +378,19 @@ export class FileTreeAlternativePluginSettingsTab extends PluginSettingTab {
             .addToggle((toggle) =>
                 toggle.setValue(this.plugin.settings.revealActiveFileButton).onChange((value) => {
                     this.plugin.settings.revealActiveFileButton = value;
+                    this.plugin.saveSettings();
+                    this.refreshView();
+                })
+            );
+
+        new Setting(containerEl)
+            .setName('Automatically reveal Active File in File Tree')
+            .setDesc(
+                `Turning on this option is the equivalent of clicking on the Reveal Active File button every time you open a file.`
+            )
+            .addToggle((toggle) =>
+                toggle.setValue(this.plugin.settings.autoReveal).onChange((value) => {
+                    this.plugin.settings.autoReveal = value;
                     this.plugin.saveSettings();
                     this.refreshView();
                 })
